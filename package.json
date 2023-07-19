@@ -1,0 +1,52 @@
+{
+  "name": "fake-permissions",
+  "version": "0.0.0",
+  "description": "A fake implementation of the W3C Permissions API",
+  "keywords": [
+    "fake",
+    "permissions",
+    "w3c"
+  ],
+  "repository": "TODO",
+  "bugs": "https://github.com/TODO/fake-permissions/issues",
+  "homepage": "https://github.com/TODO/fake-permissions",
+  "author": "Erin Millard <contact@erin.id.au>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "artifacts/dist/index.js",
+  "types": "artifacts/dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./artifacts/dist/index.d.ts",
+      "import": "./artifacts/dist/index.js",
+      "default": "./artifacts/dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "/artifacts/dist/"
+  ],
+  "scripts": {
+    "prepublishOnly": "tsc -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.3",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.3",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest": "^29.6.1",
+    "prettier": "^3.0.0",
+    "prettier-plugin-organize-imports": "^3.2.3",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.1.6"
+  }
+}
