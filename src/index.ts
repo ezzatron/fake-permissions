@@ -1,1 +1,1 @@
-// TODO
+export * from "./permissions.js";
