@@ -53,6 +53,8 @@ module.exports = {
             argsIgnorePattern: "^_",
           },
         ],
+        // this rule gets in the way of designing APIs
+        "@typescript-eslint/require-await": "off",
       },
     },
     {

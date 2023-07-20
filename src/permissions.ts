@@ -11,7 +11,6 @@ export class Permissions {
     this.#permissionNames = permissionNames;
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async query(descriptor: PermissionDescriptor): Promise<PermissionStatus> {
     if (arguments.length < 1) {
       throw new TypeError(
