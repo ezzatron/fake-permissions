@@ -1,4 +1,5 @@
 import * as defaultPermissionNameMap from "./constants/permission-name.js";
+import { PermissionStatus } from "./permission-status.js";
 import { PermissionName } from "./types/permission-name.js";
 
 const defaultPermissionNames = new Set(Object.values(defaultPermissionNameMap));
@@ -12,7 +13,7 @@ export class Permissions {
     this.#permissionNames = permissionNames;
   }
 
-  async query(descriptor: PermissionDescriptor): Promise<PermissionStatus> {
+  async query(descriptor: PermissionDescriptor): Promise<StdPermissionStatus> {
     if (arguments.length < 1) {
       throw new TypeError(
         "Failed to execute 'query' on 'Permissions': 1 argument required, but only 0 present.",
@@ -39,8 +40,11 @@ export class Permissions {
       );
     }
 
-    return {} as PermissionStatus;
+    return new PermissionStatus() as StdPermissionStatus;
   }
 }
 
-Permissions satisfies new () => globalThis.Permissions;
+Permissions satisfies new () => StdPermissions;
+
+type StdPermissions = globalThis.Permissions;
+type StdPermissionStatus = globalThis.PermissionStatus;

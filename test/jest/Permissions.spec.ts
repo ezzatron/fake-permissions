@@ -1,5 +1,5 @@
 import * as defaultPermissionNames from "../../src/constants/permission-name.js";
-import { Permissions } from "../../src/permissions.js";
+import { Permissions, PermissionStatus } from "../../src/index.js";
 
 const defaultPermissionNamesData: [PermissionName][] = Object.values(
   defaultPermissionNames,
@@ -91,7 +91,9 @@ describe("Permissions", () => {
         "when called with a permission name of '%s'",
         (name) => {
           it("returns a status", async () => {
-            expect(await permissions.query({ name })).toBeDefined();
+            expect(await permissions.query({ name })).toBeInstanceOf(
+              PermissionStatus,
+            );
           });
         },
       );
@@ -111,10 +113,10 @@ describe("Permissions", () => {
         it("returns statuses", async () => {
           expect(
             await permissions.query({ name: permissionNameA }),
-          ).toBeDefined();
+          ).toBeInstanceOf(PermissionStatus);
           expect(
             await permissions.query({ name: permissionNameB }),
-          ).toBeDefined();
+          ).toBeInstanceOf(PermissionStatus);
         });
       });
 
