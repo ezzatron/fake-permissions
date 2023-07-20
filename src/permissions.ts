@@ -1,7 +1,46 @@
+import * as defaultPermissionNameMap from "./constants/permission-name.js";
+
+const defaultPermissionNames = new Set(Object.values(defaultPermissionNameMap));
+
 export class Permissions {
-  query(): void {
-    throw new TypeError(
-      "Failed to execute 'query' on 'Permissions': 1 argument required, but only 0 present.",
-    );
+  readonly #permissionNames: Set<PermissionName>;
+
+  constructor({
+    permissionNames = defaultPermissionNames,
+  }: { permissionNames?: Set<PermissionName> } = {}) {
+    this.#permissionNames = permissionNames;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async query(descriptor: PermissionDescriptor): Promise<PermissionStatus> {
+    if (arguments.length < 1) {
+      throw new TypeError(
+        "Failed to execute 'query' on 'Permissions': 1 argument required, but only 0 present.",
+      );
+    }
+
+    if (!descriptor) {
+      throw new TypeError(
+        "Failed to execute 'query' on 'Permissions': parameter 1 is not of type 'object'.",
+      );
+    }
+
+    if (!("name" in descriptor)) {
+      throw new TypeError(
+        "Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': Required member is undefined.",
+      );
+    }
+
+    const { name } = descriptor;
+
+    if (!this.#permissionNames.has(name)) {
+      throw new TypeError(
+        `Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value '${name}' is not a valid enum value of type PermissionName.`,
+      );
+    }
+
+    return {} as PermissionStatus;
   }
 }
+
+Permissions satisfies new () => globalThis.Permissions;
