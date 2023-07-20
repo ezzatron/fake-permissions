@@ -1,9 +1,9 @@
 import { StdPermissionStatus } from "./types/std.js";
 
-export class PermissionStatus {
-  readonly name: PermissionName;
+export class PermissionStatus<Name extends string> {
+  readonly name: Name;
 
-  constructor(name: PermissionName) {
+  constructor(name: Name) {
     this.name = name;
   }
 

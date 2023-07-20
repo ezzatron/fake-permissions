@@ -1,13 +1,13 @@
-import * as defaultPermissionNames from "../../src/constants/permission-name.js";
 import { Permissions, PermissionStatus } from "../../src/index.js";
-import { StdPermissionName, StdPermissionStatus } from "../../src/types/std.js";
 
 describe("Permissions", () => {
-  let permissions: Permissions;
+  let permissions: Permissions<"permission-a" | "permission-b">;
   let callQueryWith: (...a: unknown[]) => () => Promise<unknown>;
 
   beforeEach(() => {
-    permissions = new Permissions();
+    permissions = new Permissions({
+      permissionNames: new Set(["permission-a", "permission-b"]),
+    });
 
     callQueryWith = (...a: unknown[]) => {
       return async () => {
@@ -71,73 +71,37 @@ describe("Permissions", () => {
     });
   });
 
-  describe("when using the default permission name set", () => {
-    describe("when queried with a permission name not in the set", () => {
-      it("throws a TypeError", async () => {
-        const call = callQueryWith({ name: "non-existent" });
+  describe("when queried with a permission name not in the set", () => {
+    it("throws a TypeError", async () => {
+      const call = callQueryWith({ name: "non-existent" });
 
-        await expect(call).rejects.toThrow(TypeError);
-        await expect(call).rejects.toThrow(
-          "Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value 'non-existent' is not a valid enum value of type PermissionName.",
-        );
-      });
-    });
-
-    describe("when queried with a permission name in the set", () => {
-      it("returns a status", async () => {
-        for (const name of Object.values(
-          defaultPermissionNames,
-        ) as StdPermissionName[]) {
-          expect(await permissions.query({ name })).toBeInstanceOf(
-            PermissionStatus,
-          );
-        }
-      });
+      await expect(call).rejects.toThrow(TypeError);
+      await expect(call).rejects.toThrow(
+        "Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value 'non-existent' is not a valid enum value of type PermissionName.",
+      );
     });
   });
 
-  describe("when using a custom permission name set", () => {
-    const permissionNameA = "permission-name-a" as PermissionName;
-    const permissionNameB = "permission-name-b" as PermissionName;
-
-    beforeEach(() => {
-      permissions = new Permissions({
-        permissionNames: new Set([permissionNameA, permissionNameB]),
-      });
-    });
-
-    describe("when queried with a permission name not in the set", () => {
-      it("throws a TypeError", async () => {
-        const call = callQueryWith({ name: "non-existent" });
-
-        await expect(call).rejects.toThrow(TypeError);
-        await expect(call).rejects.toThrow(
-          "Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value 'non-existent' is not a valid enum value of type PermissionName.",
-        );
-      });
-    });
-
-    describe("when queried with a permission name in the set", () => {
-      it("returns a status", async () => {
-        expect(
-          await permissions.query({ name: permissionNameA }),
-        ).toBeInstanceOf(PermissionStatus);
-        expect(
-          await permissions.query({ name: permissionNameB }),
-        ).toBeInstanceOf(PermissionStatus);
-      });
+  describe("when queried with a permission name in the set", () => {
+    it("returns a status", async () => {
+      expect(await permissions.query({ name: "permission-a" })).toBeInstanceOf(
+        PermissionStatus,
+      );
+      expect(await permissions.query({ name: "permission-b" })).toBeInstanceOf(
+        PermissionStatus,
+      );
     });
   });
 
   describe("when queried", () => {
-    let status: StdPermissionStatus;
+    let status: PermissionStatus<"permission-a">;
 
     beforeEach(async () => {
-      status = await permissions.query({ name: "geolocation" });
+      status = await permissions.query({ name: "permission-a" });
     });
 
     it("returns a status with the correct name", () => {
-      expect(status.name).toBe("geolocation");
+      expect(status.name).toBe("permission-a");
     });
   });
 });
