@@ -40,7 +40,7 @@ export class Permissions {
       );
     }
 
-    return new PermissionStatus() as StdPermissionStatus;
+    return new PermissionStatus();
   }
 }
 
