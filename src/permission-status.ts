@@ -29,4 +29,4 @@ export class PermissionStatus<Name extends string> {
   }
 }
 
-PermissionStatus satisfies new (name: PermissionName) => StdPermissionStatus;
+PermissionStatus satisfies new (...args: never[]) => StdPermissionStatus;
