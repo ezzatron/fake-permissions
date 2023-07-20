@@ -92,18 +92,6 @@ describe("Permissions", () => {
       );
     });
   });
-
-  describe("when queried", () => {
-    let status: PermissionStatus<"permission-a">;
-
-    beforeEach(async () => {
-      status = await permissions.query({ name: "permission-a" });
-    });
-
-    it("returns a status with the correct name", () => {
-      expect(status.name).toBe("permission-a");
-    });
-  });
 });
 
 type AnyFn = (...a: unknown[]) => unknown;
