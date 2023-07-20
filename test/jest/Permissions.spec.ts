@@ -1,3 +1,4 @@
+import { PROMPT } from "../../src/constants/permission-state.js";
 import { Permissions, PermissionStatus } from "../../src/index.js";
 
 describe("Permissions", () => {
@@ -7,8 +8,8 @@ describe("Permissions", () => {
   beforeEach(() => {
     permissions = new Permissions({
       permissionSet: {
-        "permission-a": {},
-        "permission-b": {},
+        "permission-a": PROMPT,
+        "permission-b": PROMPT,
       },
     });
 

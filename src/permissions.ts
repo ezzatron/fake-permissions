@@ -5,8 +5,6 @@ import { PermissionSet } from "./types/permission-set.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
 export class Permissions<Names extends string = PermissionName> {
-  readonly #permissionSet: PermissionSet<Names>;
-
   constructor({ permissionSet }: { permissionSet: PermissionSet<Names> }) {
     this.#permissionSet = permissionSet;
   }
@@ -40,8 +38,10 @@ export class Permissions<Names extends string = PermissionName> {
       );
     }
 
-    return new PermissionStatus(name);
+    return new PermissionStatus(this.#permissionSet[name], name);
   }
+
+  readonly #permissionSet: PermissionSet<Names>;
 }
 
 Permissions<StdPermissionName> satisfies new (

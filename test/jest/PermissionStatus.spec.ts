@@ -1,24 +1,31 @@
-import { PROMPT } from "../../src/constants/permission-state.js";
-import { Permissions, PermissionStatus } from "../../src/index.js";
+import { DENIED, GRANTED } from "../../src/constants/permission-state.js";
+import { Permissions } from "../../src/index.js";
 
 describe("PermissionStatus", () => {
-  let status: PermissionStatus<"permission-a">;
+  let permissions: Permissions<"permission-a" | "permission-b">;
 
   beforeEach(async () => {
-    const permissions = new Permissions({
+    permissions = new Permissions({
       permissionSet: {
-        "permission-a": {},
+        "permission-a": DENIED,
+        "permission-b": GRANTED,
       },
     });
-
-    status = await permissions.query({ name: "permission-a" });
   });
 
-  it("has a name that matches the queried permission name", () => {
-    expect(status.name).toBe("permission-a");
+  it("has a name that matches the queried permission name", async () => {
+    const statusA = await permissions.query({ name: "permission-a" });
+    const statusB = await permissions.query({ name: "permission-b" });
+
+    expect(statusA.name).toBe("permission-a");
+    expect(statusB.name).toBe("permission-b");
   });
 
-  it("is initially in the 'prompt' state", () => {
-    expect(status.state).toBe(PROMPT);
+  it("is has an initial state that matches the permission set", async () => {
+    const statusA = await permissions.query({ name: "permission-a" });
+    const statusB = await permissions.query({ name: "permission-b" });
+
+    expect(statusA.state).toBe(DENIED);
+    expect(statusB.state).toBe(GRANTED);
   });
 });

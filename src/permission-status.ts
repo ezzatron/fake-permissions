@@ -1,15 +1,15 @@
-import { PROMPT } from "./constants/permission-state.js";
-import { StdPermissionStatus } from "./types/std.js";
+import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
 
 export class PermissionStatus<Name extends string> {
   readonly name: Name;
 
-  constructor(name: Name) {
+  constructor(initialState: StdPermissionState, name: Name) {
+    this.#initialState = initialState;
     this.name = name;
   }
 
   get state(): PermissionState {
-    return PROMPT;
+    return this.#initialState;
   }
 
   addEventListener() {
@@ -27,6 +27,8 @@ export class PermissionStatus<Name extends string> {
   onchange() {
     throw new Error("Not implemented");
   }
+
+  readonly #initialState: StdPermissionState;
 }
 
 PermissionStatus satisfies new (...args: never[]) => StdPermissionStatus;
