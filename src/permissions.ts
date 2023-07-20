@@ -1,13 +1,14 @@
 import { PermissionStatus } from "./permission-status.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionName } from "./types/permission-name.js";
+import { PermissionSet } from "./types/permission-set.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
 export class Permissions<Names extends string = PermissionName> {
-  readonly #permissionNames: Set<Names>;
+  readonly #permissionSet: PermissionSet<Names>;
 
-  constructor({ permissionNames }: { permissionNames: Set<Names> }) {
-    this.#permissionNames = permissionNames;
+  constructor({ permissionSet }: { permissionSet: PermissionSet<Names> }) {
+    this.#permissionSet = permissionSet;
   }
 
   async query<Name extends Names>(
@@ -33,7 +34,7 @@ export class Permissions<Names extends string = PermissionName> {
 
     const { name } = descriptor;
 
-    if (!this.#permissionNames.has(name)) {
+    if (!this.#permissionSet[name]) {
       throw new TypeError(
         `Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value '${name}' is not a valid enum value of type PermissionName.`,
       );
@@ -43,6 +44,6 @@ export class Permissions<Names extends string = PermissionName> {
   }
 }
 
-Permissions<StdPermissionName> satisfies new (options: {
-  permissionNames: Set<StdPermissionName>;
-}) => StdPermissions;
+Permissions<StdPermissionName> satisfies new (
+  ...args: never[]
+) => StdPermissions;

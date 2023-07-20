@@ -6,7 +6,9 @@ describe("PermissionStatus", () => {
 
   beforeEach(async () => {
     const permissions = new Permissions({
-      permissionNames: new Set(["permission-a"]),
+      permissionSet: {
+        "permission-a": {},
+      },
     });
 
     status = await permissions.query({ name: "permission-a" });

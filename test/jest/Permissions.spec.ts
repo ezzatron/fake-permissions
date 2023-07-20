@@ -6,7 +6,10 @@ describe("Permissions", () => {
 
   beforeEach(() => {
     permissions = new Permissions({
-      permissionNames: new Set(["permission-a", "permission-b"]),
+      permissionSet: {
+        "permission-a": {},
+        "permission-b": {},
+      },
     });
 
     callQueryWith = (...a: unknown[]) => {
