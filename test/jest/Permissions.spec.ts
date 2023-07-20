@@ -83,13 +83,14 @@ describe("Permissions", () => {
   });
 
   describe("when queried with a permission name in the set", () => {
-    it("returns a status", async () => {
-      expect(await permissions.query({ name: "permission-a" })).toBeInstanceOf(
-        PermissionStatus,
-      );
-      expect(await permissions.query({ name: "permission-b" })).toBeInstanceOf(
-        PermissionStatus,
-      );
+    it("returns a status for the queried permission", async () => {
+      const statusA = await permissions.query({ name: "permission-a" });
+      const statusB = await permissions.query({ name: "permission-b" });
+
+      expect(statusA).toBeInstanceOf(PermissionStatus);
+      expect(statusA.name).toBe("permission-a");
+      expect(statusB).toBeInstanceOf(PermissionStatus);
+      expect(statusB.name).toBe("permission-b");
     });
   });
 });
