@@ -2,6 +2,7 @@ import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
 
 export class PermissionStatus<Name extends string> {
   readonly name: Name;
+  onchange: ((ev: Event) => void) | null = null;
 
   constructor(initialState: StdPermissionState, name: Name) {
     this.#initialState = initialState;
@@ -12,19 +13,15 @@ export class PermissionStatus<Name extends string> {
     return this.#initialState;
   }
 
-  addEventListener() {
+  addEventListener(): void {
     throw new Error("Not implemented");
   }
 
-  removeEventListener() {
+  removeEventListener(): void {
     throw new Error("Not implemented");
   }
 
   dispatchEvent(): boolean {
-    throw new Error("Not implemented");
-  }
-
-  onchange() {
     throw new Error("Not implemented");
   }
 
