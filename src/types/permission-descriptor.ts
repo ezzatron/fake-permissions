@@ -1,1 +1,1 @@
-export type PermissionDescriptor<N extends string> = { name: N };
+export type PermissionDescriptor<Name extends string> = { name: Name };
