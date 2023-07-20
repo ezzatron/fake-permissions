@@ -1,3 +1,4 @@
+import { PROMPT } from "./constants/permission-state.js";
 import { StdPermissionStatus } from "./types/std.js";
 
 export class PermissionStatus<Name extends string> {
@@ -8,7 +9,7 @@ export class PermissionStatus<Name extends string> {
   }
 
   get state(): PermissionState {
-    throw new Error("Not implemented");
+    return PROMPT;
   }
 
   addEventListener() {

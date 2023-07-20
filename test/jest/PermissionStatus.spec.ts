@@ -1,3 +1,4 @@
+import { PROMPT } from "../../src/constants/permission-state.js";
 import { Permissions, PermissionStatus } from "../../src/index.js";
 
 describe("PermissionStatus", () => {
@@ -13,5 +14,9 @@ describe("PermissionStatus", () => {
 
   it("has a name that matches the queried permission name", () => {
     expect(status.name).toBe("permission-a");
+  });
+
+  it("is initially in the 'prompt' state", () => {
+    expect(status.state).toBe(PROMPT);
   });
 });
