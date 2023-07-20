@@ -3,7 +3,7 @@ import { Permissions } from "../../src/permissions.js";
 
 const defaultPermissionNamesData: [PermissionName][] = Object.values(
   defaultPermissionNames,
-).map((name) => [name]);
+).map((name) => [name]) as [PermissionName][];
 
 describe("Permissions", () => {
   let permissions: Permissions;

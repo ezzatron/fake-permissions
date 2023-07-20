@@ -1,4 +1,5 @@
 import * as defaultPermissionNameMap from "./constants/permission-name.js";
+import { PermissionName } from "./types/permission-name.js";
 
 const defaultPermissionNames = new Set(Object.values(defaultPermissionNameMap));
 
