@@ -38,7 +38,7 @@ export class Permissions<Names extends string = PermissionName> {
       );
     }
 
-    return new PermissionStatus(this.#permissionSet[name], name);
+    return new PermissionStatus(this.#permissionSet, name);
   }
 
   readonly #permissionSet: PermissionSet<Names>;
