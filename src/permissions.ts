@@ -1,6 +1,7 @@
 import * as defaultPermissionNameMap from "./constants/permission-name.js";
 import { PermissionStatus } from "./permission-status.js";
 import { PermissionName } from "./types/permission-name.js";
+import { StdPermissionStatus, StdPermissions } from "./types/std.js";
 
 const defaultPermissionNames = new Set(Object.values(defaultPermissionNameMap));
 
@@ -40,11 +41,8 @@ export class Permissions {
       );
     }
 
-    return new PermissionStatus();
+    return new PermissionStatus(name);
   }
 }
 
 Permissions satisfies new () => StdPermissions;
-
-type StdPermissions = globalThis.Permissions;
-type StdPermissionStatus = globalThis.PermissionStatus;

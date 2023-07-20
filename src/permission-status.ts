@@ -1,10 +1,14 @@
+import { StdPermissionStatus } from "./types/std.js";
+
 export class PermissionStatus {
   readonly name: PermissionName;
-  state: PermissionState;
 
-  constructor() {
-    this.name = "" as PermissionName;
-    this.state = "" as PermissionState;
+  constructor(name: PermissionName) {
+    this.name = name;
+  }
+
+  get state(): PermissionState {
+    throw new Error("Not implemented");
   }
 
   addEventListener() {
@@ -23,3 +27,5 @@ export class PermissionStatus {
     throw new Error("Not implemented");
   }
 }
+
+PermissionStatus satisfies new (name: PermissionName) => StdPermissionStatus;

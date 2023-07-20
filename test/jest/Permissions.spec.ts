@@ -1,5 +1,6 @@
 import * as defaultPermissionNames from "../../src/constants/permission-name.js";
 import { Permissions, PermissionStatus } from "../../src/index.js";
+import { StdPermissionName, StdPermissionStatus } from "../../src/types/std.js";
 
 describe("Permissions", () => {
   let permissions: Permissions;
@@ -86,7 +87,7 @@ describe("Permissions", () => {
       it("returns a status", async () => {
         for (const name of Object.values(
           defaultPermissionNames,
-        ) as PermissionName[]) {
+        ) as StdPermissionName[]) {
           expect(await permissions.query({ name })).toBeInstanceOf(
             PermissionStatus,
           );
@@ -125,6 +126,18 @@ describe("Permissions", () => {
           await permissions.query({ name: permissionNameB }),
         ).toBeInstanceOf(PermissionStatus);
       });
+    });
+  });
+
+  describe("when queried", () => {
+    let status: StdPermissionStatus;
+
+    beforeEach(async () => {
+      status = await permissions.query({ name: "geolocation" });
+    });
+
+    it("returns a status with the correct name", () => {
+      expect(status.name).toBe("geolocation");
     });
   });
 });
