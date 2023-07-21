@@ -1,26 +1,28 @@
 import { DENIED, GRANTED, PROMPT } from "./constants/permission-state.js";
 import { PermissionStore } from "./permission-store.js";
 
-export class User<Names extends string> {
-  constructor({
-    permissionStore,
-  }: {
-    permissionStore: PermissionStore<Names>;
-  }) {
-    this.#permissionStore = permissionStore;
-  }
+export interface User<Names extends string> {
+  grantPermission(name: Names): void;
+  denyPermission(name: Names): void;
+  resetPermission(name: Names): void;
+}
 
-  grantPermission(name: Names): void {
-    this.#permissionStore.set(name, GRANTED);
-  }
+export function createUser<Names extends string>({
+  permissionStore,
+}: {
+  permissionStore: PermissionStore<Names>;
+}): User<Names> {
+  return {
+    grantPermission(name) {
+      permissionStore.set(name, GRANTED);
+    },
 
-  denyPermission(name: Names): void {
-    this.#permissionStore.set(name, DENIED);
-  }
+    denyPermission(name) {
+      permissionStore.set(name, DENIED);
+    },
 
-  resetPermission(name: Names): void {
-    this.#permissionStore.set(name, PROMPT);
-  }
-
-  readonly #permissionStore: PermissionStore<Names>;
+    resetPermission(name) {
+      permissionStore.set(name, PROMPT);
+    },
+  };
 }
