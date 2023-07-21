@@ -1,17 +1,23 @@
 import { PROMPT } from "../../src/constants/permission-state.js";
-import { Permissions, PermissionStatus } from "../../src/index.js";
+import {
+  createPermissionStore,
+  Permissions,
+  PermissionStatus,
+} from "../../src/index.js";
 
 describe("Permissions", () => {
   let permissions: Permissions<"permission-a" | "permission-b">;
   let callQueryWith: (...a: unknown[]) => () => Promise<unknown>;
 
   beforeEach(() => {
-    permissions = new Permissions({
-      permissionSet: {
+    const permissionStore = createPermissionStore({
+      initialStates: {
         "permission-a": PROMPT,
         "permission-b": PROMPT,
       },
     });
+
+    permissions = new Permissions({ permissionStore });
 
     callQueryWith = (...a: unknown[]) => {
       return async () => {

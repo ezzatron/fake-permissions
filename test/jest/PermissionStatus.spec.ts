@@ -3,7 +3,12 @@ import {
   GRANTED,
   PROMPT,
 } from "../../src/constants/permission-state.js";
-import { PermissionStatus, Permissions, User } from "../../src/index.js";
+import {
+  PermissionStatus,
+  Permissions,
+  User,
+  createPermissionStore,
+} from "../../src/index.js";
 
 type Names = "permission-a" | "permission-b" | "permission-c";
 
@@ -15,14 +20,16 @@ describe("PermissionStatus", () => {
   let statusC: PermissionStatus<"permission-c">;
 
   beforeEach(async () => {
-    const permissionSet = {
-      "permission-a": PROMPT,
-      "permission-b": GRANTED,
-      "permission-c": DENIED,
-    } as const;
+    const permissionStore = createPermissionStore({
+      initialStates: {
+        "permission-a": PROMPT,
+        "permission-b": GRANTED,
+        "permission-c": DENIED,
+      },
+    });
 
-    user = new User({ permissionSet });
-    permissions = new Permissions({ permissionSet });
+    user = new User({ permissionStore });
+    permissions = new Permissions({ permissionStore });
 
     statusA = await permissions.query({ name: "permission-a" });
     statusB = await permissions.query({ name: "permission-b" });

@@ -1,17 +1,17 @@
-import { PermissionSet } from "./types/permission-set.js";
+import { PermissionStore } from "./permission-store.js";
 import { StdPermissionStatus } from "./types/std.js";
 
 export class PermissionStatus<Name extends string> {
   readonly name: Name;
   onchange: ((ev: Event) => void) | null = null;
 
-  constructor(permissionSet: PermissionSet<Name>, name: Name) {
-    this.#permissionSet = permissionSet;
+  constructor(permissionStore: PermissionStore<Name>, name: Name) {
+    this.#permissionStore = permissionStore;
     this.name = name;
   }
 
   get state(): PermissionState {
-    return this.#permissionSet[this.name];
+    return this.#permissionStore.get(this.name);
   }
 
   addEventListener(): void {
@@ -26,7 +26,7 @@ export class PermissionStatus<Name extends string> {
     throw new Error("Not implemented");
   }
 
-  readonly #permissionSet: PermissionSet<Name>;
+  readonly #permissionStore: PermissionStore<Name>;
 }
 
 PermissionStatus satisfies new (...args: never[]) => StdPermissionStatus;
