@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import {
   DENIED,
   GRANTED,
@@ -69,6 +70,35 @@ describe("PermissionStatus", () => {
       expect(statusA.state).toBe(GRANTED);
       expect(statusB.state).toBe(DENIED);
       expect(statusC.state).toBe(PROMPT);
+    });
+  });
+
+  describe("when a change event handler is added via addEventListener()", () => {
+    let listener: jest.Mock;
+
+    beforeEach(() => {
+      listener = jest.fn();
+      statusA.addEventListener("change", listener);
+      statusB.addEventListener("change", listener);
+      statusC.addEventListener("change", listener);
+    });
+
+    afterEach(() => {
+      statusA.removeEventListener("change", listener);
+      statusB.removeEventListener("change", listener);
+      statusC.removeEventListener("change", listener);
+    });
+
+    describe("when the user changes the permission state", () => {
+      beforeEach(async () => {
+        user.grantPermission("permission-a");
+        user.denyPermission("permission-b");
+        user.resetPermission("permission-c");
+      });
+
+      it("dispatches an event", () => {
+        expect(listener).toHaveBeenCalledTimes(3);
+      });
     });
   });
 });

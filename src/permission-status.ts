@@ -32,6 +32,10 @@ export class PermissionStatus<Name extends string> extends EventTarget {
 
     this.#permissionStore = permissionStore;
     this.name = name;
+
+    permissionStore.subscribe((name) => {
+      if (name === this.name) this.dispatchEvent(new Event("change"));
+    });
   }
 
   get state(): PermissionState {
