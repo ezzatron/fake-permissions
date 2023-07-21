@@ -1,10 +1,9 @@
 import { PermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
+import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionName } from "./types/permission-name.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
-
-export const CREATE = Symbol("CREATE");
 
 type PermissionParameters<Names extends string> = {
   permissionStore: PermissionStore<Names>;
@@ -64,7 +63,10 @@ export class Permissions<Names extends string> {
       );
     }
 
-    return new PermissionStatus<Name>(this.#permissionStore, name);
+    return PermissionStatus[CREATE]<Name>({
+      name,
+      permissionStore: this.#permissionStore,
+    });
   }
 
   static #canConstruct = false;

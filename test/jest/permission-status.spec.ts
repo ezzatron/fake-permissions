@@ -38,6 +38,16 @@ describe("PermissionStatus", () => {
     statusC = await permissions.query({ name: "permission-c" });
   });
 
+  it("cannot be instantiated", () => {
+    const permissionStore = createPermissionStore({ initialStates: {} });
+    const call = () => {
+      new PermissionStatus({ name: "permission-a", permissionStore });
+    };
+
+    expect(call).toThrow(TypeError);
+    expect(call).toThrow("Illegal constructor");
+  });
+
   it("has a name that matches the queried permission name", async () => {
     expect(statusA.name).toBe("permission-a");
     expect(statusB.name).toBe("permission-b");
