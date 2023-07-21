@@ -1,5 +1,6 @@
 import { PROMPT } from "../../src/constants/permission-state.js";
 import {
+  createPermissions,
   createPermissionStore,
   Permissions,
   PermissionStatus,
@@ -17,13 +18,23 @@ describe("Permissions", () => {
       },
     });
 
-    permissions = new Permissions({ permissionStore });
+    permissions = createPermissions({ permissionStore });
 
     callQueryWith = (...a: unknown[]) => {
       return async () => {
         await (permissions.query as AnyFn)(...a);
       };
     };
+  });
+
+  it("cannot be instantiated", () => {
+    const permissionStore = createPermissionStore({ initialStates: {} });
+    const call = () => {
+      new Permissions({ permissionStore });
+    };
+
+    expect(call).toThrow(TypeError);
+    expect(call).toThrow("Illegal constructor");
   });
 
   describe("when queried without arguments", () => {

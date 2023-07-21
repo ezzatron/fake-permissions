@@ -8,6 +8,7 @@ import {
   Permissions,
   User,
   createPermissionStore,
+  createPermissions,
   createUser,
 } from "../../src/index.js";
 
@@ -30,7 +31,7 @@ describe("PermissionStatus", () => {
     });
 
     user = createUser({ permissionStore });
-    permissions = new Permissions({ permissionStore });
+    permissions = createPermissions({ permissionStore });
 
     statusA = await permissions.query({ name: "permission-a" });
     statusB = await permissions.query({ name: "permission-b" });

@@ -4,12 +4,34 @@ import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionName } from "./types/permission-name.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
-export class Permissions<Names extends string = PermissionName> {
-  constructor({
-    permissionStore,
-  }: {
-    permissionStore: PermissionStore<Names>;
-  }) {
+export const CREATE = Symbol("CREATE");
+
+type PermissionParameters<Names extends string> = {
+  permissionStore: PermissionStore<Names>;
+};
+
+export function createPermissions<Names extends string = PermissionName>(
+  parameters: PermissionParameters<Names>,
+): Permissions<Names> {
+  return Permissions[CREATE](parameters);
+}
+
+export class Permissions<Names extends string> {
+  static [CREATE]<N extends string>(
+    parameters: PermissionParameters<N>,
+  ): Permissions<N> {
+    Permissions.#canConstruct = true;
+
+    return new Permissions(parameters);
+  }
+
+  /**
+   * @deprecated Use the `createPermissions()` function instead.
+   */
+  constructor({ permissionStore }: PermissionParameters<Names>) {
+    if (!Permissions.#canConstruct) throw new TypeError("Illegal constructor");
+    Permissions.#canConstruct = false;
+
     this.#permissionStore = permissionStore;
   }
 
@@ -45,6 +67,7 @@ export class Permissions<Names extends string = PermissionName> {
     return new PermissionStatus<Name>(this.#permissionStore, name);
   }
 
+  static #canConstruct = false;
   readonly #permissionStore: PermissionStore<Names>;
 }
 
