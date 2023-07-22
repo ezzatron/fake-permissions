@@ -17,7 +17,6 @@ export class PermissionStatus<Name extends string> extends EventTarget {
   }
 
   readonly name: Name;
-  onchange: ((ev: Event) => void) | null = null;
 
   /**
    * @deprecated Use the `Permissions.query()` method instead.
@@ -32,6 +31,7 @@ export class PermissionStatus<Name extends string> extends EventTarget {
 
     this.#permissionStore = permissionStore;
     this.name = name;
+    this.#onchange = null;
 
     permissionStore.subscribe((name) => {
       if (name === this.name) this.dispatchEvent(new Event("change"));
@@ -42,8 +42,20 @@ export class PermissionStatus<Name extends string> extends EventTarget {
     return this.#permissionStore.get(this.name);
   }
 
+  get onchange(): Listener | null {
+    return this.#onchange;
+  }
+
+  set onchange(listener: Listener | null) {
+    if (this.#onchange) this.removeEventListener("change", this.#onchange);
+    this.addEventListener("change", (this.#onchange = listener));
+  }
+
   static #canConstruct = false;
   readonly #permissionStore: PermissionStore<Name>;
+  #onchange: Listener | null;
 }
 
 PermissionStatus satisfies new (...args: never[]) => StdPermissionStatus;
+
+type Listener = (ev: Event) => void;

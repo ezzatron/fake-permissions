@@ -73,7 +73,7 @@ describe("PermissionStatus", () => {
     });
   });
 
-  describe("when a change event handler is added via addEventListener()", () => {
+  describe("when a change event listener is added by calling addEventListener()", () => {
     let listener: jest.Mock;
 
     beforeEach(() => {
@@ -98,6 +98,68 @@ describe("PermissionStatus", () => {
 
       it("dispatches an event", () => {
         expect(listener).toHaveBeenCalledTimes(3);
+      });
+    });
+  });
+
+  describe("when a change event listener is added by setting onchange", () => {
+    let listenerA: jest.Mock;
+
+    beforeEach(() => {
+      listenerA = jest.fn();
+
+      statusA.onchange = listenerA;
+      statusB.onchange = listenerA;
+      statusC.onchange = listenerA;
+    });
+
+    afterEach(() => {
+      statusA.onchange = null;
+      statusB.onchange = null;
+      statusC.onchange = null;
+    });
+
+    it("can be read", () => {
+      expect(statusA.onchange).toBe(listenerA);
+    });
+
+    describe("when the user changes the permission state", () => {
+      beforeEach(async () => {
+        user.grantPermission("permission-a");
+        user.denyPermission("permission-b");
+        user.resetPermission("permission-c");
+      });
+
+      it("dispatches an event", () => {
+        expect(listenerA).toHaveBeenCalledTimes(3);
+      });
+    });
+
+    describe("when onchange is set to a different listener", () => {
+      let listenerB: jest.Mock;
+
+      beforeEach(() => {
+        listenerB = jest.fn();
+
+        statusA.onchange = listenerB;
+        statusB.onchange = listenerB;
+        statusC.onchange = listenerB;
+      });
+
+      describe("when the user changes the permission state", () => {
+        beforeEach(async () => {
+          user.grantPermission("permission-a");
+          user.denyPermission("permission-b");
+          user.resetPermission("permission-c");
+        });
+
+        it("does not dispatch an event to the old listener", () => {
+          expect(listenerA).toHaveBeenCalledTimes(0);
+        });
+
+        it("dispatches an event to the new listener", () => {
+          expect(listenerB).toHaveBeenCalledTimes(3);
+        });
       });
     });
   });
