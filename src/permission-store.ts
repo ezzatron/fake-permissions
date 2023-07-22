@@ -4,7 +4,7 @@ export interface PermissionStore<Names extends string> {
   has(name: Names): boolean;
   get(name: Names): StdPermissionState;
   set(name: Names, state: StdPermissionState): void;
-  subscribe(handler: SubscribeHandler): UnsubscribeFn;
+  subscribe(subscriber: Subscriber): Unsubscribe;
 }
 
 export function createPermissionStore<Names extends string>({
@@ -13,7 +13,7 @@ export function createPermissionStore<Names extends string>({
   initialStates: Record<Names, StdPermissionState>;
 }): PermissionStore<Names> {
   const states = { ...initialStates };
-  const subscribers = new Set<SubscribeHandler>();
+  const subscribers = new Set<Subscriber>();
 
   return {
     has(name: Names): boolean {
@@ -29,19 +29,19 @@ export function createPermissionStore<Names extends string>({
       dispatch(name);
     },
 
-    subscribe(handler: SubscribeHandler): UnsubscribeFn {
-      subscribers.add(handler);
+    subscribe(subscriber: Subscriber): Unsubscribe {
+      subscribers.add(subscriber);
 
       return () => {
-        subscribers.delete(handler);
+        subscribers.delete(subscriber);
       };
     },
   };
 
   function dispatch(name: Names): void {
-    for (const handler of subscribers) {
+    for (const subscriber of subscribers) {
       try {
-        handler(name);
+        subscriber(name);
       } catch {
         // ignored
       }
@@ -49,5 +49,5 @@ export function createPermissionStore<Names extends string>({
   }
 }
 
-type SubscribeHandler = (name: string) => void;
-type UnsubscribeFn = () => void;
+type Subscriber = (name: string) => void;
+type Unsubscribe = () => void;
