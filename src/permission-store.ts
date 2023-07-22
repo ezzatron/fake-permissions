@@ -4,7 +4,8 @@ export interface PermissionStore<Names extends string> {
   has(name: Names): boolean;
   get(name: Names): StdPermissionState;
   set(name: Names, state: StdPermissionState): void;
-  subscribe(subscriber: Subscriber): Unsubscribe;
+  subscribe(subscriber: Subscriber): void;
+  unsubscribe(subscriber: Subscriber): void;
 }
 
 export function createPermissionStore<Names extends string>({
@@ -29,12 +30,12 @@ export function createPermissionStore<Names extends string>({
       dispatch(name);
     },
 
-    subscribe(subscriber: Subscriber): Unsubscribe {
+    subscribe(subscriber: Subscriber): void {
       subscribers.add(subscriber);
+    },
 
-      return () => {
-        subscribers.delete(subscriber);
-      };
+    unsubscribe(subscriber: Subscriber): void {
+      subscribers.delete(subscriber);
     },
   };
 
@@ -50,4 +51,3 @@ export function createPermissionStore<Names extends string>({
 }
 
 type Subscriber = (name: string) => void;
-type Unsubscribe = () => void;
