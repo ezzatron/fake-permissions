@@ -5,6 +5,7 @@ export interface User<Names extends string> {
   grantPermission(name: Names): void;
   denyPermission(name: Names): void;
   resetPermission(name: Names): void;
+  requestPermission(name: Names): void;
 }
 
 export function createUser<Names extends string>({
@@ -23,6 +24,12 @@ export function createUser<Names extends string>({
 
     resetPermission(name) {
       permissionStore.set(name, PROMPT);
+    },
+
+    requestPermission(name) {
+      if (permissionStore.get(name) === PROMPT) {
+        permissionStore.set(name, DENIED);
+      }
     },
   };
 }
