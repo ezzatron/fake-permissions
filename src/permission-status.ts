@@ -1,7 +1,7 @@
 import { normalizeOptions } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
 import { CREATE } from "./private.js";
-import { StdPermissionStatus } from "./types/std.js";
+import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
 
 type PermissionStatusParameters<Names extends string> = {
   name: Names;
@@ -42,7 +42,7 @@ export class PermissionStatus<Name extends string> extends EventTarget {
     };
   }
 
-  get state(): PermissionState {
+  get state(): StdPermissionState {
     return this.#permissionStore.get(this.name);
   }
 
