@@ -28,7 +28,9 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
    * @deprecated Use the `Permissions.query()` method instead.
    */
   constructor({ name, permissionStore }: PermissionStatusParameters<Name>) {
-    super();
+    super({
+      onListenerCountChange() {},
+    });
 
     if (!PermissionStatus.#canConstruct) {
       throw new TypeError("Illegal constructor");
