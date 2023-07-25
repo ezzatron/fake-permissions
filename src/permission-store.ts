@@ -17,29 +17,29 @@ export function createPermissionStore<Names extends string>({
   const subscribers = new Set<Subscriber>();
 
   return {
-    has(name: Names): boolean {
+    has(name) {
       return name in states;
     },
 
-    get(name: Names): StdPermissionState {
+    get(name) {
       return states[name];
     },
 
-    set(name: Names, state: StdPermissionState): void {
+    set(name, state) {
       states[name] = state;
       dispatch(name);
     },
 
-    subscribe(subscriber: Subscriber): void {
+    subscribe(subscriber) {
       subscribers.add(subscriber);
     },
 
-    unsubscribe(subscriber: Subscriber): void {
+    unsubscribe(subscriber) {
       subscribers.delete(subscriber);
     },
   };
 
-  function dispatch(name: Names): void {
+  function dispatch(name: Names) {
     for (const subscriber of subscribers) {
       try {
         subscriber(name);
