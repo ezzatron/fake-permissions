@@ -1,6 +1,7 @@
-import { StdPermissionState } from "./std.js";
+import { StdEventTargetInterface, StdPermissionState } from "./std.js";
 
-export interface PermissionStatus<Name extends string> extends EventTarget {
+export interface PermissionStatus<Name extends string>
+  extends StdEventTargetInterface {
   readonly name: Name;
   readonly state: StdPermissionState;
   onchange: ((event: Event) => void) | null;

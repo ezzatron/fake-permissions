@@ -1,15 +1,19 @@
-import { normalizeOptions } from "./event-target.js";
+import { BaseEventTarget, normalizeOptions } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
 import { CREATE } from "./private.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
-import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
+import {
+  StdEventTargetInterface,
+  StdPermissionState,
+  StdPermissionStatus,
+} from "./types/std.js";
 
 type PermissionStatusParameters<Names extends string> = {
   name: Names;
   permissionStore: PermissionStore<Names>;
 };
 
-export class PermissionStatus<Name extends string> extends EventTarget {
+export class PermissionStatus<Name extends string> extends BaseEventTarget {
   static [CREATE]<N extends string>(
     parameters: PermissionStatusParameters<N>,
   ): PermissionStatus<N> {
@@ -140,7 +144,7 @@ export class PermissionStatus<Name extends string> extends EventTarget {
       this.#removeChangeListener(listener, options);
     };
 
-    function wrappedListener(this: EventTarget, event: Event) {
+    function wrappedListener(this: StdEventTargetInterface, event: Event) {
       if (typeof listener === "function") {
         listener.call(this, event);
       } else {
