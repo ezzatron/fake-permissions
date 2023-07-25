@@ -1,3 +1,7 @@
+export {
+  SelectDelegate,
+  createDelegatedPermissions,
+} from "./delegated-permissions.js";
 export * from "./permission-store.js";
 export { createPermissions } from "./permissions.js";
 export { PermissionStatus } from "./types/permission-status.js";
