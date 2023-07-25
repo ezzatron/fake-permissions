@@ -3,6 +3,7 @@ import { PermissionStore } from "./permission-store.js";
 import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionName } from "./types/permission-name.js";
+import { Permissions as PermissionsInterface } from "./types/permissions.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
 type PermissionParameters<Names extends string> = {
@@ -15,7 +16,7 @@ export function createPermissions<Names extends string = PermissionName>(
   return Permissions[CREATE](parameters);
 }
 
-export class Permissions<Names extends string> {
+class Permissions<Names extends string> {
   static [CREATE]<N extends string>(
     parameters: PermissionParameters<N>,
   ): Permissions<N> {
@@ -73,6 +74,7 @@ export class Permissions<Names extends string> {
   readonly #permissionStore: PermissionStore<Names>;
 }
 
+Permissions satisfies new (...args: never[]) => PermissionsInterface<never>;
 Permissions<StdPermissionName> satisfies new (
   ...args: never[]
 ) => StdPermissions;

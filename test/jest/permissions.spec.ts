@@ -3,7 +3,6 @@ import {
   createPermissions,
   createPermissionStore,
   Permissions,
-  PermissionStatus,
 } from "../../src/index.js";
 
 describe("Permissions", () => {
@@ -25,16 +24,6 @@ describe("Permissions", () => {
         await (permissions.query as AnyFn)(...a);
       };
     };
-  });
-
-  it("cannot be instantiated", () => {
-    const permissionStore = createPermissionStore({ initialStates: {} });
-    const call = () => {
-      new Permissions({ permissionStore });
-    };
-
-    expect(call).toThrow(TypeError);
-    expect(call).toThrow("Illegal constructor");
   });
 
   describe("when queried without arguments", () => {
@@ -108,9 +97,9 @@ describe("Permissions", () => {
       const statusA = await permissions.query({ name: "permission-a" });
       const statusB = await permissions.query({ name: "permission-b" });
 
-      expect(statusA).toBeInstanceOf(PermissionStatus);
+      expect(statusA.constructor.name).toBe("PermissionStatus");
       expect(statusA.name).toBe("permission-a");
-      expect(statusB).toBeInstanceOf(PermissionStatus);
+      expect(statusB.constructor.name).toBe("PermissionStatus");
       expect(statusB.name).toBe("permission-b");
     });
   });

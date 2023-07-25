@@ -1,6 +1,7 @@
 import { normalizeOptions } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
 import { CREATE } from "./private.js";
+import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
 
 type PermissionStatusParameters<Names extends string> = {
@@ -212,6 +213,9 @@ export class PermissionStatus<Name extends string> extends EventTarget {
   #handlePermissionStoreChange: (name: string) => void;
 }
 
+PermissionStatus satisfies new (
+  ...args: never[]
+) => PermissionStatusInterface<never>;
 PermissionStatus satisfies new (...args: never[]) => StdPermissionStatus;
 
 type ChangeListeners = Map<
