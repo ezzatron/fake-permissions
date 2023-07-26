@@ -67,7 +67,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
   static #canConstruct = false;
   readonly #permissionStore: PermissionStore<Name>;
   #onchange: EventListener | null;
-  #handlePermissionStoreChange: (name: string) => void;
+  readonly #handlePermissionStoreChange: (name: string) => void;
 }
 
 PermissionStatus satisfies new (
