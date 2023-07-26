@@ -3,6 +3,7 @@ import { PermissionStore } from "./permission-store.js";
 import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionName } from "./types/permission-name.js";
+import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
@@ -37,7 +38,7 @@ class Permissions<Names extends string> {
 
   async query<Name extends Names>(
     descriptor: PermissionDescriptor<Name>,
-  ): Promise<PermissionStatus<Name>> {
+  ): Promise<PermissionStatusInterface<Name>> {
     if (arguments.length < 1) {
       throw new TypeError(
         "Failed to execute 'query' on 'Permissions': 1 argument required, but only 0 present.",
