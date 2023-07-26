@@ -7,15 +7,15 @@ import { PermissionStatus as PermissionStatusInterface } from "./types/permissio
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
-type PermissionParameters<Names extends string> = {
-  permissionStore: PermissionStore<Names>;
-};
-
 export function createPermissions<Names extends string = PermissionName>(
   parameters: PermissionParameters<Names>,
 ): Permissions<Names> {
   return Permissions[CREATE](parameters);
 }
+
+type PermissionParameters<Names extends string> = {
+  permissionStore: PermissionStore<Names>;
+};
 
 class Permissions<Names extends string> {
   static [CREATE]<N extends string>(
