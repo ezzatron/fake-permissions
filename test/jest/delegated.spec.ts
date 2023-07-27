@@ -55,6 +55,24 @@ describe("Delegated permissions", () => {
       }));
   });
 
+  it("cannot be instantiated directly", async () => {
+    statusA = await permissions.query({ name: "permission-a" });
+
+    const instantiatePermissions = () => {
+      new (permissions.constructor as new (p: object) => unknown)({});
+    };
+    const instantiateStatus = () => {
+      new (statusA.constructor as new (p: object) => unknown)({
+        descriptor: {},
+      });
+    };
+
+    expect(instantiatePermissions).toThrow(TypeError);
+    expect(instantiatePermissions).toThrow("Illegal constructor");
+    expect(instantiateStatus).toThrow(TypeError);
+    expect(instantiateStatus).toThrow("Illegal constructor");
+  });
+
   it("requires at least one delegate", () => {
     const call = () => {
       createDelegatedPermissions({ delegates: [] });

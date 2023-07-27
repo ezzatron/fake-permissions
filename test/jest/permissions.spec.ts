@@ -26,6 +26,15 @@ describe("Permissions", () => {
     };
   });
 
+  it("cannot be instantiated directly", () => {
+    const call = () => {
+      new (permissions.constructor as new (p: object) => unknown)({});
+    };
+
+    expect(call).toThrow(TypeError);
+    expect(call).toThrow("Illegal constructor");
+  });
+
   describe("when queried without arguments", () => {
     it("throws a TypeError", async () => {
       const call = callQueryWith();
