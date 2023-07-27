@@ -1,12 +1,13 @@
 import { DENIED, GRANTED, PROMPT } from "./constants/permission-state.js";
 import { PermissionStore } from "./permission-store.js";
+import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { StdPermissionState } from "./types/std.js";
 
 export interface User<Names extends string> {
-  grantPermission(name: Names): void;
-  denyPermission(name: Names): void;
-  resetPermission(name: Names): void;
-  requestPermission(name: Names): void;
+  grantPermission(descriptor: PermissionDescriptor<Names>): void;
+  denyPermission(descriptor: PermissionDescriptor<Names>): void;
+  resetPermission(descriptor: PermissionDescriptor<Names>): void;
+  requestPermission(descriptor: PermissionDescriptor<Names>): void;
 }
 
 export function createUser<Names extends string>({
@@ -17,32 +18,32 @@ export function createUser<Names extends string>({
   handlePermissionRequest?: HandlePermissionRequest<Names>;
 }): User<Names> {
   return {
-    grantPermission(name) {
-      permissionStore.set(name, GRANTED);
+    grantPermission(descriptor) {
+      permissionStore.set(descriptor, GRANTED);
     },
 
-    denyPermission(name) {
-      permissionStore.set(name, DENIED);
+    denyPermission(descriptor) {
+      permissionStore.set(descriptor, DENIED);
     },
 
-    resetPermission(name) {
-      permissionStore.set(name, PROMPT);
+    resetPermission(descriptor) {
+      permissionStore.set(descriptor, PROMPT);
     },
 
-    requestPermission(name) {
-      const state = permissionStore.get(name);
+    requestPermission(descriptor) {
+      const state = permissionStore.get(descriptor);
       if (state !== PROMPT) return;
 
       if (handlePermissionRequest) {
-        const nextState = handlePermissionRequest(name);
-        if (nextState !== state) permissionStore.set(name, nextState);
+        const nextState = handlePermissionRequest(descriptor);
+        if (nextState !== state) permissionStore.set(descriptor, nextState);
       } else {
-        permissionStore.set(name, DENIED);
+        permissionStore.set(descriptor, DENIED);
       }
     },
   };
 }
 
 export type HandlePermissionRequest<Names extends string> = (
-  name: Names,
+  descriptor: PermissionDescriptor<Names>,
 ) => StdPermissionState;

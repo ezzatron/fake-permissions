@@ -1,15 +1,20 @@
-export type PermissionDescriptor<Name extends string> =
-  | ("midi" extends Name ? MidiPermissionDescriptor : never)
-  | ("push" extends Name ? PushPermissionDescriptor : never)
-  | (string extends "midi" | "push"
-      ? never
-      : GenericPermissionDescriptor<Exclude<Name, "midi" | "push">>);
+import { MIDI as _MIDI, PUSH as _PUSH } from "../constants/permission-name.js";
 
-interface MidiPermissionDescriptor extends GenericPermissionDescriptor<"midi"> {
+type MIDI = typeof _MIDI;
+type PUSH = typeof _PUSH;
+
+export type PermissionDescriptor<Name extends string> =
+  | (MIDI extends Name ? MidiPermissionDescriptor : never)
+  | (PUSH extends Name ? PushPermissionDescriptor : never)
+  | (string extends MIDI | PUSH
+      ? never
+      : GenericPermissionDescriptor<Exclude<Name, MIDI | PUSH>>);
+
+interface MidiPermissionDescriptor extends GenericPermissionDescriptor<MIDI> {
   sysex?: boolean;
 }
 
-interface PushPermissionDescriptor extends GenericPermissionDescriptor<"push"> {
+interface PushPermissionDescriptor extends GenericPermissionDescriptor<PUSH> {
   userVisibleOnly?: boolean;
 }
 

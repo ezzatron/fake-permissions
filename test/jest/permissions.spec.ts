@@ -1,8 +1,8 @@
 import { PROMPT } from "../../src/constants/permission-state.js";
 import {
-  createPermissions,
-  createPermissionStore,
   Permissions,
+  createPermissionStore,
+  createPermissions,
 } from "../../src/index.js";
 
 describe("Permissions", () => {
@@ -11,10 +11,10 @@ describe("Permissions", () => {
 
   beforeEach(() => {
     const permissionStore = createPermissionStore({
-      initialStates: {
-        "permission-a": PROMPT,
-        "permission-b": PROMPT,
-      },
+      initialStates: new Map([
+        [{ name: "permission-a" }, PROMPT],
+        [{ name: "permission-b" }, PROMPT],
+      ]),
     });
 
     permissions = createPermissions({ permissionStore });
@@ -90,7 +90,7 @@ describe("Permissions", () => {
     });
   });
 
-  describe("when queried with a permission name not in the set", () => {
+  describe("when queried with a permission name not in the store", () => {
     it("throws a TypeError", async () => {
       const call = callQueryWith({ name: "non-existent" });
 
@@ -101,7 +101,7 @@ describe("Permissions", () => {
     });
   });
 
-  describe("when queried with a permission name in the set", () => {
+  describe("when queried with a permission name in the store", () => {
     it("returns a status for the queried permission", async () => {
       const statusA = await permissions.query({ name: "permission-a" });
       const statusB = await permissions.query({ name: "permission-b" });

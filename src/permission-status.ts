@@ -1,11 +1,12 @@
 import { BaseEventTarget } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
 import { CREATE } from "./private.js";
+import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
 
 type PermissionStatusParameters<Names extends string> = {
-  name: Names;
+  descriptor: PermissionDescriptor<Names>;
   permissionStore: PermissionStore<Names>;
 };
 
@@ -23,7 +24,10 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
   /**
    * @deprecated Use the `Permissions.query()` method instead.
    */
-  constructor({ name, permissionStore }: PermissionStatusParameters<Name>) {
+  constructor({
+    descriptor,
+    permissionStore,
+  }: PermissionStatusParameters<Name>) {
     super({
       onListenerCountChange: (type, count) => {
         if (type !== "change") return;
@@ -41,17 +45,20 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     }
     PermissionStatus.#canConstruct = false;
 
+    this.name = descriptor.name as Name;
+    this.#descriptor = descriptor;
     this.#permissionStore = permissionStore;
-    this.name = name;
     this.#onchange = null;
 
-    this.#handlePermissionStoreChange = (name) => {
-      if (name === this.name) this.dispatchEvent(new Event("change"));
+    this.#handlePermissionStoreChange = (isMatchingDescriptor) => {
+      if (isMatchingDescriptor(this.#descriptor)) {
+        this.dispatchEvent(new Event("change"));
+      }
     };
   }
 
   get state(): StdPermissionState {
-    return this.#permissionStore.get(this.name);
+    return this.#permissionStore.get(this.#descriptor);
   }
 
   get onchange(): EventListener | null {
@@ -65,9 +72,12 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
   }
 
   static #canConstruct = false;
+  readonly #descriptor: PermissionDescriptor<Name>;
   readonly #permissionStore: PermissionStore<Name>;
   #onchange: EventListener | null;
-  readonly #handlePermissionStoreChange: (name: string) => void;
+  readonly #handlePermissionStoreChange: (
+    isMatchingDescriptor: (descriptor: PermissionDescriptor<Name>) => boolean,
+  ) => void;
 }
 
 PermissionStatus satisfies new (

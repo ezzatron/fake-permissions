@@ -56,17 +56,16 @@ class Permissions<Names extends string> {
       );
     }
 
-    const name = descriptor.name as Name;
-
-    if (!this.#permissionStore.has(name)) {
+    if (!this.#permissionStore.has(descriptor as PermissionDescriptor<Names>)) {
       throw new TypeError(
-        `Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value '${name}' is not a valid enum value of type PermissionName.`,
+        `Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value '${descriptor.name}' is not a valid enum value of type PermissionName.`,
       );
     }
 
     return PermissionStatus[CREATE]<Name>({
-      name,
-      permissionStore: this.#permissionStore,
+      descriptor,
+      permissionStore: this
+        .#permissionStore as unknown as PermissionStore<Name>,
     });
   }
 
