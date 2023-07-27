@@ -11,14 +11,6 @@ export interface PermissionStore<Names extends string> {
   unsubscribe(subscriber: Subscriber): void;
 }
 
-export function createStandardPermissionStore(): PermissionStore<PermissionName> {
-  return createPermissionStore({
-    initialStates: Object.fromEntries(
-      Object.values(permissionNames).map((name) => [name, PROMPT]),
-    ),
-  });
-}
-
 export function createPermissionStore<Names extends string>({
   initialStates,
 }: {
@@ -59,6 +51,14 @@ export function createPermissionStore<Names extends string>({
       }
     }
   }
+}
+
+export function createStandardPermissionStore(): PermissionStore<PermissionName> {
+  return createPermissionStore({
+    initialStates: Object.fromEntries(
+      Object.values(permissionNames).map((name) => [name, PROMPT]),
+    ),
+  });
 }
 
 type Subscriber = (name: string) => void;
