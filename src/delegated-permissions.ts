@@ -1,14 +1,11 @@
 import { PermissionStatus } from "./delegated-permission-status.js";
 import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { PermissionName } from "./types/permission-name.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
-export function createDelegatedPermissions<
-  Names extends string = PermissionName,
->({
+export function createDelegatedPermissions<Names extends string>({
   delegates,
 }: {
   delegates: PermissionsInterface<Names>[];

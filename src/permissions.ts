@@ -2,12 +2,11 @@ import { PermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
 import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { PermissionName } from "./types/permission-name.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
-export function createPermissions<Names extends string = PermissionName>(
+export function createPermissions<Names extends string>(
   parameters: PermissionParameters<Names>,
 ): Permissions<Names> {
   return Permissions[CREATE](parameters);
