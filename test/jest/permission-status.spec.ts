@@ -578,4 +578,20 @@ describe("PermissionStatus", () => {
       });
     });
   });
+
+  describe("when a null event listener is added", () => {
+    it("has no effect", () => {
+      expect(() => {
+        statusA.addEventListener("event-a", null);
+      }).not.toThrow();
+    });
+  });
+
+  describe("when a null event listener is removed", () => {
+    it("has no effect", () => {
+      expect(() => {
+        statusA.removeEventListener("event-a", null);
+      }).not.toThrow();
+    });
+  });
 });
