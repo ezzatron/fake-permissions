@@ -1,3 +1,6 @@
+import * as permissionNames from "./constants/permission-name.js";
+import { PROMPT } from "./constants/permission-state.js";
+import { PermissionName } from "./types/permission-name.js";
 import { StdPermissionState } from "./types/std.js";
 
 export interface PermissionStore<Names extends string> {
@@ -6,6 +9,14 @@ export interface PermissionStore<Names extends string> {
   set(name: Names, state: StdPermissionState): void;
   subscribe(subscriber: Subscriber): void;
   unsubscribe(subscriber: Subscriber): void;
+}
+
+export function createStandardPermissionStore(): PermissionStore<PermissionName> {
+  return createPermissionStore({
+    initialStates: Object.fromEntries(
+      Object.values(permissionNames).map((name) => [name, PROMPT]),
+    ),
+  });
 }
 
 export function createPermissionStore<Names extends string>({
