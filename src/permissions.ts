@@ -56,7 +56,7 @@ class Permissions<Names extends string> {
       );
     }
 
-    const { name } = descriptor;
+    const name = descriptor.name as Name;
 
     if (!this.#permissionStore.has(name)) {
       throw new TypeError(

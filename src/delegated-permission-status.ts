@@ -60,7 +60,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     }
     PermissionStatus.#canConstruct = false;
 
-    this.name = name;
+    this.name = name as Name;
     this.#delegates = delegates;
     this.#delegate = delegate;
     this.#onchange = null;
