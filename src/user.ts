@@ -31,22 +31,18 @@ export function createUser<Names extends string>({
 
     requestPermission(name) {
       const state = permissionStore.get(name);
+      if (state !== PROMPT) return;
 
       if (handlePermissionRequest) {
-        const nextState = handlePermissionRequest({ name, state });
+        const nextState = handlePermissionRequest(name);
         if (nextState !== state) permissionStore.set(name, nextState);
-      } else if (state === PROMPT) {
+      } else {
         permissionStore.set(name, DENIED);
       }
     },
   };
 }
 
-export type HandlePermissionRequestParameters<Names extends string> = {
-  name: Names;
-  state: StdPermissionState;
-};
-
 export type HandlePermissionRequest<Names extends string> = (
-  parameters: HandlePermissionRequestParameters<Names>,
+  name: Names,
 ) => StdPermissionState;

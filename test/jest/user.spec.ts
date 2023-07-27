@@ -73,32 +73,45 @@ describe("User", () => {
       user = createUser({ permissionStore, handlePermissionRequest });
     });
 
-    describe("when a permission is requested", () => {
+    describe('when a permission in the "prompt" state is requested', () => {
       beforeEach(() => {
         user.requestPermission("permission-a");
-        user.requestPermission("permission-b");
-        user.requestPermission("permission-c");
       });
 
       it("calls the callback with the permission name and state", () => {
-        expect(handlePermissionRequest).toHaveBeenCalledWith({
-          name: "permission-a",
-          state: PROMPT,
-        });
-        expect(handlePermissionRequest).toHaveBeenCalledWith({
-          name: "permission-b",
-          state: GRANTED,
-        });
-        expect(handlePermissionRequest).toHaveBeenCalledWith({
-          name: "permission-c",
-          state: DENIED,
-        });
+        expect(handlePermissionRequest).toHaveBeenCalledWith("permission-a");
       });
 
       it("updates the permission state with the callback's return value", () => {
         expect(permissionStore.get("permission-a")).toBe(GRANTED);
+      });
+    });
+
+    describe('when a permission in the "granted" state is requested', () => {
+      beforeEach(() => {
+        user.requestPermission("permission-b");
+      });
+
+      it("does not call the callback", () => {
+        expect(handlePermissionRequest).not.toHaveBeenCalled();
+      });
+
+      it("leaves the permission granted", () => {
         expect(permissionStore.get("permission-b")).toBe(GRANTED);
-        expect(permissionStore.get("permission-c")).toBe(GRANTED);
+      });
+    });
+
+    describe('when a permission in the "denied" state is requested', () => {
+      beforeEach(() => {
+        user.requestPermission("permission-c");
+      });
+
+      it("does not call the callback", () => {
+        expect(handlePermissionRequest).not.toHaveBeenCalled();
+      });
+
+      it("leaves the permission denied", () => {
+        expect(permissionStore.get("permission-c")).toBe(DENIED);
       });
     });
   });
