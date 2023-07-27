@@ -122,7 +122,10 @@ export class BaseEventTarget extends StdEventTarget {
     const listeners = this.#listenersFor(type, options);
     const listenerData = listeners.get(listener);
 
-    if (!listenerData) return;
+    /* istanbul ignore next */
+    if (!listenerData) {
+      throw new Error("Invariant violation: Missing listener data");
+    }
 
     listeners.delete(listener);
 
