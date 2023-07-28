@@ -23,6 +23,7 @@ jobs:
       - name: Make
         run: make ci
 
-      # TODO
-      # - name: Publish coverage
-      #   uses: codecov/codecov-action@v3
+      - name: Publish coverage
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
