@@ -7,9 +7,9 @@
     "permissions",
     "w3c"
   ],
-  "repository": "TODO",
-  "bugs": "https://github.com/TODO/fake-permissions/issues",
-  "homepage": "https://github.com/TODO/fake-permissions",
+  "repository": "ezzatron/fake-permissions",
+  "bugs": "https://github.com/ezzatron/fake-permissions/issues",
+  "homepage": "https://github.com/ezzatron/fake-permissions",
   "author": "Erin Millard <contact@erin.id.au>",
   "license": "MIT",
   "publishConfig": {
