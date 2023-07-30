@@ -1,6 +1,5 @@
 import { BaseEventTarget } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
-import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
@@ -10,15 +9,17 @@ type PermissionStatusParameters<Names extends string> = {
   permissionStore: PermissionStore<Names>;
 };
 
+let canConstruct = false;
+
+export function createPermissionStatus<Names extends string>(
+  parameters: PermissionStatusParameters<Names>,
+): PermissionStatus<Names> {
+  canConstruct = true;
+
+  return new PermissionStatus(parameters);
+}
+
 export class PermissionStatus<Name extends string> extends BaseEventTarget {
-  static [CREATE]<N extends string>(
-    parameters: PermissionStatusParameters<N>,
-  ): PermissionStatus<N> {
-    PermissionStatus.#canConstruct = true;
-
-    return new PermissionStatus(parameters);
-  }
-
   readonly name: Name;
 
   /**
@@ -40,10 +41,8 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
       },
     });
 
-    if (!PermissionStatus.#canConstruct) {
-      throw new TypeError("Illegal constructor");
-    }
-    PermissionStatus.#canConstruct = false;
+    if (!canConstruct) throw new TypeError("Illegal constructor");
+    canConstruct = false;
 
     this.name = descriptor.name as Name;
     this.#descriptor = descriptor;
@@ -71,7 +70,6 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     if (this.#onchange) this.addEventListener("change", this.#onchange);
   }
 
-  static #canConstruct = false;
   readonly #descriptor: PermissionDescriptor<Name>;
   readonly #permissionStore: PermissionStore<Name>;
   #onchange: EventListener | null;

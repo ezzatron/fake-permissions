@@ -1,36 +1,31 @@
-import { PermissionStatus } from "./permission-status.js";
+import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
-import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
 
-export function createPermissions<Names extends string>(
-  parameters: PermissionParameters<Names>,
-): Permissions<Names> {
-  return Permissions[CREATE](parameters);
-}
-
 type PermissionParameters<Names extends string> = {
   permissionStore: PermissionStore<Names>;
 };
 
+let canConstruct = false;
+
+export function createPermissions<Names extends string>(
+  parameters: PermissionParameters<Names>,
+): Permissions<Names> {
+  canConstruct = true;
+
+  return new Permissions(parameters);
+}
+
 class Permissions<Names extends string> {
-  static [CREATE]<N extends string>(
-    parameters: PermissionParameters<N>,
-  ): Permissions<N> {
-    Permissions.#canConstruct = true;
-
-    return new Permissions(parameters);
-  }
-
   /**
    * @deprecated Use the `createPermissions()` function instead.
    */
   constructor({ permissionStore }: PermissionParameters<Names>) {
-    if (!Permissions.#canConstruct) throw new TypeError("Illegal constructor");
-    Permissions.#canConstruct = false;
+    if (!canConstruct) throw new TypeError("Illegal constructor");
+    canConstruct = false;
 
     this.#permissionStore = permissionStore;
   }
@@ -62,14 +57,13 @@ class Permissions<Names extends string> {
       );
     }
 
-    return PermissionStatus[CREATE]<Name>({
+    return createPermissionStatus<Name>({
       descriptor,
       permissionStore: this
         .#permissionStore as unknown as PermissionStore<Name>,
     });
   }
 
-  static #canConstruct = false;
   readonly #permissionStore: PermissionStore<Names>;
 }
 

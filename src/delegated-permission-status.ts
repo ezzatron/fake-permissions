@@ -1,5 +1,4 @@
 import { BaseEventTarget } from "./event-target.js";
-import { CREATE } from "./private.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
@@ -13,15 +12,17 @@ type PermissionStatusParameters<Name extends string> = {
   unsubscribe: (subscriber: Subscriber<Name>) => void;
 };
 
+let canConstruct = false;
+
+export function createPermissionStatus<Name extends string>(
+  parameters: PermissionStatusParameters<Name>,
+): PermissionStatus<Name> {
+  canConstruct = true;
+
+  return new PermissionStatus(parameters);
+}
+
 export class PermissionStatus<Name extends string> extends BaseEventTarget {
-  static [CREATE]<N extends string>(
-    parameters: PermissionStatusParameters<N>,
-  ): PermissionStatus<N> {
-    PermissionStatus.#canConstruct = true;
-
-    return new PermissionStatus(parameters);
-  }
-
   readonly name: Name;
 
   /**
@@ -55,10 +56,8 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
       },
     });
 
-    if (!PermissionStatus.#canConstruct) {
-      throw new TypeError("Illegal constructor");
-    }
-    PermissionStatus.#canConstruct = false;
+    if (!canConstruct) throw new TypeError("Illegal constructor");
+    canConstruct = false;
 
     this.name = name as Name;
     this.#delegates = delegates;
@@ -109,7 +108,6 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     this.dispatchEvent(new Event("change"));
   }
 
-  static #canConstruct = false;
   readonly #delegates: Map<
     PermissionsInterface<Name>,
     PermissionStatusInterface<Name>

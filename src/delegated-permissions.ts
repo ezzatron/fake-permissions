@@ -1,9 +1,10 @@
-import { PermissionStatus } from "./delegated-permission-status.js";
-import { CREATE } from "./private.js";
+import { createPermissionStatus } from "./delegated-permission-status.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
 import { StdPermissionName, StdPermissions } from "./types/std.js";
+
+let canConstruct = false;
 
 export function createDelegatedPermissions<Names extends string>({
   delegates,
@@ -18,8 +19,10 @@ export function createDelegatedPermissions<Names extends string>({
 
   const subscribers = new Set<Subscriber<Names>>();
 
+  canConstruct = true;
+
   return {
-    permissions: Permissions[CREATE]({
+    permissions: new Permissions({
       delegates,
 
       delegate() {
@@ -61,14 +64,6 @@ type PermissionParameters<Names extends string> = {
 };
 
 class Permissions<Names extends string> {
-  static [CREATE]<N extends string>(
-    parameters: PermissionParameters<N>,
-  ): Permissions<N> {
-    Permissions.#canConstruct = true;
-
-    return new Permissions(parameters);
-  }
-
   /**
    * @deprecated Use the `createDelegatedPermissions()` function instead.
    */
@@ -78,8 +73,8 @@ class Permissions<Names extends string> {
     subscribe,
     unsubscribe,
   }: PermissionParameters<Names>) {
-    if (!Permissions.#canConstruct) throw new TypeError("Illegal constructor");
-    Permissions.#canConstruct = false;
+    if (!canConstruct) throw new TypeError("Illegal constructor");
+    canConstruct = false;
 
     this.#delegates = delegates;
     this.#delegate = delegate;
@@ -101,7 +96,7 @@ class Permissions<Names extends string> {
       }),
     );
 
-    return PermissionStatus[CREATE]<Name>({
+    return createPermissionStatus<Name>({
       descriptor,
       delegates,
       delegate: this.#delegate,
@@ -110,7 +105,6 @@ class Permissions<Names extends string> {
     });
   }
 
-  static #canConstruct = false;
   readonly #delegates: PermissionsInterface<Names>[];
   readonly #delegate: () => PermissionsInterface<Names>;
   readonly #subscribe: (subscriber: Subscriber<Names>) => void;
