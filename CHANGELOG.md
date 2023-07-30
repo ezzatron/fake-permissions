@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [v0.1.3] - 2023-07-31
+
+[v0.1.3]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.1.3
+
+### Other
+
+- Improved how private constructors are implemented. They now avoid adding a
+  property to the class, and instead rely on module state.
+
 ## [v0.1.2] - 2023-07-28
 
 [v0.1.2]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.1.2
