@@ -11,6 +11,7 @@ import {
   createPermissionStore,
   createUser,
 } from "../../src/index.js";
+import { StdPermissionState } from "../../src/types/std.js";
 
 type Names = "permission-a" | "permission-b" | "permission-c";
 
@@ -34,8 +35,8 @@ describe("User", () => {
     });
 
     describe('when a permission in the "prompt" state is requested', () => {
-      beforeEach(() => {
-        user.requestPermission({ name: "permission-a" });
+      beforeEach(async () => {
+        await user.requestPermission({ name: "permission-a" });
       });
 
       it("denies the permission", () => {
@@ -44,8 +45,8 @@ describe("User", () => {
     });
 
     describe('when a permission in the "granted" state is requested', () => {
-      beforeEach(() => {
-        user.requestPermission({ name: "permission-b" });
+      beforeEach(async () => {
+        await user.requestPermission({ name: "permission-b" });
       });
 
       it("leaves the permission granted", () => {
@@ -54,8 +55,8 @@ describe("User", () => {
     });
 
     describe('when a permission in the "denied" state is requested', () => {
-      beforeEach(() => {
-        user.requestPermission({ name: "permission-c" });
+      beforeEach(async () => {
+        await user.requestPermission({ name: "permission-c" });
       });
 
       it("leaves the permission denied", () => {
@@ -68,14 +69,16 @@ describe("User", () => {
     let handlePermissionRequest: jest.Mock<HandlePermissionRequest<Names>>;
 
     beforeEach(() => {
-      handlePermissionRequest = jest.fn(() => GRANTED);
+      handlePermissionRequest = jest.fn(
+        async () => GRANTED as StdPermissionState,
+      );
 
       user = createUser({ permissionStore, handlePermissionRequest });
     });
 
     describe('when a permission in the "prompt" state is requested', () => {
-      beforeEach(() => {
-        user.requestPermission({ name: "permission-a" });
+      beforeEach(async () => {
+        await user.requestPermission({ name: "permission-a" });
       });
 
       it("calls the callback with the permission descriptor", () => {
@@ -90,8 +93,8 @@ describe("User", () => {
     });
 
     describe('when a permission in the "granted" state is requested', () => {
-      beforeEach(() => {
-        user.requestPermission({ name: "permission-b" });
+      beforeEach(async () => {
+        await user.requestPermission({ name: "permission-b" });
       });
 
       it("does not call the callback", () => {
@@ -104,8 +107,8 @@ describe("User", () => {
     });
 
     describe('when a permission in the "denied" state is requested', () => {
-      beforeEach(() => {
-        user.requestPermission({ name: "permission-c" });
+      beforeEach(async () => {
+        await user.requestPermission({ name: "permission-c" });
       });
 
       it("does not call the callback", () => {
