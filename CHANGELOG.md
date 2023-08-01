@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [v0.2.0] - 2023-08-02
+
+[v0.2.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.2.0
+
+### Changed
+
+- Requesting a permission is now an `async` operation.
+
 ## [v0.1.3] - 2023-07-31
 
 [v0.1.3]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.1.3
