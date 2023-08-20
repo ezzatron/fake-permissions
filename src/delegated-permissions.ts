@@ -2,7 +2,6 @@ import { createPermissionStatus } from "./delegated-permission-status.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
-import { StdPermissionName, StdPermissions } from "./types/std.js";
 
 let canConstruct = false;
 
@@ -63,7 +62,7 @@ type PermissionParameters<Names extends string> = {
   unsubscribe: (subscriber: Subscriber<Names>) => void;
 };
 
-class Permissions<Names extends string> {
+export class Permissions<Names extends string> {
   /**
    * @deprecated Use the `createDelegatedPermissions()` function instead.
    */
@@ -110,11 +109,6 @@ class Permissions<Names extends string> {
   readonly #subscribe: (subscriber: Subscriber<Names>) => void;
   readonly #unsubscribe: (subscriber: Subscriber<Names>) => void;
 }
-
-Permissions satisfies new (...args: never[]) => PermissionsInterface<never>;
-Permissions<StdPermissionName> satisfies new (
-  ...args: never[]
-) => StdPermissions;
 
 type Subscriber<Names extends string> = (
   delegate: PermissionsInterface<Names>,

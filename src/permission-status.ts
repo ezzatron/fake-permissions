@@ -1,8 +1,7 @@
 import { BaseEventTarget } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
-import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
+import { StdPermissionState } from "./types/std.js";
 
 type PermissionStatusParameters<Names extends string> = {
   descriptor: PermissionDescriptor<Names>;
@@ -77,8 +76,3 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     isMatchingDescriptor: (descriptor: PermissionDescriptor<Name>) => boolean,
   ) => void;
 }
-
-PermissionStatus satisfies new (
-  ...args: never[]
-) => PermissionStatusInterface<never>;
-PermissionStatus satisfies new (...args: never[]) => StdPermissionStatus;

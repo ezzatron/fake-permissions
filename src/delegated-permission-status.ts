@@ -2,7 +2,7 @@ import { BaseEventTarget } from "./event-target.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
 import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 import { Permissions as PermissionsInterface } from "./types/permissions.js";
-import { StdPermissionState, StdPermissionStatus } from "./types/std.js";
+import { StdPermissionState } from "./types/std.js";
 
 type PermissionStatusParameters<Name extends string> = {
   descriptor: PermissionDescriptor<Name>;
@@ -120,11 +120,6 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     delegate: PermissionsInterface<Name>,
   ) => void;
 }
-
-PermissionStatus satisfies new (
-  ...args: never[]
-) => PermissionStatusInterface<never>;
-PermissionStatus satisfies new (...args: never[]) => StdPermissionStatus;
 
 type Subscriber<Names extends string> = (
   delegate: PermissionsInterface<Names>,
