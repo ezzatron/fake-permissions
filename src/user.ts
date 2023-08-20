@@ -1,14 +1,13 @@
-import { SyncOrAsync } from "./async.js";
 import { DENIED, GRANTED, PROMPT } from "./constants/permission-state.js";
 import { PermissionStore } from "./permission-store.js";
+import { HandlePermissionRequest } from "./types/handle-permission-request.js";
 import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { StdPermissionState } from "./types/std.js";
 
 export interface User<Names extends string> {
   grantPermission(descriptor: PermissionDescriptor<Names>): void;
   denyPermission(descriptor: PermissionDescriptor<Names>): void;
   resetPermission(descriptor: PermissionDescriptor<Names>): void;
-  requestPermission(descriptor: PermissionDescriptor<Names>): Promise<void>;
+  requestPermission: HandlePermissionRequest<Names>;
 }
 
 export function createUser<Names extends string>({
@@ -33,18 +32,18 @@ export function createUser<Names extends string>({
 
     async requestPermission(descriptor) {
       const state = permissionStore.get(descriptor);
-      if (state !== PROMPT) return;
+      if (state !== PROMPT) return state;
 
       if (handlePermissionRequest) {
         const nextState = await handlePermissionRequest(descriptor);
         if (nextState !== state) permissionStore.set(descriptor, nextState);
-      } else {
-        permissionStore.set(descriptor, DENIED);
+
+        return nextState;
       }
+
+      permissionStore.set(descriptor, DENIED);
+
+      return DENIED;
     },
   };
 }
-
-export type HandlePermissionRequest<Names extends string> = (
-  descriptor: PermissionDescriptor<Names>,
-) => SyncOrAsync<StdPermissionState>;

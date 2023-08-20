@@ -2,6 +2,7 @@ export { createDelegatedPermissions } from "./delegated-permissions.js";
 export type { SelectDelegate } from "./delegated-permissions.js";
 export * from "./permission-store.js";
 export { createPermissions } from "./permissions.js";
+export type { HandlePermissionRequest } from "./types/handle-permission-request.js";
 export type { PermissionDescriptor } from "./types/permission-descriptor.js";
 export type { PermissionName } from "./types/permission-name.js";
 export type { PermissionStatus } from "./types/permission-status.js";

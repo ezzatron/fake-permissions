@@ -35,31 +35,28 @@ describe("User", () => {
     });
 
     describe('when a permission in the "prompt" state is requested', () => {
-      beforeEach(async () => {
-        await user.requestPermission({ name: "permission-a" });
-      });
-
-      it("denies the permission", () => {
+      it("denies the permission", async () => {
+        expect(await user.requestPermission({ name: "permission-a" })).toBe(
+          DENIED,
+        );
         expect(permissionStore.get({ name: "permission-a" })).toBe(DENIED);
       });
     });
 
     describe('when a permission in the "granted" state is requested', () => {
-      beforeEach(async () => {
-        await user.requestPermission({ name: "permission-b" });
-      });
-
-      it("leaves the permission granted", () => {
+      it("leaves the permission granted", async () => {
+        expect(await user.requestPermission({ name: "permission-b" })).toBe(
+          GRANTED,
+        );
         expect(permissionStore.get({ name: "permission-b" })).toBe(GRANTED);
       });
     });
 
     describe('when a permission in the "denied" state is requested', () => {
-      beforeEach(async () => {
-        await user.requestPermission({ name: "permission-c" });
-      });
-
-      it("leaves the permission denied", () => {
+      it("leaves the permission denied", async () => {
+        expect(await user.requestPermission({ name: "permission-c" })).toBe(
+          DENIED,
+        );
         expect(permissionStore.get({ name: "permission-c" })).toBe(DENIED);
       });
     });
@@ -77,45 +74,48 @@ describe("User", () => {
     });
 
     describe('when a permission in the "prompt" state is requested', () => {
-      beforeEach(async () => {
+      it("calls the callback with the permission descriptor", async () => {
         await user.requestPermission({ name: "permission-a" });
-      });
 
-      it("calls the callback with the permission descriptor", () => {
         expect(handlePermissionRequest).toHaveBeenCalledWith({
           name: "permission-a",
         });
       });
 
-      it("updates the permission state with the callback's return value", () => {
+      it("updates the permission state with the callback's return value", async () => {
+        expect(await user.requestPermission({ name: "permission-a" })).toBe(
+          GRANTED,
+        );
         expect(permissionStore.get({ name: "permission-a" })).toBe(GRANTED);
       });
     });
 
     describe('when a permission in the "granted" state is requested', () => {
-      beforeEach(async () => {
+      it("does not call the callback", async () => {
         await user.requestPermission({ name: "permission-b" });
-      });
 
-      it("does not call the callback", () => {
         expect(handlePermissionRequest).not.toHaveBeenCalled();
       });
 
-      it("leaves the permission granted", () => {
+      it("leaves the permission granted", async () => {
+        expect(await user.requestPermission({ name: "permission-b" })).toBe(
+          GRANTED,
+        );
         expect(permissionStore.get({ name: "permission-b" })).toBe(GRANTED);
       });
     });
 
     describe('when a permission in the "denied" state is requested', () => {
-      beforeEach(async () => {
+      it("does not call the callback", async () => {
         await user.requestPermission({ name: "permission-c" });
-      });
 
-      it("does not call the callback", () => {
         expect(handlePermissionRequest).not.toHaveBeenCalled();
       });
 
-      it("leaves the permission denied", () => {
+      it("leaves the permission denied", async () => {
+        expect(await user.requestPermission({ name: "permission-c" })).toBe(
+          DENIED,
+        );
         expect(permissionStore.get({ name: "permission-c" })).toBe(DENIED);
       });
     });
