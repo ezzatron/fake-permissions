@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [v0.3.0] - 2023-08-20
+
+[v0.3.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.3.0
+
+### Changed
+
+- The current permission state is now returned when requesting permissions from
+  the user.
+- The `HandlePermissionRequest` type is now used as the
+  `user.requestPermission()` method's type.
+
 ## [v0.2.1] - 2023-08-20
 
 [v0.2.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.2.1
