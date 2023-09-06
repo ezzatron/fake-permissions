@@ -49,10 +49,9 @@ describe("Delegated permissions", () => {
     delegateA = createPermissions({ permissionStore: permissionStoreA });
     delegateB = createPermissions({ permissionStore: permissionStoreB });
 
-    ({ permissions: permissions, selectDelegate } =
-      createDelegatedPermissions<Names>({
-        delegates: [delegateA, delegateB],
-      }));
+    ({ permissions, selectDelegate } = createDelegatedPermissions<Names>({
+      delegates: [delegateA, delegateB],
+    }));
   });
 
   it("cannot be instantiated directly", async () => {
