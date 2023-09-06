@@ -116,9 +116,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
   #onchange: EventListener | null;
   #state: StdPermissionState;
   readonly #handleChangeEvent: (event: Event) => void;
-  readonly #handleDelegateChange: (
-    delegate: PermissionsInterface<Name>,
-  ) => void;
+  readonly #handleDelegateChange: () => void;
 }
 
 type Subscriber<Names extends string> = (
