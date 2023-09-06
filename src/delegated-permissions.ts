@@ -16,7 +16,7 @@ export function createDelegatedPermissions<Names extends string>({
   let [delegate] = delegates;
   if (!delegate) throw new TypeError("No delegates provided");
 
-  const subscribers = new Set<Subscriber<Names>>();
+  const subscribers = new Set<Subscriber>();
 
   canConstruct = true;
 
@@ -42,7 +42,7 @@ export function createDelegatedPermissions<Names extends string>({
 
       for (const subscriber of subscribers) {
         try {
-          subscriber(delegate);
+          subscriber();
         } catch {
           // ignored
         }
@@ -58,8 +58,8 @@ export type SelectDelegate<Names extends string> = (
 type PermissionParameters<Names extends string> = {
   delegates: PermissionsInterface<Names>[];
   delegate: () => PermissionsInterface<Names>;
-  subscribe: (subscriber: Subscriber<Names>) => void;
-  unsubscribe: (subscriber: Subscriber<Names>) => void;
+  subscribe: (subscriber: Subscriber) => void;
+  unsubscribe: (subscriber: Subscriber) => void;
 };
 
 export class Permissions<Names extends string> {
@@ -106,10 +106,8 @@ export class Permissions<Names extends string> {
 
   readonly #delegates: PermissionsInterface<Names>[];
   readonly #delegate: () => PermissionsInterface<Names>;
-  readonly #subscribe: (subscriber: Subscriber<Names>) => void;
-  readonly #unsubscribe: (subscriber: Subscriber<Names>) => void;
+  readonly #subscribe: (subscriber: Subscriber) => void;
+  readonly #unsubscribe: (subscriber: Subscriber) => void;
 }
 
-type Subscriber<Names extends string> = (
-  delegate: PermissionsInterface<Names>,
-) => void;
+type Subscriber = () => void;

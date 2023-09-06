@@ -8,8 +8,8 @@ type PermissionStatusParameters<Name extends string> = {
   descriptor: PermissionDescriptor<Name>;
   delegates: Map<PermissionsInterface<Name>, PermissionStatusInterface<Name>>;
   delegate: () => PermissionsInterface<Name>;
-  subscribe: (subscriber: Subscriber<Name>) => void;
-  unsubscribe: (subscriber: Subscriber<Name>) => void;
+  subscribe: (subscriber: Subscriber) => void;
+  unsubscribe: (subscriber: Subscriber) => void;
 };
 
 let canConstruct = false;
@@ -119,6 +119,4 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
   readonly #handleDelegateChange: () => void;
 }
 
-type Subscriber<Names extends string> = (
-  delegate: PermissionsInterface<Names>,
-) => void;
+type Subscriber = () => void;
