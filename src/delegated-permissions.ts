@@ -28,16 +28,16 @@ export function createDelegatedPermissions<Names extends string>({
         return delegate;
       },
 
-      subscribe(subscriber: Subscriber<Names>) {
+      subscribe(subscriber) {
         subscribers.add(subscriber);
       },
 
-      unsubscribe(subscriber: Subscriber<Names>) {
+      unsubscribe(subscriber) {
         subscribers.delete(subscriber);
       },
     }),
 
-    selectDelegate(nextDelegate: PermissionsInterface<Names>) {
+    selectDelegate(nextDelegate) {
       delegate = nextDelegate;
 
       for (const subscriber of subscribers) {
