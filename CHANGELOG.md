@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [v0.4.0] - 2023-09-09
+
+[v0.4.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.4.0
+
+### Changed
+
+- **\[BC]** This package no longer implements its own generic types for
+  permissions, and instead uses the built-in ones from `@types/web`.
+
+### Removed
+
+- **\[BC]** Removed permission name constants.
+- **\[BC]** Removed permission status constants.
+
 ## [v0.3.1] - 2023-09-09
 
 [v0.3.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.3.1
