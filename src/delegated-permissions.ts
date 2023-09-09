@@ -1,17 +1,14 @@
 import { createPermissionStatus } from "./delegated-permission-status.js";
-import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
-import { Permissions as PermissionsInterface } from "./types/permissions.js";
 
 let canConstruct = false;
 
-export function createDelegatedPermissions<Names extends string>({
+export function createDelegatedPermissions({
   delegates,
 }: {
-  delegates: PermissionsInterface<Names>[];
+  delegates: globalThis.Permissions[];
 }): {
-  permissions: PermissionsInterface<Names>;
-  selectDelegate: SelectDelegate<Names>;
+  permissions: globalThis.Permissions;
+  selectDelegate: SelectDelegate;
 } {
   let [delegate] = delegates;
   if (!delegate) throw new TypeError("No delegates provided");
@@ -51,18 +48,16 @@ export function createDelegatedPermissions<Names extends string>({
   };
 }
 
-export type SelectDelegate<Names extends string> = (
-  delegate: PermissionsInterface<Names>,
-) => void;
+export type SelectDelegate = (delegate: globalThis.Permissions) => void;
 
-type PermissionParameters<Names extends string> = {
-  delegates: PermissionsInterface<Names>[];
-  delegate: () => PermissionsInterface<Names>;
+type PermissionParameters = {
+  delegates: globalThis.Permissions[];
+  delegate: () => globalThis.Permissions;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
 };
 
-export class Permissions<Names extends string> {
+export class Permissions {
   /**
    * @deprecated Use the `createDelegatedPermissions()` function instead.
    */
@@ -71,7 +66,7 @@ export class Permissions<Names extends string> {
     delegate,
     subscribe,
     unsubscribe,
-  }: PermissionParameters<Names>) {
+  }: PermissionParameters) {
     if (!canConstruct) throw new TypeError("Illegal constructor");
     canConstruct = false;
 
@@ -81,13 +76,8 @@ export class Permissions<Names extends string> {
     this.#unsubscribe = unsubscribe;
   }
 
-  async query<Name extends Names>(
-    descriptor: PermissionDescriptor<Name>,
-  ): Promise<PermissionStatusInterface<Name>> {
-    const delegates: Map<
-      PermissionsInterface<Names>,
-      PermissionStatusInterface<Name>
-    > = new Map();
+  async query(descriptor: PermissionDescriptor): Promise<PermissionStatus> {
+    const delegates: Map<globalThis.Permissions, PermissionStatus> = new Map();
 
     await Promise.all(
       this.#delegates.map(async (delegate) => {
@@ -95,7 +85,7 @@ export class Permissions<Names extends string> {
       }),
     );
 
-    return createPermissionStatus<Name>({
+    return createPermissionStatus({
       descriptor,
       delegates,
       delegate: this.#delegate,
@@ -104,8 +94,8 @@ export class Permissions<Names extends string> {
     });
   }
 
-  readonly #delegates: PermissionsInterface<Names>[];
-  readonly #delegate: () => PermissionsInterface<Names>;
+  readonly #delegates: globalThis.Permissions[];
+  readonly #delegate: () => globalThis.Permissions;
   readonly #subscribe: (subscriber: Subscriber) => void;
   readonly #unsubscribe: (subscriber: Subscriber) => void;
 }

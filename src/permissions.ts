@@ -1,36 +1,32 @@
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
-import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
 
-type PermissionParameters<Names extends string> = {
-  permissionStore: PermissionStore<Names>;
+type PermissionParameters = {
+  permissionStore: PermissionStore;
 };
 
 let canConstruct = false;
 
-export function createPermissions<Names extends string>(
-  parameters: PermissionParameters<Names>,
-): Permissions<Names> {
+export function createPermissions(
+  parameters: PermissionParameters,
+): globalThis.Permissions {
   canConstruct = true;
 
   return new Permissions(parameters);
 }
 
-export class Permissions<Names extends string> {
+export class Permissions {
   /**
    * @deprecated Use the `createPermissions()` function instead.
    */
-  constructor({ permissionStore }: PermissionParameters<Names>) {
+  constructor({ permissionStore }: PermissionParameters) {
     if (!canConstruct) throw new TypeError("Illegal constructor");
     canConstruct = false;
 
     this.#permissionStore = permissionStore;
   }
 
-  async query<Name extends Names>(
-    descriptor: PermissionDescriptor<Name>,
-  ): Promise<PermissionStatusInterface<Name>> {
+  async query(descriptor: PermissionDescriptor): Promise<PermissionStatus> {
     if (arguments.length < 1) {
       throw new TypeError(
         "Failed to execute 'query' on 'Permissions': 1 argument required, but only 0 present.",
@@ -49,18 +45,17 @@ export class Permissions<Names extends string> {
       );
     }
 
-    if (!this.#permissionStore.has(descriptor as PermissionDescriptor<Names>)) {
+    if (!this.#permissionStore.has(descriptor)) {
       throw new TypeError(
         `Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value '${descriptor.name}' is not a valid enum value of type PermissionName.`,
       );
     }
 
-    return createPermissionStatus<Name>({
+    return createPermissionStatus({
       descriptor,
-      permissionStore: this
-        .#permissionStore as unknown as PermissionStore<Name>,
+      permissionStore: this.#permissionStore,
     });
   }
 
-  readonly #permissionStore: PermissionStore<Names>;
+  readonly #permissionStore: PermissionStore;
 }

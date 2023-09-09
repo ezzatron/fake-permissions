@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import {
   GEOLOCATION,
-  MIDI,
+  NOTIFICATIONS,
   PUSH,
 } from "../../src/constants/permission-name.js";
 import {
@@ -9,34 +9,47 @@ import {
   GRANTED,
   PROMPT,
 } from "../../src/constants/permission-state.js";
-import {
-  PermissionDescriptor,
-  PermissionStore,
-  createPermissionStore,
-} from "../../src/index.js";
-
-type Names = typeof GEOLOCATION | typeof MIDI | typeof PUSH;
+import { PermissionStore, createPermissionStore } from "../../src/index.js";
 
 describe("PermissionStore()", () => {
-  let permissionStore: PermissionStore<Names>;
+  const geolocation: PermissionDescriptor = { name: GEOLOCATION };
+  const geolocationWithExtra: PermissionDescriptor = {
+    name: GEOLOCATION,
+    extra: true,
+  } as PermissionDescriptor;
+  const notifications: PermissionDescriptor = { name: NOTIFICATIONS };
+  const push: PermissionDescriptor = { name: PUSH };
+  const pushUserVisibleOnlyFalse: PermissionDescriptor = {
+    name: PUSH,
+    userVisibleOnly: false,
+  } as PermissionDescriptor;
+  const pushUserVisibleOnlyTrue: PermissionDescriptor = {
+    name: PUSH,
+    userVisibleOnly: true,
+  } as PermissionDescriptor;
+  const pushWithExtra: PermissionDescriptor = {
+    name: PUSH,
+    extra: true,
+  } as PermissionDescriptor;
+
+  let permissionStore: PermissionStore;
 
   beforeEach(() => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
         [{ name: GEOLOCATION }, DENIED],
-        [{ name: MIDI }, GRANTED],
-        [{ name: MIDI, sysex: true }, PROMPT],
-        [{ name: PUSH }, GRANTED],
-        [{ name: PUSH, userVisibleOnly: true }, PROMPT],
+        [pushUserVisibleOnlyFalse, GRANTED],
+        [pushUserVisibleOnlyTrue, PROMPT],
       ]),
 
       isMatchingDescriptor(a, b) {
-        if (a.name === MIDI && b.name === MIDI) {
-          return (a.sysex ?? false) === (b.sysex ?? false);
-        }
-
         if (a.name === PUSH && b.name === PUSH) {
-          return (a.userVisibleOnly ?? false) === (b.userVisibleOnly ?? false);
+          // a.userVisibleOnly is always present (comes from an initialStates key)
+          return (
+            "userVisibleOnly" in a &&
+            a.userVisibleOnly ===
+              ("userVisibleOnly" in b ? b.userVisibleOnly : false)
+          );
         }
 
         return a.name === b.name;
@@ -47,38 +60,22 @@ describe("PermissionStore()", () => {
   describe("has()", () => {
     describe("when called with non-matching descriptor", () => {
       it("returns false", () => {
-        expect(
-          permissionStore.has({
-            name: "camera",
-          } as unknown as PermissionDescriptor<Names>),
-        ).toBe(false);
+        expect(permissionStore.has(notifications)).toBe(false);
       });
     });
 
     describe("when called with matching descriptor", () => {
       it("returns true", () => {
-        expect(permissionStore.has({ name: GEOLOCATION })).toBe(true);
-        expect(permissionStore.has({ name: MIDI })).toBe(true);
-        expect(permissionStore.has({ name: MIDI, sysex: false })).toBe(true);
-        expect(permissionStore.has({ name: MIDI, sysex: true })).toBe(true);
-        expect(permissionStore.has({ name: PUSH })).toBe(true);
-        expect(
-          permissionStore.has({ name: PUSH, userVisibleOnly: false }),
-        ).toBe(true);
-        expect(permissionStore.has({ name: PUSH, userVisibleOnly: true })).toBe(
-          true,
-        );
+        expect(permissionStore.has(geolocation)).toBe(true);
+        expect(permissionStore.has(push)).toBe(true);
+        expect(permissionStore.has(pushUserVisibleOnlyFalse)).toBe(true);
+        expect(permissionStore.has(pushUserVisibleOnlyTrue)).toBe(true);
       });
     });
 
     describe("when called with matching descriptor with extra properties", () => {
       it("returns true", () => {
-        expect(
-          permissionStore.has({
-            name: GEOLOCATION,
-            extra: true,
-          } as PermissionDescriptor<Names>),
-        ).toBe(true);
+        expect(permissionStore.has(geolocationWithExtra)).toBe(true);
       });
     });
   });
@@ -87,42 +84,28 @@ describe("PermissionStore()", () => {
     describe("when called with non-matching descriptor", () => {
       it("throws a TypeError", () => {
         const call = () => {
-          permissionStore.get({
-            name: "camera",
-          } as unknown as PermissionDescriptor<Names>);
+          permissionStore.get(notifications);
         };
 
         expect(call).toThrow(TypeError);
         expect(call).toThrow(
-          'No permission state for descriptor {"name":"camera"}',
+          'No permission state for descriptor {"name":"notifications"}',
         );
       });
     });
 
     describe("when called with matching descriptor", () => {
       it("returns the state of the permission", () => {
-        expect(permissionStore.get({ name: GEOLOCATION })).toBe(DENIED);
-        expect(permissionStore.get({ name: MIDI })).toBe(GRANTED);
-        expect(permissionStore.get({ name: MIDI, sysex: false })).toBe(GRANTED);
-        expect(permissionStore.get({ name: MIDI, sysex: true })).toBe(PROMPT);
-        expect(permissionStore.get({ name: PUSH })).toBe(GRANTED);
-        expect(
-          permissionStore.get({ name: PUSH, userVisibleOnly: false }),
-        ).toBe(GRANTED);
-        expect(permissionStore.get({ name: PUSH, userVisibleOnly: true })).toBe(
-          PROMPT,
-        );
+        expect(permissionStore.get(geolocation)).toBe(DENIED);
+        expect(permissionStore.get(push)).toBe(GRANTED);
+        expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe(GRANTED);
+        expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe(PROMPT);
       });
     });
 
     describe("when called with matching descriptor with extra properties", () => {
       it("returns the state of the permission", () => {
-        expect(
-          permissionStore.get({
-            name: GEOLOCATION,
-            extra: true,
-          } as PermissionDescriptor<Names>),
-        ).toBe(DENIED);
+        expect(permissionStore.get(geolocationWithExtra)).toBe(DENIED);
       });
     });
   });
@@ -131,53 +114,34 @@ describe("PermissionStore()", () => {
     describe("when called with non-matching descriptor", () => {
       it("throws a TypeError", () => {
         const call = () => {
-          permissionStore.set(
-            {
-              name: "camera",
-            } as unknown as PermissionDescriptor<Names>,
-            PROMPT,
-          );
+          permissionStore.set(notifications, PROMPT);
         };
 
         expect(call).toThrow(TypeError);
         expect(call).toThrow(
-          'No permission state for descriptor {"name":"camera"}',
+          'No permission state for descriptor {"name":"notifications"}',
         );
       });
     });
 
     describe("when called with matching descriptor", () => {
       it("sets the state of the permission", () => {
-        permissionStore.set({ name: GEOLOCATION }, GRANTED);
-        permissionStore.set({ name: MIDI }, PROMPT);
-        permissionStore.set({ name: MIDI, sysex: true }, DENIED);
-        permissionStore.set({ name: PUSH }, PROMPT);
-        permissionStore.set({ name: PUSH, userVisibleOnly: true }, DENIED);
+        permissionStore.set(geolocation, GRANTED);
+        permissionStore.set(pushUserVisibleOnlyFalse, PROMPT);
+        permissionStore.set(pushUserVisibleOnlyTrue, DENIED);
 
-        expect(permissionStore.get({ name: GEOLOCATION })).toBe(GRANTED);
-        expect(permissionStore.get({ name: MIDI })).toBe(PROMPT);
-        expect(permissionStore.get({ name: MIDI, sysex: false })).toBe(PROMPT);
-        expect(permissionStore.get({ name: MIDI, sysex: true })).toBe(DENIED);
-        expect(permissionStore.get({ name: PUSH })).toBe(PROMPT);
-        expect(
-          permissionStore.get({ name: PUSH, userVisibleOnly: false }),
-        ).toBe(PROMPT);
-        expect(permissionStore.get({ name: PUSH, userVisibleOnly: true })).toBe(
-          DENIED,
-        );
+        expect(permissionStore.get(geolocation)).toBe(GRANTED);
+        expect(permissionStore.get(push)).toBe(PROMPT);
+        expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe(PROMPT);
+        expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe(DENIED);
       });
     });
 
     describe("when called with matching descriptor with extra properties", () => {
       it("sets the state of the permission", () => {
-        permissionStore.set(
-          {
-            name: GEOLOCATION,
-            extra: true,
-          } as PermissionDescriptor<Names>,
-          PROMPT,
-        );
-        expect(permissionStore.get({ name: GEOLOCATION })).toBe(PROMPT);
+        permissionStore.set(geolocationWithExtra, PROMPT);
+
+        expect(permissionStore.get(geolocation)).toBe(PROMPT);
       });
     });
   });
@@ -195,7 +159,7 @@ describe("PermissionStore()", () => {
 
     describe("when a permission state changes", () => {
       beforeEach(() => {
-        permissionStore.set({ name: MIDI }, DENIED);
+        permissionStore.set(pushUserVisibleOnlyFalse, DENIED);
       });
 
       it("calls the subscriber", () => {
@@ -206,26 +170,16 @@ describe("PermissionStore()", () => {
         expect(subscriber).toHaveBeenCalledWith(expect.any(Function));
 
         const callback = subscriber.mock.calls[0][0] as (
-          d: PermissionDescriptor<Names>,
+          d: PermissionDescriptor,
         ) => boolean;
 
-        expect(callback({ name: MIDI })).toBe(true);
-        expect(callback({ name: MIDI, sysex: false })).toBe(true);
-        expect(callback({ name: MIDI, sysex: true })).toBe(false);
-        expect(
-          callback({
-            name: MIDI,
-            extra: "extra",
-          } as PermissionDescriptor<Names>),
-        ).toBe(true);
+        expect(callback(push)).toBe(true);
+        expect(callback(pushUserVisibleOnlyFalse)).toBe(true);
+        expect(callback(pushUserVisibleOnlyTrue)).toBe(false);
+        expect(callback(pushWithExtra)).toBe(true);
 
-        expect(callback({ name: GEOLOCATION })).toBe(false);
-        expect(
-          callback({
-            name: GEOLOCATION,
-            extra: "extra",
-          } as PermissionDescriptor<Names>),
-        ).toBe(false);
+        expect(callback(geolocation)).toBe(false);
+        expect(callback(geolocationWithExtra)).toBe(false);
       });
     });
   });

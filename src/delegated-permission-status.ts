@@ -1,29 +1,25 @@
 import { BaseEventTarget } from "./event-target.js";
-import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { PermissionStatus as PermissionStatusInterface } from "./types/permission-status.js";
-import { Permissions as PermissionsInterface } from "./types/permissions.js";
-import { StdPermissionState } from "./types/std.js";
 
-type PermissionStatusParameters<Name extends string> = {
-  descriptor: PermissionDescriptor<Name>;
-  delegates: Map<PermissionsInterface<Name>, PermissionStatusInterface<Name>>;
-  delegate: () => PermissionsInterface<Name>;
+type PermissionStatusParameters = {
+  descriptor: PermissionDescriptor;
+  delegates: Map<Permissions, globalThis.PermissionStatus>;
+  delegate: () => Permissions;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
 };
 
 let canConstruct = false;
 
-export function createPermissionStatus<Name extends string>(
-  parameters: PermissionStatusParameters<Name>,
-): PermissionStatus<Name> {
+export function createPermissionStatus(
+  parameters: PermissionStatusParameters,
+): globalThis.PermissionStatus {
   canConstruct = true;
 
   return new PermissionStatus(parameters);
 }
 
-export class PermissionStatus<Name extends string> extends BaseEventTarget {
-  readonly name: Name;
+export class PermissionStatus extends BaseEventTarget {
+  readonly name: PermissionName;
 
   /**
    * @deprecated Use the `Permissions.query()` method instead.
@@ -34,7 +30,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     delegate,
     subscribe,
     unsubscribe,
-  }: PermissionStatusParameters<Name>) {
+  }: PermissionStatusParameters) {
     super({
       onListenerCountChange: (type, count) => {
         if (type !== "change") return;
@@ -59,7 +55,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     if (!canConstruct) throw new TypeError("Illegal constructor");
     canConstruct = false;
 
-    this.name = name as Name;
+    this.name = name;
     this.#delegates = delegates;
     this.#delegate = delegate;
     this.#onchange = null;
@@ -77,7 +73,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     };
   }
 
-  get state(): StdPermissionState {
+  get state(): PermissionState {
     this.#state = this.#statusDelegate().state;
 
     return this.#state;
@@ -93,7 +89,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     if (this.#onchange) this.addEventListener("change", this.#onchange);
   }
 
-  #statusDelegate(): PermissionStatusInterface<Name> {
+  #statusDelegate(): globalThis.PermissionStatus {
     const delegate = this.#delegates.get(this.#delegate());
     if (delegate) return delegate;
 
@@ -101,20 +97,17 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     throw new Error("Invariant violation: Missing status delegate");
   }
 
-  #updateState(state: StdPermissionState): void {
+  #updateState(state: PermissionState): void {
     if (this.#state === state) return;
 
     this.#state = state;
     this.dispatchEvent(new Event("change"));
   }
 
-  readonly #delegates: Map<
-    PermissionsInterface<Name>,
-    PermissionStatusInterface<Name>
-  >;
-  readonly #delegate: () => PermissionsInterface<Name>;
+  readonly #delegates: Map<Permissions, globalThis.PermissionStatus>;
+  readonly #delegate: () => Permissions;
   #onchange: EventListener | null;
-  #state: StdPermissionState;
+  #state: PermissionState;
   readonly #handleChangeEvent: (event: Event) => void;
   readonly #handleDelegateChange: () => void;
 }

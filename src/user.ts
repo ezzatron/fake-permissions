@@ -1,22 +1,21 @@
 import { DENIED, GRANTED, PROMPT } from "./constants/permission-state.js";
 import { PermissionStore } from "./permission-store.js";
 import { HandlePermissionRequest } from "./types/handle-permission-request.js";
-import { PermissionDescriptor } from "./types/permission-descriptor.js";
 
-export interface User<Names extends string> {
-  grantPermission(descriptor: PermissionDescriptor<Names>): void;
-  denyPermission(descriptor: PermissionDescriptor<Names>): void;
-  resetPermission(descriptor: PermissionDescriptor<Names>): void;
-  requestPermission: HandlePermissionRequest<Names>;
+export interface User {
+  grantPermission(descriptor: PermissionDescriptor): void;
+  denyPermission(descriptor: PermissionDescriptor): void;
+  resetPermission(descriptor: PermissionDescriptor): void;
+  requestPermission: HandlePermissionRequest;
 }
 
-export function createUser<Names extends string>({
+export function createUser({
   permissionStore,
   handlePermissionRequest,
 }: {
-  permissionStore: PermissionStore<Names>;
-  handlePermissionRequest?: HandlePermissionRequest<Names>;
-}): User<Names> {
+  permissionStore: PermissionStore;
+  handlePermissionRequest?: HandlePermissionRequest;
+}): User {
   return {
     grantPermission(descriptor) {
       permissionStore.set(descriptor, GRANTED);

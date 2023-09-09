@@ -1,6 +1,4 @@
-import { StdEventTarget, StdEventTargetInterface } from "./types/std.js";
-
-export class BaseEventTarget extends StdEventTarget {
+export class BaseEventTarget extends EventTarget {
   constructor({
     onListenerCountChange,
   }: {
@@ -75,7 +73,7 @@ export class BaseEventTarget extends StdEventTarget {
       this.#handleListenerRemoval(type, listener, options);
     };
 
-    function wrappedListener(this: StdEventTargetInterface, event: Event) {
+    function wrappedListener(this: EventTarget, event: Event) {
       if (typeof listener === "function") {
         listener.call(this, event);
       } else {

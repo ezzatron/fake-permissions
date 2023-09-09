@@ -1,30 +1,27 @@
 import * as permissionNames from "./constants/permission-name.js";
-import { MIDI, PUSH } from "./constants/permission-name.js";
+import { PUSH } from "./constants/permission-name.js";
 import { PROMPT } from "./constants/permission-state.js";
-import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { PermissionName } from "./types/permission-name.js";
-import { StdPermissionState } from "./types/std.js";
 
-export interface PermissionStore<Names extends string> {
-  has(descriptor: PermissionDescriptor<Names>): boolean;
-  get(descriptor: PermissionDescriptor<Names>): StdPermissionState;
-  set(descriptor: PermissionDescriptor<Names>, state: StdPermissionState): void;
-  subscribe(subscriber: Subscriber<Names>): void;
-  unsubscribe(subscriber: Subscriber<Names>): void;
+export interface PermissionStore {
+  has(descriptor: PermissionDescriptor): boolean;
+  get(descriptor: PermissionDescriptor): PermissionState;
+  set(descriptor: PermissionDescriptor, state: PermissionState): void;
+  subscribe(subscriber: Subscriber): void;
+  unsubscribe(subscriber: Subscriber): void;
 }
 
-export function createPermissionStore<Names extends string>({
+export function createPermissionStore({
   initialStates,
   isMatchingDescriptor = (a, b) => a.name === b.name,
 }: {
-  initialStates: Map<PermissionDescriptor<Names>, StdPermissionState>;
+  initialStates: Map<PermissionDescriptor, PermissionState>;
   isMatchingDescriptor?: (
-    a: PermissionDescriptor<Names>,
-    b: PermissionDescriptor<Names>,
+    a: PermissionDescriptor,
+    b: PermissionDescriptor,
   ) => boolean;
-}): PermissionStore<Names> {
+}): PermissionStore {
   const states = new Map(initialStates);
-  const subscribers = new Set<Subscriber<Names>>();
+  const subscribers = new Set<Subscriber>();
 
   return {
     has(descriptor) {
@@ -66,7 +63,7 @@ export function createPermissionStore<Names extends string>({
     },
   };
 
-  function find(query: PermissionDescriptor<Names>) {
+  function find(query: PermissionDescriptor) {
     for (const [descriptor] of states) {
       if (isMatchingDescriptor(descriptor, query)) return descriptor;
     }
@@ -74,7 +71,7 @@ export function createPermissionStore<Names extends string>({
     return undefined;
   }
 
-  function dispatch(descriptor: PermissionDescriptor<Names>) {
+  function dispatch(descriptor: PermissionDescriptor) {
     const isMatching = isMatchingDescriptor.bind(null, descriptor);
 
     for (const subscriber of subscribers) {
@@ -87,33 +84,29 @@ export function createPermissionStore<Names extends string>({
   }
 }
 
-export function createStandardPermissionStore(): PermissionStore<PermissionName> {
+export function createStandardPermissionStore(): PermissionStore {
   const genericPermissionNames = Object.values(permissionNames).filter(
-    (name) => name !== MIDI && name !== PUSH,
+    (name) => name !== PUSH,
   );
   const genericEntries = genericPermissionNames.map(
-    (name) =>
-      [{ name } as PermissionDescriptor<PermissionName>, PROMPT] as const,
+    (name) => [{ name }, PROMPT] as const,
   );
 
   return createPermissionStore({
     initialStates: new Map([
       ...genericEntries,
-      [{ name: MIDI, sysex: false }, PROMPT],
-      [{ name: MIDI, sysex: true }, PROMPT],
-      [{ name: PUSH, userVisibleOnly: false }, PROMPT],
-      [{ name: PUSH, userVisibleOnly: true }, PROMPT],
+      [{ name: PUSH, userVisibleOnly: false } as PermissionDescriptor, PROMPT],
+      [{ name: PUSH, userVisibleOnly: true } as PermissionDescriptor, PROMPT],
     ]),
 
     isMatchingDescriptor(a, b) {
-      if (a.name === MIDI && b.name === MIDI) {
-        // a.sysex is always present (comes from an initialStates key)
-        return a.sysex === (b.sysex ?? false);
-      }
-
       if (a.name === PUSH && b.name === PUSH) {
         // a.userVisibleOnly is always present (comes from an initialStates key)
-        return a.userVisibleOnly === (b.userVisibleOnly ?? false);
+        return (
+          "userVisibleOnly" in a &&
+          a.userVisibleOnly ===
+            ("userVisibleOnly" in b ? b.userVisibleOnly : false)
+        );
       }
 
       return a.name === b.name;
@@ -121,6 +114,6 @@ export function createStandardPermissionStore(): PermissionStore<PermissionName>
   });
 }
 
-type Subscriber<Names extends string> = (
-  isMatchingDescriptor: (descriptor: PermissionDescriptor<Names>) => boolean,
+type Subscriber = (
+  isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
 ) => void;

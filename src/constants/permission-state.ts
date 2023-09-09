@@ -1,5 +1,3 @@
-import { StdPermissionState } from "../types/std.js";
-
-export const PROMPT = "prompt" satisfies StdPermissionState;
-export const GRANTED = "granted" satisfies StdPermissionState;
-export const DENIED = "denied" satisfies StdPermissionState;
+export const PROMPT = "prompt" satisfies PermissionState;
+export const GRANTED = "granted" satisfies PermissionState;
+export const DENIED = "denied" satisfies PermissionState;

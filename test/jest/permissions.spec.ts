@@ -1,19 +1,22 @@
 import { PROMPT } from "../../src/constants/permission-state.js";
-import {
-  Permissions,
-  createPermissionStore,
-  createPermissions,
-} from "../../src/index.js";
+import { createPermissionStore, createPermissions } from "../../src/index.js";
 
 describe("Permissions", () => {
-  let permissions: Permissions<"permission-a" | "permission-b">;
+  const permissionA: PermissionDescriptor = {
+    name: "permission-a" as PermissionName,
+  };
+  const permissionB: PermissionDescriptor = {
+    name: "permission-b" as PermissionName,
+  };
+
+  let permissions: Permissions;
   let callQueryWith: (...a: unknown[]) => () => Promise<unknown>;
 
   beforeEach(() => {
     const permissionStore = createPermissionStore({
       initialStates: new Map([
-        [{ name: "permission-a" }, PROMPT],
-        [{ name: "permission-b" }, PROMPT],
+        [permissionA, PROMPT],
+        [permissionB, PROMPT],
       ]),
     });
 
@@ -21,7 +24,7 @@ describe("Permissions", () => {
 
     callQueryWith = (...a: unknown[]) => {
       return async () => {
-        await (permissions.query as AnyFn)(...a);
+        await (permissions.query as (...a: unknown[]) => unknown)(...a);
       };
     };
   });
@@ -103,8 +106,8 @@ describe("Permissions", () => {
 
   describe("when queried with a permission name in the store", () => {
     it("returns a status for the queried permission", async () => {
-      const statusA = await permissions.query({ name: "permission-a" });
-      const statusB = await permissions.query({ name: "permission-b" });
+      const statusA = await permissions.query(permissionA);
+      const statusB = await permissions.query(permissionB);
 
       expect(statusA.constructor.name).toBe("PermissionStatus");
       expect(statusA.name).toBe("permission-a");
@@ -113,5 +116,3 @@ describe("Permissions", () => {
     });
   });
 });
-
-type AnyFn = (...a: unknown[]) => unknown;

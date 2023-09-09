@@ -1,33 +1,28 @@
 import { BaseEventTarget } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
-import { PermissionDescriptor } from "./types/permission-descriptor.js";
-import { StdPermissionState } from "./types/std.js";
 
-type PermissionStatusParameters<Names extends string> = {
-  descriptor: PermissionDescriptor<Names>;
-  permissionStore: PermissionStore<Names>;
+type PermissionStatusParameters = {
+  descriptor: PermissionDescriptor;
+  permissionStore: PermissionStore;
 };
 
 let canConstruct = false;
 
-export function createPermissionStatus<Names extends string>(
-  parameters: PermissionStatusParameters<Names>,
-): PermissionStatus<Names> {
+export function createPermissionStatus(
+  parameters: PermissionStatusParameters,
+): globalThis.PermissionStatus {
   canConstruct = true;
 
   return new PermissionStatus(parameters);
 }
 
-export class PermissionStatus<Name extends string> extends BaseEventTarget {
-  readonly name: Name;
+export class PermissionStatus extends BaseEventTarget {
+  readonly name: PermissionName;
 
   /**
    * @deprecated Use the `Permissions.query()` method instead.
    */
-  constructor({
-    descriptor,
-    permissionStore,
-  }: PermissionStatusParameters<Name>) {
+  constructor({ descriptor, permissionStore }: PermissionStatusParameters) {
     super({
       onListenerCountChange: (type, count) => {
         if (type !== "change") return;
@@ -43,7 +38,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     if (!canConstruct) throw new TypeError("Illegal constructor");
     canConstruct = false;
 
-    this.name = descriptor.name as Name;
+    this.name = descriptor.name;
     this.#descriptor = descriptor;
     this.#permissionStore = permissionStore;
     this.#onchange = null;
@@ -55,7 +50,7 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     };
   }
 
-  get state(): StdPermissionState {
+  get state(): PermissionState {
     return this.#permissionStore.get(this.#descriptor);
   }
 
@@ -69,10 +64,10 @@ export class PermissionStatus<Name extends string> extends BaseEventTarget {
     if (this.#onchange) this.addEventListener("change", this.#onchange);
   }
 
-  readonly #descriptor: PermissionDescriptor<Name>;
-  readonly #permissionStore: PermissionStore<Name>;
+  readonly #descriptor: PermissionDescriptor;
+  readonly #permissionStore: PermissionStore;
   #onchange: EventListener | null;
   readonly #handlePermissionStoreChange: (
-    isMatchingDescriptor: (descriptor: PermissionDescriptor<Name>) => boolean,
+    isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
   ) => void;
 }

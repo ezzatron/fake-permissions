@@ -5,27 +5,33 @@ import {
   PROMPT,
 } from "../../src/constants/permission-state.js";
 import {
-  PermissionStatus,
   PermissionStore,
-  Permissions,
   SelectDelegate,
   createDelegatedPermissions,
   createPermissionStore,
   createPermissions,
 } from "../../src/index.js";
 
-type Names = "permission-a" | "permission-b" | "permission-c";
-
 describe("Delegated permissions", () => {
-  let permissionStoreA: PermissionStore<Names>;
-  let permissionStoreB: PermissionStore<Names>;
-  let delegateA: Permissions<Names>;
-  let delegateB: Permissions<Names>;
-  let permissions: Permissions<Names>;
-  let selectDelegate: SelectDelegate<Names>;
-  let statusA: PermissionStatus<"permission-a">;
-  let statusB: PermissionStatus<"permission-b">;
-  let statusC: PermissionStatus<"permission-c">;
+  const permissionA: PermissionDescriptor = {
+    name: "permission-a" as PermissionName,
+  };
+  const permissionB: PermissionDescriptor = {
+    name: "permission-b" as PermissionName,
+  };
+  const permissionC: PermissionDescriptor = {
+    name: "permission-c" as PermissionName,
+  };
+
+  let permissionStoreA: PermissionStore;
+  let permissionStoreB: PermissionStore;
+  let delegateA: Permissions;
+  let delegateB: Permissions;
+  let permissions: Permissions;
+  let selectDelegate: SelectDelegate;
+  let statusA: PermissionStatus;
+  let statusB: PermissionStatus;
+  let statusC: PermissionStatus;
   let listenerA: jest.Mock;
   let listenerB: jest.Mock;
   let listenerC: jest.Mock;
@@ -33,29 +39,29 @@ describe("Delegated permissions", () => {
   beforeEach(() => {
     permissionStoreA = createPermissionStore({
       initialStates: new Map([
-        [{ name: "permission-a" }, PROMPT],
-        [{ name: "permission-b" }, GRANTED],
-        [{ name: "permission-c" }, DENIED],
+        [permissionA, PROMPT],
+        [permissionB, GRANTED],
+        [permissionC, DENIED],
       ]),
     });
     permissionStoreB = createPermissionStore({
       initialStates: new Map([
-        [{ name: "permission-a" }, GRANTED],
-        [{ name: "permission-b" }, DENIED],
-        [{ name: "permission-c" }, PROMPT],
+        [permissionA, GRANTED],
+        [permissionB, DENIED],
+        [permissionC, PROMPT],
       ]),
     });
 
     delegateA = createPermissions({ permissionStore: permissionStoreA });
     delegateB = createPermissions({ permissionStore: permissionStoreB });
 
-    ({ permissions, selectDelegate } = createDelegatedPermissions<Names>({
+    ({ permissions, selectDelegate } = createDelegatedPermissions({
       delegates: [delegateA, delegateB],
     }));
   });
 
   it("cannot be instantiated directly", async () => {
-    statusA = await permissions.query({ name: "permission-a" });
+    statusA = await permissions.query(permissionA);
 
     const instantiatePermissions = () => {
       new (permissions.constructor as new (p: object) => unknown)({});
@@ -84,9 +90,9 @@ describe("Delegated permissions", () => {
   describe("before selecting a delegate", () => {
     describe("when querying a permission", () => {
       beforeEach(async () => {
-        statusA = await permissions.query({ name: "permission-a" });
-        statusB = await permissions.query({ name: "permission-b" });
-        statusC = await permissions.query({ name: "permission-c" });
+        statusA = await permissions.query(permissionA);
+        statusB = await permissions.query(permissionB);
+        statusC = await permissions.query(permissionC);
 
         listenerA = jest.fn();
         listenerB = jest.fn();
@@ -111,9 +117,9 @@ describe("Delegated permissions", () => {
 
       describe("when the first delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.set({ name: "permission-a" }, DENIED);
-          permissionStoreA.set({ name: "permission-b" }, PROMPT);
-          permissionStoreA.set({ name: "permission-c" }, GRANTED);
+          permissionStoreA.set(permissionA, DENIED);
+          permissionStoreA.set(permissionB, PROMPT);
+          permissionStoreA.set(permissionC, GRANTED);
         });
 
         it("dispatches change events", () => {
@@ -131,9 +137,9 @@ describe("Delegated permissions", () => {
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.set({ name: "permission-a" }, DENIED);
-          permissionStoreB.set({ name: "permission-b" }, PROMPT);
-          permissionStoreB.set({ name: "permission-c" }, GRANTED);
+          permissionStoreB.set(permissionA, DENIED);
+          permissionStoreB.set(permissionB, PROMPT);
+          permissionStoreB.set(permissionC, GRANTED);
         });
 
         it("does not dispatch change events", () => {
@@ -169,18 +175,9 @@ describe("Delegated permissions", () => {
 
       describe("when selecting a delegate with the same state", () => {
         beforeEach(() => {
-          permissionStoreB.set(
-            { name: "permission-a" },
-            permissionStoreA.get({ name: "permission-a" }),
-          );
-          permissionStoreB.set(
-            { name: "permission-b" },
-            permissionStoreA.get({ name: "permission-b" }),
-          );
-          permissionStoreB.set(
-            { name: "permission-c" },
-            permissionStoreA.get({ name: "permission-c" }),
-          );
+          permissionStoreB.set(permissionA, permissionStoreA.get(permissionA));
+          permissionStoreB.set(permissionB, permissionStoreA.get(permissionB));
+          permissionStoreB.set(permissionC, permissionStoreA.get(permissionC));
 
           selectDelegate(delegateB);
         });
@@ -223,9 +220,9 @@ describe("Delegated permissions", () => {
 
         describe("when the first delegate's state changes", () => {
           beforeEach(() => {
-            permissionStoreA.set({ name: "permission-a" }, DENIED);
-            permissionStoreA.set({ name: "permission-b" }, PROMPT);
-            permissionStoreA.set({ name: "permission-c" }, GRANTED);
+            permissionStoreA.set(permissionA, DENIED);
+            permissionStoreA.set(permissionB, PROMPT);
+            permissionStoreA.set(permissionC, GRANTED);
           });
 
           it("dispatches change events", () => {
@@ -266,9 +263,9 @@ describe("Delegated permissions", () => {
 
     describe("when querying a permission", () => {
       beforeEach(async () => {
-        statusA = await permissions.query({ name: "permission-a" });
-        statusB = await permissions.query({ name: "permission-b" });
-        statusC = await permissions.query({ name: "permission-c" });
+        statusA = await permissions.query(permissionA);
+        statusB = await permissions.query(permissionB);
+        statusC = await permissions.query(permissionC);
 
         listenerA = jest.fn();
         listenerB = jest.fn();
@@ -287,9 +284,9 @@ describe("Delegated permissions", () => {
 
       describe("when the selected delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.set({ name: "permission-a" }, PROMPT);
-          permissionStoreB.set({ name: "permission-b" }, GRANTED);
-          permissionStoreB.set({ name: "permission-c" }, DENIED);
+          permissionStoreB.set(permissionA, PROMPT);
+          permissionStoreB.set(permissionB, GRANTED);
+          permissionStoreB.set(permissionC, DENIED);
         });
 
         it("dispatches change events", () => {
@@ -307,9 +304,9 @@ describe("Delegated permissions", () => {
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.set({ name: "permission-a" }, DENIED);
-          permissionStoreA.set({ name: "permission-b" }, PROMPT);
-          permissionStoreA.set({ name: "permission-c" }, GRANTED);
+          permissionStoreA.set(permissionA, DENIED);
+          permissionStoreA.set(permissionB, PROMPT);
+          permissionStoreA.set(permissionC, GRANTED);
         });
 
         it("does not dispatch change events", () => {
