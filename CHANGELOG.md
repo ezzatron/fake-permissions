@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [v0.3.1] - 2023-09-09
+
+[v0.3.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.3.1
+
+### Fixed
+
+- Fixed the `PermissionDescriptor` type so that it no longer adds generic
+  permission descriptors to the union unless a permission name other than `midi`
+  or `push` is part of the `PermissionName` union.
+
 ## [v0.3.0] - 2023-08-20
 
 [v0.3.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.3.0
