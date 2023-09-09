@@ -23,11 +23,6 @@
       "types": "./artifacts/dist/index.d.ts",
       "import": "./artifacts/dist/index.js",
       "default": "./artifacts/dist/index.js"
-    },
-    "./constants/*": {
-      "types": "./artifacts/dist/constants/*.d.ts",
-      "import": "./artifacts/dist/constants/*.js",
-      "default": "./artifacts/dist/constants/*.js"
     }
   },
   "sideEffects": false,

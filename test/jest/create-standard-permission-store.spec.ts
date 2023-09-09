@@ -1,23 +1,16 @@
-import * as permissionNames from "../../src/constants/permission-name.js";
-import { PUSH } from "../../src/constants/permission-name.js";
-import {
-  DENIED,
-  GRANTED,
-  PROMPT,
-} from "../../src/constants/permission-state.js";
 import {
   PermissionStore,
   createStandardPermissionStore,
 } from "../../src/index.js";
 
 describe("createStandardPermissionStore()", () => {
-  const push: PermissionDescriptor = { name: PUSH };
+  const push: PermissionDescriptor = { name: "push" };
   const pushUserVisibleOnlyFalse: PermissionDescriptor = {
-    name: PUSH,
+    name: "push",
     userVisibleOnly: false,
   } as PermissionDescriptor;
   const pushUserVisibleOnlyTrue: PermissionDescriptor = {
-    name: PUSH,
+    name: "push",
     userVisibleOnly: true,
   } as PermissionDescriptor;
 
@@ -27,22 +20,30 @@ describe("createStandardPermissionStore()", () => {
     permissionStore = createStandardPermissionStore();
   });
 
-  it("should create a permission store with the standard permissions", () => {
-    for (const name of Object.values(permissionNames)) {
+  it.each([
+    ["geolocation"],
+    ["notifications"],
+    ["persistent-storage"],
+    ["push"],
+    ["screen-wake-lock"],
+    ["xr-spatial-tracking"],
+  ] as const)(
+    "should create a permission store with the standard permissions (%s)",
+    (name) => {
       expect(permissionStore.has({ name })).toBe(true);
-    }
-  });
+    },
+  );
 
   it("should create a permission store that understands push descriptors with the userVisibleOnly property", () => {
-    expect(permissionStore.get(push)).toBe(PROMPT);
-    expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe(PROMPT);
-    expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe(PROMPT);
+    expect(permissionStore.get(push)).toBe("prompt");
+    expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("prompt");
+    expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("prompt");
 
-    permissionStore.set(pushUserVisibleOnlyTrue, DENIED);
-    permissionStore.set(pushUserVisibleOnlyFalse, GRANTED);
+    permissionStore.set(pushUserVisibleOnlyTrue, "denied");
+    permissionStore.set(pushUserVisibleOnlyFalse, "granted");
 
-    expect(permissionStore.get(push)).toBe(GRANTED);
-    expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe(GRANTED);
-    expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe(DENIED);
+    expect(permissionStore.get(push)).toBe("granted");
+    expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("granted");
+    expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("denied");
   });
 });

@@ -1,10 +1,5 @@
 import { jest } from "@jest/globals";
 import {
-  DENIED,
-  GRANTED,
-  PROMPT,
-} from "../../src/constants/permission-state.js";
-import {
   PermissionStore,
   User,
   createPermissionStore,
@@ -35,9 +30,9 @@ describe("PermissionStatus", () => {
   beforeEach(async () => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
-        [permissionA, PROMPT],
-        [permissionB, GRANTED],
-        [permissionC, DENIED],
+        [permissionA, "prompt"],
+        [permissionB, "granted"],
+        [permissionC, "denied"],
       ]),
     });
     subscribe = jest.spyOn(permissionStore, "subscribe");
@@ -65,8 +60,8 @@ describe("PermissionStatus", () => {
   });
 
   it("has an initial state that matches the permission store", async () => {
-    expect(statusA.state).toBe(PROMPT);
-    expect(statusB.state).toBe(GRANTED);
+    expect(statusA.state).toBe("prompt");
+    expect(statusB.state).toBe("granted");
   });
 
   describe("when the user changes the permission state", () => {
@@ -77,9 +72,9 @@ describe("PermissionStatus", () => {
     });
 
     it("has a state that matches the new state", () => {
-      expect(statusA.state).toBe(GRANTED);
-      expect(statusB.state).toBe(DENIED);
-      expect(statusC.state).toBe(PROMPT);
+      expect(statusA.state).toBe("granted");
+      expect(statusB.state).toBe("denied");
+      expect(statusC.state).toBe("prompt");
     });
   });
 

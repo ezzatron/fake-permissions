@@ -1,6 +1,5 @@
-import { DENIED, GRANTED, PROMPT } from "./constants/permission-state.js";
+import { HandlePermissionRequest } from "./handle-permission-request.js";
 import { PermissionStore } from "./permission-store.js";
-import { HandlePermissionRequest } from "./types/handle-permission-request.js";
 
 export interface User {
   grantPermission(descriptor: PermissionDescriptor): void;
@@ -18,20 +17,20 @@ export function createUser({
 }): User {
   return {
     grantPermission(descriptor) {
-      permissionStore.set(descriptor, GRANTED);
+      permissionStore.set(descriptor, "granted");
     },
 
     denyPermission(descriptor) {
-      permissionStore.set(descriptor, DENIED);
+      permissionStore.set(descriptor, "denied");
     },
 
     resetPermission(descriptor) {
-      permissionStore.set(descriptor, PROMPT);
+      permissionStore.set(descriptor, "prompt");
     },
 
     async requestPermission(descriptor) {
       const state = permissionStore.get(descriptor);
-      if (state !== PROMPT) return state;
+      if (state !== "prompt") return state;
 
       if (handlePermissionRequest) {
         const nextState = await handlePermissionRequest(descriptor);
@@ -40,9 +39,9 @@ export function createUser({
         return nextState;
       }
 
-      permissionStore.set(descriptor, DENIED);
+      permissionStore.set(descriptor, "denied");
 
-      return DENIED;
+      return "denied";
     },
   };
 }

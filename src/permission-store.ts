@@ -1,7 +1,3 @@
-import * as permissionNames from "./constants/permission-name.js";
-import { PUSH } from "./constants/permission-name.js";
-import { PROMPT } from "./constants/permission-state.js";
-
 export interface PermissionStore {
   has(descriptor: PermissionDescriptor): boolean;
   get(descriptor: PermissionDescriptor): PermissionState;
@@ -85,22 +81,25 @@ export function createPermissionStore({
 }
 
 export function createStandardPermissionStore(): PermissionStore {
-  const genericPermissionNames = Object.values(permissionNames).filter(
-    (name) => name !== PUSH,
-  );
-  const genericEntries = genericPermissionNames.map(
-    (name) => [{ name }, PROMPT] as const,
-  );
-
   return createPermissionStore({
     initialStates: new Map([
-      ...genericEntries,
-      [{ name: PUSH, userVisibleOnly: false } as PermissionDescriptor, PROMPT],
-      [{ name: PUSH, userVisibleOnly: true } as PermissionDescriptor, PROMPT],
+      [{ name: "geolocation" }, "prompt"],
+      [{ name: "notifications" }, "prompt"],
+      [{ name: "persistent-storage" }, "prompt"],
+      [
+        { name: "push", userVisibleOnly: false } as PermissionDescriptor,
+        "prompt",
+      ],
+      [
+        { name: "push", userVisibleOnly: true } as PermissionDescriptor,
+        "prompt",
+      ],
+      [{ name: "screen-wake-lock" }, "prompt"],
+      [{ name: "xr-spatial-tracking" }, "prompt"],
     ]),
 
     isMatchingDescriptor(a, b) {
-      if (a.name === PUSH && b.name === PUSH) {
+      if (a.name === "push" && b.name === "push") {
         // a.userVisibleOnly is always present (comes from an initialStates key)
         return (
           "userVisibleOnly" in a &&

@@ -1,10 +1,5 @@
 import { jest } from "@jest/globals";
 import {
-  DENIED,
-  GRANTED,
-  PROMPT,
-} from "../../src/constants/permission-state.js";
-import {
   PermissionStore,
   SelectDelegate,
   createDelegatedPermissions,
@@ -39,16 +34,16 @@ describe("Delegated permissions", () => {
   beforeEach(() => {
     permissionStoreA = createPermissionStore({
       initialStates: new Map([
-        [permissionA, PROMPT],
-        [permissionB, GRANTED],
-        [permissionC, DENIED],
+        [permissionA, "prompt"],
+        [permissionB, "granted"],
+        [permissionC, "denied"],
       ]),
     });
     permissionStoreB = createPermissionStore({
       initialStates: new Map([
-        [permissionA, GRANTED],
-        [permissionB, DENIED],
-        [permissionC, PROMPT],
+        [permissionA, "granted"],
+        [permissionB, "denied"],
+        [permissionC, "prompt"],
       ]),
     });
 
@@ -110,16 +105,16 @@ describe("Delegated permissions", () => {
       });
 
       it("returns a status with a state that matches the first delegate", () => {
-        expect(statusA.state).toBe(PROMPT);
-        expect(statusB.state).toBe(GRANTED);
-        expect(statusC.state).toBe(DENIED);
+        expect(statusA.state).toBe("prompt");
+        expect(statusB.state).toBe("granted");
+        expect(statusC.state).toBe("denied");
       });
 
       describe("when the first delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.set(permissionA, DENIED);
-          permissionStoreA.set(permissionB, PROMPT);
-          permissionStoreA.set(permissionC, GRANTED);
+          permissionStoreA.set(permissionA, "denied");
+          permissionStoreA.set(permissionB, "prompt");
+          permissionStoreA.set(permissionC, "granted");
         });
 
         it("dispatches change events", () => {
@@ -129,17 +124,17 @@ describe("Delegated permissions", () => {
         });
 
         it("updates the state on the status to match the new state", () => {
-          expect(statusA.state).toBe(DENIED);
-          expect(statusB.state).toBe(PROMPT);
-          expect(statusC.state).toBe(GRANTED);
+          expect(statusA.state).toBe("denied");
+          expect(statusB.state).toBe("prompt");
+          expect(statusC.state).toBe("granted");
         });
       });
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.set(permissionA, DENIED);
-          permissionStoreB.set(permissionB, PROMPT);
-          permissionStoreB.set(permissionC, GRANTED);
+          permissionStoreB.set(permissionA, "denied");
+          permissionStoreB.set(permissionB, "prompt");
+          permissionStoreB.set(permissionC, "granted");
         });
 
         it("does not dispatch change events", () => {
@@ -149,9 +144,9 @@ describe("Delegated permissions", () => {
         });
 
         it("does not update the state on the status", () => {
-          expect(statusA.state).toBe(PROMPT);
-          expect(statusB.state).toBe(GRANTED);
-          expect(statusC.state).toBe(DENIED);
+          expect(statusA.state).toBe("prompt");
+          expect(statusB.state).toBe("granted");
+          expect(statusC.state).toBe("denied");
         });
       });
 
@@ -167,9 +162,9 @@ describe("Delegated permissions", () => {
         });
 
         it("returns a status with a state that matches the selected delegate", () => {
-          expect(statusA.state).toBe(GRANTED);
-          expect(statusB.state).toBe(DENIED);
-          expect(statusC.state).toBe(PROMPT);
+          expect(statusA.state).toBe("granted");
+          expect(statusB.state).toBe("denied");
+          expect(statusC.state).toBe("prompt");
         });
       });
 
@@ -189,9 +184,9 @@ describe("Delegated permissions", () => {
         });
 
         it("returns a status with a state that matches the first delegate", () => {
-          expect(statusA.state).toBe(PROMPT);
-          expect(statusB.state).toBe(GRANTED);
-          expect(statusC.state).toBe(DENIED);
+          expect(statusA.state).toBe("prompt");
+          expect(statusB.state).toBe("granted");
+          expect(statusC.state).toBe("denied");
         });
       });
 
@@ -220,9 +215,9 @@ describe("Delegated permissions", () => {
 
         describe("when the first delegate's state changes", () => {
           beforeEach(() => {
-            permissionStoreA.set(permissionA, DENIED);
-            permissionStoreA.set(permissionB, PROMPT);
-            permissionStoreA.set(permissionC, GRANTED);
+            permissionStoreA.set(permissionA, "denied");
+            permissionStoreA.set(permissionB, "prompt");
+            permissionStoreA.set(permissionC, "granted");
           });
 
           it("dispatches change events", () => {
@@ -277,16 +272,16 @@ describe("Delegated permissions", () => {
       });
 
       it("returns a status with a state that matches the selected delegate", () => {
-        expect(statusA.state).toBe(GRANTED);
-        expect(statusB.state).toBe(DENIED);
-        expect(statusC.state).toBe(PROMPT);
+        expect(statusA.state).toBe("granted");
+        expect(statusB.state).toBe("denied");
+        expect(statusC.state).toBe("prompt");
       });
 
       describe("when the selected delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.set(permissionA, PROMPT);
-          permissionStoreB.set(permissionB, GRANTED);
-          permissionStoreB.set(permissionC, DENIED);
+          permissionStoreB.set(permissionA, "prompt");
+          permissionStoreB.set(permissionB, "granted");
+          permissionStoreB.set(permissionC, "denied");
         });
 
         it("dispatches change events", () => {
@@ -296,17 +291,17 @@ describe("Delegated permissions", () => {
         });
 
         it("updates the state on the status to match the new state", () => {
-          expect(statusA.state).toBe(PROMPT);
-          expect(statusB.state).toBe(GRANTED);
-          expect(statusC.state).toBe(DENIED);
+          expect(statusA.state).toBe("prompt");
+          expect(statusB.state).toBe("granted");
+          expect(statusC.state).toBe("denied");
         });
       });
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.set(permissionA, DENIED);
-          permissionStoreA.set(permissionB, PROMPT);
-          permissionStoreA.set(permissionC, GRANTED);
+          permissionStoreA.set(permissionA, "denied");
+          permissionStoreA.set(permissionB, "prompt");
+          permissionStoreA.set(permissionC, "granted");
         });
 
         it("does not dispatch change events", () => {
@@ -316,9 +311,9 @@ describe("Delegated permissions", () => {
         });
 
         it("does not update the state on the status", () => {
-          expect(statusA.state).toBe(GRANTED);
-          expect(statusB.state).toBe(DENIED);
-          expect(statusC.state).toBe(PROMPT);
+          expect(statusA.state).toBe("granted");
+          expect(statusB.state).toBe("denied");
+          expect(statusC.state).toBe("prompt");
         });
       });
     });

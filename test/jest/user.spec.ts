@@ -1,10 +1,5 @@
 import { jest } from "@jest/globals";
 import {
-  DENIED,
-  GRANTED,
-  PROMPT,
-} from "../../src/constants/permission-state.js";
-import {
   HandlePermissionRequest,
   PermissionStore,
   User,
@@ -29,9 +24,9 @@ describe("User", () => {
   beforeEach(() => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
-        [permissionA, PROMPT],
-        [permissionB, GRANTED],
-        [permissionC, DENIED],
+        [permissionA, "prompt"],
+        [permissionB, "granted"],
+        [permissionC, "denied"],
       ]),
     });
   });
@@ -43,22 +38,22 @@ describe("User", () => {
 
     describe('when a permission in the "prompt" state is requested', () => {
       it("denies the permission", async () => {
-        expect(await user.requestPermission(permissionA)).toBe(DENIED);
-        expect(permissionStore.get(permissionA)).toBe(DENIED);
+        expect(await user.requestPermission(permissionA)).toBe("denied");
+        expect(permissionStore.get(permissionA)).toBe("denied");
       });
     });
 
     describe('when a permission in the "granted" state is requested', () => {
       it("leaves the permission granted", async () => {
-        expect(await user.requestPermission(permissionB)).toBe(GRANTED);
-        expect(permissionStore.get(permissionB)).toBe(GRANTED);
+        expect(await user.requestPermission(permissionB)).toBe("granted");
+        expect(permissionStore.get(permissionB)).toBe("granted");
       });
     });
 
     describe('when a permission in the "denied" state is requested', () => {
       it("leaves the permission denied", async () => {
-        expect(await user.requestPermission(permissionC)).toBe(DENIED);
-        expect(permissionStore.get(permissionC)).toBe(DENIED);
+        expect(await user.requestPermission(permissionC)).toBe("denied");
+        expect(permissionStore.get(permissionC)).toBe("denied");
       });
     });
   });
@@ -67,7 +62,9 @@ describe("User", () => {
     let handlePermissionRequest: jest.Mock<HandlePermissionRequest>;
 
     beforeEach(() => {
-      handlePermissionRequest = jest.fn(async () => GRANTED as PermissionState);
+      handlePermissionRequest = jest.fn(
+        async () => "granted" as PermissionState,
+      );
 
       user = createUser({ permissionStore, handlePermissionRequest });
     });
@@ -82,8 +79,8 @@ describe("User", () => {
       });
 
       it("updates the permission state with the callback's return value", async () => {
-        expect(await user.requestPermission(permissionA)).toBe(GRANTED);
-        expect(permissionStore.get(permissionA)).toBe(GRANTED);
+        expect(await user.requestPermission(permissionA)).toBe("granted");
+        expect(permissionStore.get(permissionA)).toBe("granted");
       });
     });
 
@@ -95,8 +92,8 @@ describe("User", () => {
       });
 
       it("leaves the permission granted", async () => {
-        expect(await user.requestPermission(permissionB)).toBe(GRANTED);
-        expect(permissionStore.get(permissionB)).toBe(GRANTED);
+        expect(await user.requestPermission(permissionB)).toBe("granted");
+        expect(permissionStore.get(permissionB)).toBe("granted");
       });
     });
 
@@ -108,8 +105,8 @@ describe("User", () => {
       });
 
       it("leaves the permission denied", async () => {
-        expect(await user.requestPermission(permissionC)).toBe(DENIED);
-        expect(permissionStore.get(permissionC)).toBe(DENIED);
+        expect(await user.requestPermission(permissionC)).toBe("denied");
+        expect(permissionStore.get(permissionC)).toBe("denied");
       });
     });
   });

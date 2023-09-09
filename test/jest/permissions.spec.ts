@@ -1,4 +1,3 @@
-import { PROMPT } from "../../src/constants/permission-state.js";
 import { createPermissionStore, createPermissions } from "../../src/index.js";
 
 describe("Permissions", () => {
@@ -15,8 +14,8 @@ describe("Permissions", () => {
   beforeEach(() => {
     const permissionStore = createPermissionStore({
       initialStates: new Map([
-        [permissionA, PROMPT],
-        [permissionB, PROMPT],
+        [permissionA, "prompt"],
+        [permissionB, "prompt"],
       ]),
     });
 
