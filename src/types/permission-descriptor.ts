@@ -6,7 +6,7 @@ type PUSH = typeof _PUSH;
 export type PermissionDescriptor<Name extends string> =
   | (MIDI extends Name ? MidiPermissionDescriptor : never)
   | (PUSH extends Name ? PushPermissionDescriptor : never)
-  | (string extends MIDI | PUSH
+  | (Exclude<Name, MIDI | PUSH> extends never
       ? never
       : GenericPermissionDescriptor<Exclude<Name, MIDI | PUSH>>);
 
