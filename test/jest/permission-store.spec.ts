@@ -173,4 +173,37 @@ describe("PermissionStore()", () => {
       });
     });
   });
+
+  describe("when created with default options", () => {
+    beforeEach(() => {
+      permissionStore = createPermissionStore();
+    });
+
+    it.each([
+      ["geolocation"],
+      ["notifications"],
+      ["persistent-storage"],
+      ["push"],
+      ["screen-wake-lock"],
+      ["xr-spatial-tracking"],
+    ] as const)(
+      "should create a permission store with the standard permissions (%s)",
+      (name) => {
+        expect(permissionStore.has({ name })).toBe(true);
+      },
+    );
+
+    it("should create a permission store that understands push descriptors with the userVisibleOnly property", () => {
+      expect(permissionStore.get(push)).toBe("prompt");
+      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("prompt");
+      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("prompt");
+
+      permissionStore.set(pushUserVisibleOnlyTrue, "denied");
+      permissionStore.set(pushUserVisibleOnlyFalse, "granted");
+
+      expect(permissionStore.get(push)).toBe("granted");
+      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("granted");
+      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("denied");
+    });
+  });
 });

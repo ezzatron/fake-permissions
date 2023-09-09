@@ -7,15 +7,36 @@ export interface PermissionStore {
 }
 
 export function createPermissionStore({
-  initialStates,
-  isMatchingDescriptor = (a, b) => a.name === b.name,
+  initialStates = new Map([
+    [{ name: "geolocation" }, "prompt"],
+    [{ name: "notifications" }, "prompt"],
+    [{ name: "persistent-storage" }, "prompt"],
+    [
+      { name: "push", userVisibleOnly: false } as PermissionDescriptor,
+      "prompt",
+    ],
+    [{ name: "push", userVisibleOnly: true } as PermissionDescriptor, "prompt"],
+    [{ name: "screen-wake-lock" }, "prompt"],
+    [{ name: "xr-spatial-tracking" }, "prompt"],
+  ]),
+
+  isMatchingDescriptor = (a, b) => {
+    if (a.name === "push" && b.name === "push") {
+      return (
+        ("userVisibleOnly" in a ? a.userVisibleOnly : false) ===
+        ("userVisibleOnly" in b ? b.userVisibleOnly : false)
+      );
+    }
+
+    return a.name === b.name;
+  },
 }: {
-  initialStates: Map<PermissionDescriptor, PermissionState>;
+  initialStates?: Map<PermissionDescriptor, PermissionState>;
   isMatchingDescriptor?: (
     a: PermissionDescriptor,
     b: PermissionDescriptor,
   ) => boolean;
-}): PermissionStore {
+} = {}): PermissionStore {
   const states = new Map(initialStates);
   const subscribers = new Set<Subscriber>();
 
@@ -78,39 +99,6 @@ export function createPermissionStore({
       }
     }
   }
-}
-
-export function createStandardPermissionStore(): PermissionStore {
-  return createPermissionStore({
-    initialStates: new Map([
-      [{ name: "geolocation" }, "prompt"],
-      [{ name: "notifications" }, "prompt"],
-      [{ name: "persistent-storage" }, "prompt"],
-      [
-        { name: "push", userVisibleOnly: false } as PermissionDescriptor,
-        "prompt",
-      ],
-      [
-        { name: "push", userVisibleOnly: true } as PermissionDescriptor,
-        "prompt",
-      ],
-      [{ name: "screen-wake-lock" }, "prompt"],
-      [{ name: "xr-spatial-tracking" }, "prompt"],
-    ]),
-
-    isMatchingDescriptor(a, b) {
-      if (a.name === "push" && b.name === "push") {
-        // a.userVisibleOnly is always present (comes from an initialStates key)
-        return (
-          "userVisibleOnly" in a &&
-          a.userVisibleOnly ===
-            ("userVisibleOnly" in b ? b.userVisibleOnly : false)
-        );
-      }
-
-      return a.name === b.name;
-    },
-  });
 }
 
 type Subscriber = (
