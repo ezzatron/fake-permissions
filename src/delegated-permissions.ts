@@ -9,6 +9,7 @@ export function createDelegatedPermissions({
 }): {
   permissions: globalThis.Permissions;
   selectDelegate: SelectDelegate;
+  isDelegateSelected: IsDelegateSelected;
 } {
   let [delegate] = delegates;
   if (!delegate) throw new TypeError("No delegates provided");
@@ -45,10 +46,15 @@ export function createDelegatedPermissions({
         }
       }
     },
+
+    isDelegateSelected(query) {
+      return query === delegate;
+    },
   };
 }
 
 export type SelectDelegate = (delegate: globalThis.Permissions) => void;
+export type IsDelegateSelected = (delegate: globalThis.Permissions) => boolean;
 
 type PermissionParameters = {
   delegates: globalThis.Permissions[];

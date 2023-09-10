@@ -1,5 +1,6 @@
 import { jest } from "@jest/globals";
 import {
+  IsDelegateSelected,
   PermissionStore,
   SelectDelegate,
   createDelegatedPermissions,
@@ -24,6 +25,7 @@ describe("Delegated permissions", () => {
   let delegateB: Permissions;
   let permissions: Permissions;
   let selectDelegate: SelectDelegate;
+  let isDelegateSelected: IsDelegateSelected;
   let statusA: PermissionStatus;
   let statusB: PermissionStatus;
   let statusC: PermissionStatus;
@@ -50,9 +52,10 @@ describe("Delegated permissions", () => {
     delegateA = createPermissions({ permissionStore: permissionStoreA });
     delegateB = createPermissions({ permissionStore: permissionStoreB });
 
-    ({ permissions, selectDelegate } = createDelegatedPermissions({
-      delegates: [delegateA, delegateB],
-    }));
+    ({ permissions, selectDelegate, isDelegateSelected } =
+      createDelegatedPermissions({
+        delegates: [delegateA, delegateB],
+      }));
   });
 
   it("cannot be instantiated directly", async () => {
@@ -83,6 +86,11 @@ describe("Delegated permissions", () => {
   });
 
   describe("before selecting a delegate", () => {
+    it("has selected the first delegate", () => {
+      expect(isDelegateSelected(delegateA)).toBe(true);
+      expect(isDelegateSelected(delegateB)).toBe(false);
+    });
+
     describe("when querying a permission", () => {
       beforeEach(async () => {
         statusA = await permissions.query(permissionA);
@@ -254,6 +262,11 @@ describe("Delegated permissions", () => {
   describe("after selecting a delegate", () => {
     beforeEach(() => {
       selectDelegate(delegateB);
+    });
+
+    it("has selected the specified delegate", () => {
+      expect(isDelegateSelected(delegateB)).toBe(true);
+      expect(isDelegateSelected(delegateA)).toBe(false);
     });
 
     describe("when querying a permission", () => {
