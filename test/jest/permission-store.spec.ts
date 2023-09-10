@@ -206,4 +206,28 @@ describe("PermissionStore()", () => {
       expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("denied");
     });
   });
+
+  describe("when created with a custom initialStates option", () => {
+    beforeEach(() => {
+      permissionStore = createPermissionStore({
+        initialStates: new Map([
+          [push, "granted"],
+          [pushUserVisibleOnlyTrue, "prompt"],
+        ]),
+      });
+    });
+
+    it("should create a permission store that understands non-normalized push descriptors in the initial states", () => {
+      expect(permissionStore.get(push)).toBe("granted");
+      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("granted");
+      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("prompt");
+
+      permissionStore.set(pushUserVisibleOnlyFalse, "prompt");
+      permissionStore.set(pushUserVisibleOnlyTrue, "denied");
+
+      expect(permissionStore.get(push)).toBe("prompt");
+      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("prompt");
+      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("denied");
+    });
+  });
 });
