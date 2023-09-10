@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [v0.6.0] - 2023-09-10
+
+[v0.6.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.6.0
+
+### Added
+
+- Added an `isDelegateSelected()` query function to created delegates.
+
 ## [v0.5.0] - 2023-09-09
 
 [v0.5.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.5.0
