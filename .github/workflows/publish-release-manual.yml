@@ -18,4 +18,5 @@ jobs:
       contents: write
       discussions: write
     with:
+      discussionCategory: Releases
       tag: ${{ github.event.inputs.tag }}
