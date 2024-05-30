@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { createPermissionStore, createPermissions } from "../../src/index.js";
 
 describe("Permissions", () => {

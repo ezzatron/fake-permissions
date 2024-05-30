@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   IsDelegateSelected,
   PermissionStore,
@@ -7,6 +7,7 @@ import {
   createPermissionStore,
   createPermissions,
 } from "../../src/index.js";
+import { mockFn, type Mocked } from "../helpers.js";
 
 describe("Delegated permissions", () => {
   const permissionA: PermissionDescriptor = {
@@ -29,9 +30,9 @@ describe("Delegated permissions", () => {
   let statusA: PermissionStatus;
   let statusB: PermissionStatus;
   let statusC: PermissionStatus;
-  let listenerA: jest.Mock;
-  let listenerB: jest.Mock;
-  let listenerC: jest.Mock;
+  let listenerA: Mocked;
+  let listenerB: Mocked;
+  let listenerC: Mocked;
 
   beforeEach(() => {
     permissionStoreA = createPermissionStore({
@@ -97,9 +98,9 @@ describe("Delegated permissions", () => {
         statusB = await permissions.query(permissionB);
         statusC = await permissions.query(permissionC);
 
-        listenerA = jest.fn();
-        listenerB = jest.fn();
-        listenerC = jest.fn();
+        listenerA = mockFn();
+        listenerB = mockFn();
+        listenerC = mockFn();
 
         statusA.addEventListener("change", listenerA);
         statusB.addEventListener("change", listenerB);
@@ -200,9 +201,9 @@ describe("Delegated permissions", () => {
 
       describe("when a change event listener is added by setting onchange", () => {
         beforeEach(() => {
-          listenerA = jest.fn();
-          listenerB = jest.fn();
-          listenerC = jest.fn();
+          listenerA = mockFn();
+          listenerB = mockFn();
+          listenerC = mockFn();
 
           statusA.onchange = listenerA;
           statusB.onchange = listenerB;
@@ -238,7 +239,7 @@ describe("Delegated permissions", () => {
 
       describe("when a non-change event listener is added", () => {
         beforeEach(() => {
-          listenerA = jest.fn();
+          listenerA = mockFn();
           statusA.addEventListener("event-a", listenerA);
         });
 
@@ -275,9 +276,9 @@ describe("Delegated permissions", () => {
         statusB = await permissions.query(permissionB);
         statusC = await permissions.query(permissionC);
 
-        listenerA = jest.fn();
-        listenerB = jest.fn();
-        listenerC = jest.fn();
+        listenerA = mockFn();
+        listenerB = mockFn();
+        listenerC = mockFn();
 
         statusA.addEventListener("change", listenerA);
         statusB.addEventListener("change", listenerB);

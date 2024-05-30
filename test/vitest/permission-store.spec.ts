@@ -1,5 +1,6 @@
-import { jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { PermissionStore, createPermissionStore } from "../../src/index.js";
+import { mockFn, type Mocked } from "../helpers.js";
 
 describe("PermissionStore()", () => {
   const geolocation: PermissionDescriptor = { name: "geolocation" };
@@ -137,10 +138,10 @@ describe("PermissionStore()", () => {
   });
 
   describe("subscribe()", () => {
-    let subscriber: jest.Mock;
+    let subscriber: Mocked;
 
     beforeEach(() => {
-      permissionStore.subscribe((subscriber = jest.fn()));
+      permissionStore.subscribe((subscriber = mockFn()));
     });
 
     afterEach(() => {

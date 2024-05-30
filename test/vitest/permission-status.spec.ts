@@ -1,4 +1,12 @@
-import { jest } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type MockInstance,
+} from "vitest";
 import {
   PermissionStore,
   User,
@@ -6,6 +14,7 @@ import {
   createPermissions,
   createUser,
 } from "../../src/index.js";
+import { mockFn, type Mocked } from "../helpers.js";
 
 describe("PermissionStatus", () => {
   const permissionA: PermissionDescriptor = {
@@ -19,7 +28,10 @@ describe("PermissionStatus", () => {
   };
 
   let permissionStore: PermissionStore;
-  let subscribe: jest.SpiedFunction<typeof permissionStore.subscribe>;
+  let subscribe: MockInstance<
+    Parameters<PermissionStore["subscribe"]>,
+    ReturnType<PermissionStore["subscribe"]>
+  >;
 
   let user: User;
   let permissions: Permissions;
@@ -35,7 +47,7 @@ describe("PermissionStatus", () => {
         [permissionC, "denied"],
       ]),
     });
-    subscribe = jest.spyOn(permissionStore, "subscribe");
+    subscribe = vi.spyOn(permissionStore, "subscribe");
 
     user = createUser({ permissionStore });
     permissions = createPermissions({ permissionStore });
@@ -85,12 +97,12 @@ describe("PermissionStatus", () => {
   });
 
   describe("when a change event listener is added by setting onchange", () => {
-    let listenerA: jest.Mock;
-    let listenerB: jest.Mock;
+    let listenerA: Mocked;
+    let listenerB: Mocked;
 
     beforeEach(() => {
-      listenerA = jest.fn();
-      listenerB = jest.fn();
+      listenerA = mockFn();
+      listenerB = mockFn();
 
       statusA.onchange = listenerA;
       statusB.onchange = listenerA;
@@ -149,10 +161,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when a change event listener is added by calling addEventListener()", () => {
-    let listener: jest.Mock;
+    let listener: Mocked;
 
     beforeEach(() => {
-      listener = jest.fn();
+      listener = mockFn();
       statusA.addEventListener("change", listener);
       statusB.addEventListener("change", listener);
       statusC.addEventListener("change", listener);
@@ -222,10 +234,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when an object-based change event listener is added by calling addEventListener()", () => {
-    let listener: { handleEvent: jest.Mock };
+    let listener: { handleEvent: Mocked };
 
     beforeEach(() => {
-      listener = { handleEvent: jest.fn() };
+      listener = { handleEvent: mockFn() };
       statusA.addEventListener("change", listener);
       statusB.addEventListener("change", listener);
       statusC.addEventListener("change", listener);
@@ -295,10 +307,10 @@ describe("PermissionStatus", () => {
   });
 
   describe('when a change event listener is added by calling addEventListener() with the "once" option', () => {
-    let listener: jest.Mock;
+    let listener: Mocked;
 
     beforeEach(() => {
-      listener = jest.fn();
+      listener = mockFn();
       statusA.addEventListener("change", listener, { once: true });
       statusB.addEventListener("change", listener, { once: true });
       statusC.addEventListener("change", listener, { once: true });
@@ -368,11 +380,11 @@ describe("PermissionStatus", () => {
   });
 
   describe('when a change event listener is added by calling addEventListener() with the "signal" option', () => {
-    let listener: jest.Mock;
+    let listener: Mocked;
     let controller: AbortController;
 
     beforeEach(() => {
-      listener = jest.fn();
+      listener = mockFn();
       controller = new AbortController();
       const { signal } = controller;
 
@@ -419,10 +431,10 @@ describe("PermissionStatus", () => {
   });
 
   describe('when a change event listener is added by calling addEventListener() in the "capture" phase', () => {
-    let listener: jest.Mock;
+    let listener: Mocked;
 
     beforeEach(() => {
-      listener = jest.fn();
+      listener = mockFn();
       statusA.addEventListener("change", listener, true);
       statusB.addEventListener("change", listener, true);
       statusC.addEventListener("change", listener, true);
@@ -508,10 +520,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when removeEventListener() is called with a change event listener that is not registered", () => {
-    let listener: jest.Mock;
+    let listener: Mocked;
 
     beforeEach(() => {
-      listener = jest.fn();
+      listener = mockFn();
     });
 
     it("has no effect", () => {
@@ -522,10 +534,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when a non-change event listener is added", () => {
-    let listener: jest.Mock;
+    let listener: Mocked;
 
     beforeEach(() => {
-      listener = jest.fn();
+      listener = mockFn();
       statusA.addEventListener("event-a", listener);
     });
 

@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   HandlePermissionRequest,
   PermissionStore,
@@ -6,6 +6,7 @@ import {
   createPermissionStore,
   createUser,
 } from "../../src/index.js";
+import { mockFn, type Mocked } from "../helpers.js";
 
 describe("User", () => {
   const permissionA: PermissionDescriptor = {
@@ -59,11 +60,12 @@ describe("User", () => {
   });
 
   describe("when a permission request callback is configured", () => {
-    let handlePermissionRequest: jest.Mock<HandlePermissionRequest>;
+    let handlePermissionRequest: Mocked<HandlePermissionRequest>;
 
     beforeEach(() => {
-      handlePermissionRequest = jest.fn(
-        async () => "granted" as PermissionState,
+      handlePermissionRequest = mockFn(
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        (async () => "granted") as HandlePermissionRequest,
       );
 
       user = createUser({ permissionStore, handlePermissionRequest });
