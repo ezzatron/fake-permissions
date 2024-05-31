@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import {
   HandlePermissionRequest,
   PermissionStore,
   User,
   createPermissionStore,
   createUser,
-} from "../../src/index.js";
+} from "fake-permissions";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockFn, type Mocked } from "../helpers.js";
 
 describe("User", () => {

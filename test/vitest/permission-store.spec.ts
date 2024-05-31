@@ -1,5 +1,5 @@
+import { PermissionStore, createPermissionStore } from "fake-permissions";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { PermissionStore, createPermissionStore } from "../../src/index.js";
 import { mockFn, type Mocked } from "../helpers.js";
 
 describe("PermissionStore()", () => {

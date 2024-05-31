@@ -1,4 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   IsDelegateSelected,
   PermissionStore,
@@ -6,7 +5,8 @@ import {
   createDelegatedPermissions,
   createPermissionStore,
   createPermissions,
-} from "../../src/index.js";
+} from "fake-permissions";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { mockFn, type Mocked } from "../helpers.js";
 
 describe("Delegated permissions", () => {

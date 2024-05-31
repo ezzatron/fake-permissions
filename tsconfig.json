@@ -5,6 +5,9 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "noEmitOnError": true,
+    "paths": {
+      "fake-permissions": ["./src/index.ts"]
+    },
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,

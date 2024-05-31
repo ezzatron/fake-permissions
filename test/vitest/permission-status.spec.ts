@@ -1,4 +1,11 @@
 import {
+  PermissionStore,
+  User,
+  createPermissionStore,
+  createPermissions,
+  createUser,
+} from "fake-permissions";
+import {
   afterEach,
   beforeEach,
   describe,
@@ -7,13 +14,6 @@ import {
   vi,
   type MockInstance,
 } from "vitest";
-import {
-  PermissionStore,
-  User,
-  createPermissionStore,
-  createPermissions,
-  createUser,
-} from "../../src/index.js";
 import { mockFn, type Mocked } from "../helpers.js";
 
 describe("PermissionStatus", () => {
