@@ -57,5 +57,7 @@ export class Permissions {
     });
   }
 
+  readonly [Symbol.toStringTag] = "Permissions";
+
   readonly #permissionStore: PermissionStore;
 }

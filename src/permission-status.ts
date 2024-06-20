@@ -64,6 +64,8 @@ export class PermissionStatus extends BaseEventTarget {
     if (this.#onchange) this.addEventListener("change", this.#onchange);
   }
 
+  readonly [Symbol.toStringTag] = "PermissionStatus";
+
   readonly #descriptor: PermissionDescriptor;
   readonly #permissionStore: PermissionStore;
   #onchange: EventListener | null;

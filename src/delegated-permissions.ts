@@ -100,6 +100,8 @@ export class Permissions {
     });
   }
 
+  readonly [Symbol.toStringTag] = "Permissions";
+
   readonly #delegates: globalThis.Permissions[];
   readonly #delegate: () => globalThis.Permissions;
   readonly #subscribe: (subscriber: Subscriber) => void;

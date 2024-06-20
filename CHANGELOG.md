@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Added [`Symbol.toStringTag`] methods to all `Permissions` and
+  `PermissionStatus` objects.
+
+[`Symbol.toStringTag`]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
+
 ## [v0.6.0] - 2023-09-10
 
 [v0.6.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.6.0

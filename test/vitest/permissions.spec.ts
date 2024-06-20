@@ -29,6 +29,12 @@ describe("Permissions", () => {
     };
   });
 
+  it("has a string tag", () => {
+    expect(Object.prototype.toString.call(permissions)).toBe(
+      "[object Permissions]",
+    );
+  });
+
   it("cannot be instantiated directly", () => {
     const call = () => {
       new (permissions.constructor as new (p: object) => unknown)({});

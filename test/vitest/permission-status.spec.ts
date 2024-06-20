@@ -57,6 +57,12 @@ describe("PermissionStatus", () => {
     statusC = await permissions.query(permissionC);
   });
 
+  it("has a string tag", () => {
+    expect(Object.prototype.toString.call(statusA)).toBe(
+      "[object PermissionStatus]",
+    );
+  });
+
   it("cannot be instantiated directly", () => {
     const call = () => {
       new (statusA.constructor as new (p: object) => unknown)({});
