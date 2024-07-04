@@ -41,9 +41,15 @@ export function createDelegatedPermissions({
       for (const subscriber of subscribers) {
         try {
           subscriber();
-        } catch {
-          // ignored
+          /* v8 ignore start: impossible to test under Vitest */
+        } catch (error) {
+          // Throw subscriber errors asynchronously, so that users will at least
+          // see it in the console and notice that their subscriber throws.
+          setTimeout(() => {
+            throw error;
+          }, 0);
         }
+        /* v8 ignore stop */
       }
     },
 
