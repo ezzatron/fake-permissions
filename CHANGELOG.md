@@ -10,6 +10,15 @@ Versioning].
 
 ## Unreleased
 
+## [v0.6.2] - 2024-07-04
+
+[v0.6.2]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.6.2
+
+### Changed
+
+- Errors thrown from subscriber functions used in permissions delegates and
+  permission stores are now thrown asynchronously, instead of being discarded.
+
 ## [v0.6.1] - 2024-06-21
 
 [v0.6.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.6.1
