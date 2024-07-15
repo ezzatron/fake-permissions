@@ -6,8 +6,15 @@ import {
   createPermissionStore,
   createPermissions,
 } from "fake-permissions";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mockFn, type Mocked } from "../helpers.js";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type Mock,
+} from "vitest";
 
 describe("Delegated permissions", () => {
   const permissionA: PermissionDescriptor = {
@@ -30,9 +37,9 @@ describe("Delegated permissions", () => {
   let statusA: PermissionStatus;
   let statusB: PermissionStatus;
   let statusC: PermissionStatus;
-  let listenerA: Mocked;
-  let listenerB: Mocked;
-  let listenerC: Mocked;
+  let listenerA: Mock;
+  let listenerB: Mock;
+  let listenerC: Mock;
 
   beforeEach(() => {
     permissionStoreA = createPermissionStore({
@@ -104,9 +111,9 @@ describe("Delegated permissions", () => {
         statusB = await permissions.query(permissionB);
         statusC = await permissions.query(permissionC);
 
-        listenerA = mockFn();
-        listenerB = mockFn();
-        listenerC = mockFn();
+        listenerA = vi.fn();
+        listenerB = vi.fn();
+        listenerC = vi.fn();
 
         statusA.addEventListener("change", listenerA);
         statusB.addEventListener("change", listenerB);
@@ -207,9 +214,9 @@ describe("Delegated permissions", () => {
 
       describe("when a change event listener is added by setting onchange", () => {
         beforeEach(() => {
-          listenerA = mockFn();
-          listenerB = mockFn();
-          listenerC = mockFn();
+          listenerA = vi.fn();
+          listenerB = vi.fn();
+          listenerC = vi.fn();
 
           statusA.onchange = listenerA;
           statusB.onchange = listenerB;
@@ -245,7 +252,7 @@ describe("Delegated permissions", () => {
 
       describe("when a non-change event listener is added", () => {
         beforeEach(() => {
-          listenerA = mockFn();
+          listenerA = vi.fn();
           statusA.addEventListener("event-a", listenerA);
         });
 
@@ -282,9 +289,9 @@ describe("Delegated permissions", () => {
         statusB = await permissions.query(permissionB);
         statusC = await permissions.query(permissionC);
 
-        listenerA = mockFn();
-        listenerB = mockFn();
-        listenerC = mockFn();
+        listenerA = vi.fn();
+        listenerB = vi.fn();
+        listenerC = vi.fn();
 
         statusA.addEventListener("change", listenerA);
         statusB.addEventListener("change", listenerB);

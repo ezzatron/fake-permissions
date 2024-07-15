@@ -1,6 +1,13 @@
 import { PermissionStore, createPermissionStore } from "fake-permissions";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mockFn, type Mocked } from "../helpers.js";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type Mock,
+} from "vitest";
 
 describe("PermissionStore()", () => {
   const geolocation: PermissionDescriptor = { name: "geolocation" };
@@ -138,10 +145,10 @@ describe("PermissionStore()", () => {
   });
 
   describe("subscribe()", () => {
-    let subscriber: Mocked;
+    let subscriber: Mock;
 
     beforeEach(() => {
-      permissionStore.subscribe((subscriber = mockFn()));
+      permissionStore.subscribe((subscriber = vi.fn()));
     });
 
     afterEach(() => {

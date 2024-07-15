@@ -5,8 +5,7 @@ import {
   createPermissionStore,
   createUser,
 } from "fake-permissions";
-import { beforeEach, describe, expect, it } from "vitest";
-import { mockFn, type Mocked } from "../helpers.js";
+import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
 describe("User", () => {
   const permissionA: PermissionDescriptor = {
@@ -60,10 +59,10 @@ describe("User", () => {
   });
 
   describe("when a permission request callback is configured", () => {
-    let handlePermissionRequest: Mocked<HandlePermissionRequest>;
+    let handlePermissionRequest: Mock<HandlePermissionRequest>;
 
     beforeEach(() => {
-      handlePermissionRequest = mockFn(
+      handlePermissionRequest = vi.fn(
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         (async () => "granted") as HandlePermissionRequest,
       );

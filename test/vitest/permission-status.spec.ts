@@ -12,9 +12,9 @@ import {
   expect,
   it,
   vi,
+  type Mock,
   type MockInstance,
 } from "vitest";
-import { mockFn, type Mocked } from "../helpers.js";
 
 describe("PermissionStatus", () => {
   const permissionA: PermissionDescriptor = {
@@ -28,10 +28,7 @@ describe("PermissionStatus", () => {
   };
 
   let permissionStore: PermissionStore;
-  let subscribe: MockInstance<
-    Parameters<PermissionStore["subscribe"]>,
-    ReturnType<PermissionStore["subscribe"]>
-  >;
+  let subscribe: MockInstance<PermissionStore["subscribe"]>;
 
   let user: User;
   let permissions: Permissions;
@@ -103,12 +100,12 @@ describe("PermissionStatus", () => {
   });
 
   describe("when a change event listener is added by setting onchange", () => {
-    let listenerA: Mocked;
-    let listenerB: Mocked;
+    let listenerA: Mock;
+    let listenerB: Mock;
 
     beforeEach(() => {
-      listenerA = mockFn();
-      listenerB = mockFn();
+      listenerA = vi.fn();
+      listenerB = vi.fn();
 
       statusA.onchange = listenerA;
       statusB.onchange = listenerA;
@@ -167,10 +164,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when a change event listener is added by calling addEventListener()", () => {
-    let listener: Mocked;
+    let listener: Mock;
 
     beforeEach(() => {
-      listener = mockFn();
+      listener = vi.fn();
       statusA.addEventListener("change", listener);
       statusB.addEventListener("change", listener);
       statusC.addEventListener("change", listener);
@@ -240,10 +237,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when an object-based change event listener is added by calling addEventListener()", () => {
-    let listener: { handleEvent: Mocked };
+    let listener: { handleEvent: Mock };
 
     beforeEach(() => {
-      listener = { handleEvent: mockFn() };
+      listener = { handleEvent: vi.fn() };
       statusA.addEventListener("change", listener);
       statusB.addEventListener("change", listener);
       statusC.addEventListener("change", listener);
@@ -313,10 +310,10 @@ describe("PermissionStatus", () => {
   });
 
   describe('when a change event listener is added by calling addEventListener() with the "once" option', () => {
-    let listener: Mocked;
+    let listener: Mock;
 
     beforeEach(() => {
-      listener = mockFn();
+      listener = vi.fn();
       statusA.addEventListener("change", listener, { once: true });
       statusB.addEventListener("change", listener, { once: true });
       statusC.addEventListener("change", listener, { once: true });
@@ -386,11 +383,11 @@ describe("PermissionStatus", () => {
   });
 
   describe('when a change event listener is added by calling addEventListener() with the "signal" option', () => {
-    let listener: Mocked;
+    let listener: Mock;
     let controller: AbortController;
 
     beforeEach(() => {
-      listener = mockFn();
+      listener = vi.fn();
       controller = new AbortController();
       const { signal } = controller;
 
@@ -437,10 +434,10 @@ describe("PermissionStatus", () => {
   });
 
   describe('when a change event listener is added by calling addEventListener() in the "capture" phase', () => {
-    let listener: Mocked;
+    let listener: Mock;
 
     beforeEach(() => {
-      listener = mockFn();
+      listener = vi.fn();
       statusA.addEventListener("change", listener, true);
       statusB.addEventListener("change", listener, true);
       statusC.addEventListener("change", listener, true);
@@ -526,10 +523,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when removeEventListener() is called with a change event listener that is not registered", () => {
-    let listener: Mocked;
+    let listener: Mock;
 
     beforeEach(() => {
-      listener = mockFn();
+      listener = vi.fn();
     });
 
     it("has no effect", () => {
@@ -540,10 +537,10 @@ describe("PermissionStatus", () => {
   });
 
   describe("when a non-change event listener is added", () => {
-    let listener: Mocked;
+    let listener: Mock;
 
     beforeEach(() => {
-      listener = mockFn();
+      listener = vi.fn();
       statusA.addEventListener("event-a", listener);
     });
 
