@@ -163,7 +163,7 @@ export class BaseEventTarget extends EventTarget {
 export function normalizeOptions(
   options: AddEventListenerOptions | boolean | undefined,
 ): AddEventListenerOptions {
-  return typeof options === "boolean" ? { capture: options } : options ?? {};
+  return typeof options === "boolean" ? { capture: options } : (options ?? {});
 }
 
 type ListenersByType = Map<string, Listeners>;
