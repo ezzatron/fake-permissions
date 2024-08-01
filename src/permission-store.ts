@@ -1,10 +1,10 @@
-export interface PermissionStore {
+export type PermissionStore = {
   has(descriptor: PermissionDescriptor): boolean;
   get(descriptor: PermissionDescriptor): PermissionState;
   set(descriptor: PermissionDescriptor, state: PermissionState): void;
   subscribe(subscriber: Subscriber): void;
   unsubscribe(subscriber: Subscriber): void;
-}
+};
 
 export function createPermissionStore({
   initialStates = new Map([

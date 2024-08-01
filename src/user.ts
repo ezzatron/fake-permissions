@@ -1,12 +1,12 @@
 import { HandlePermissionRequest } from "./handle-permission-request.js";
 import { PermissionStore } from "./permission-store.js";
 
-export interface User {
+export type User = {
   grantPermission(descriptor: PermissionDescriptor): void;
   denyPermission(descriptor: PermissionDescriptor): void;
   resetPermission(descriptor: PermissionDescriptor): void;
   requestPermission: HandlePermissionRequest;
-}
+};
 
 export function createUser({
   permissionStore,
