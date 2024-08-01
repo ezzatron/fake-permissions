@@ -44,15 +44,15 @@ Versioning].
 
 ### Changed
 
-- **\[BC]** The default values for the `initialStates` and
+- **\[BREAKING]** The default values for the `initialStates` and
   `isMatchingDescriptor` options of `createPermissionStore()` function have
   changed to match the old behavior of `createStandardPermissionStore()`.
 
 ### Removed
 
-- **\[BC]** Removed `createStandardPermissionStore()`. It is no longer needed,
-  since `createPermissionStore()` now has sensible defaults for all of its
-  options.
+- **\[BREAKING]** Removed `createStandardPermissionStore()`. It is no longer
+  needed, since `createPermissionStore()` now has sensible defaults for all of
+  its options.
 
 ## [v0.4.0] - 2023-09-09
 
@@ -60,13 +60,13 @@ Versioning].
 
 ### Changed
 
-- **\[BC]** This package no longer implements its own generic types for
+- **\[BREAKING]** This package no longer implements its own generic types for
   permissions, and instead uses the built-in ones from `@types/web`.
 
 ### Removed
 
-- **\[BC]** Removed permission name constants.
-- **\[BC]** Removed permission status constants.
+- **\[BREAKING]** Removed permission name constants.
+- **\[BREAKING]** Removed permission status constants.
 
 ## [v0.3.1] - 2023-09-09
 
