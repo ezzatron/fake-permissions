@@ -1,19 +1,24 @@
-import { HandlePermissionRequest } from "./handle-permission-request.js";
+import {
+  createAccessDialog,
+  type HandleAccessRequest,
+} from "./access-dialog.js";
 import { PermissionStore } from "./permission-store.js";
 
 export type User = {
   grantPermission(descriptor: PermissionDescriptor): void;
   denyPermission(descriptor: PermissionDescriptor): void;
   resetPermission(descriptor: PermissionDescriptor): void;
-  requestPermission: HandlePermissionRequest;
+  requestAccess(descriptor: PermissionDescriptor): Promise<boolean>;
 };
 
 export function createUser({
   permissionStore,
-  handlePermissionRequest,
+  handleAccessRequest = async (dialog) => {
+    dialog.dismiss();
+  },
 }: {
   permissionStore: PermissionStore;
-  handlePermissionRequest?: HandlePermissionRequest;
+  handleAccessRequest?: HandleAccessRequest;
 }): User {
   return {
     grantPermission(descriptor) {
@@ -28,20 +33,24 @@ export function createUser({
       permissionStore.set(descriptor, "prompt");
     },
 
-    async requestPermission(descriptor) {
+    async requestAccess(descriptor) {
       const state = permissionStore.get(descriptor);
-      if (state !== "prompt") return state;
 
-      if (handlePermissionRequest) {
-        const nextState = await handlePermissionRequest(descriptor);
-        if (nextState !== state) permissionStore.set(descriptor, nextState);
+      if (state === "granted") return true;
+      if (state === "denied") return false;
 
-        return nextState;
+      const dialog = createAccessDialog();
+      await handleAccessRequest(dialog, descriptor);
+
+      if (!dialog.result) return false;
+
+      const { shouldAllow, shouldPersist } = dialog.result;
+
+      if (shouldPersist) {
+        permissionStore.set(descriptor, shouldAllow ? "granted" : "denied");
       }
 
-      permissionStore.set(descriptor, "denied");
-
-      return "denied";
+      return shouldAllow;
     },
   };
 }

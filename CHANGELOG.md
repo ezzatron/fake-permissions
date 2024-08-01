@@ -12,9 +12,30 @@ Versioning].
 
 ### Changed
 
+- **\[BREAKING]** The `handlePermissionRequest` option of the `createUser()`
+  function has been renamed to `handleAccessRequest`.
+- **\[BREAKING]** The `HandlePermissionRequest` function type has been renamed
+  to `HandleAccessRequest`, and its signature has changed:
+  - The function is now always asynchronous.
+  - The first parameter is now an `AccessDialog` object, with methods
+    `dialog.dismiss()`, `dialog.allow()`, and `dialog.deny()`. The
+    `dialog.allow()` and `dialog.deny()` methods both accept a single parameter
+    `shouldPersist` which can be used to control whether the access dialog
+    outcome should affect the permission state.
+  - The permission descriptor is now the second parameter.
+  - The return type is now `Promise<void>`.
+- **\[BREAKING]** The `user.requestPermission()` method has been renamed to
+  `user.requestAccess()`, and now returns a `Promise<boolean>` instead of a
+  `Promise<PermissionStatus>`. This boolean value indicates whether the user
+  allowed access or not, but does not indicate whether the permission state
+  changed as a result of the user's decision.
 - **\[BREAKING]** The `PermissionStore` type is now a type, instead of an
   interface.
 - **\[BREAKING]** The `User` type is now a type, instead of an interface.
+
+### Added
+
+- Added the `AccessDialog` type.
 
 ## [v0.6.2] - 2024-07-04
 
