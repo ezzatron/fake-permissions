@@ -10,6 +10,12 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **\[BREAKING]** The `PermissionStore` type is now a type, instead of an
+  interface.
+- **\[BREAKING]** The `User` type is now a type, instead of an interface.
+
 ## [v0.6.2] - 2024-07-04
 
 [v0.6.2]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.6.2
