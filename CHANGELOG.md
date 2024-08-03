@@ -137,6 +137,7 @@ user.setAccessRequestHandler(async (dialog) => {
 
 - Added [permission masking].
 - Added the `user.setAccessRequestHandler()` method.
+- Added the `permissionStore.isMatchingDescriptor()` method.
 - Added the `PermissionsMask` and `PermissionMask` types.
 - Added the `AccessDialog` type.
 
