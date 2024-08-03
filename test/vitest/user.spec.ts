@@ -116,7 +116,7 @@ describe("User", () => {
       it("calls the callback with a dialog and the permission descriptor", async () => {
         await user.requestAccess(permissionA);
 
-        expect(handleAccessRequest).toHaveBeenCalledWith(
+        expect(handleAccessRequest).toBeCalledWith(
           expect.objectContaining({
             dismiss: expect.any(Function) as () => void,
             allow: expect.any(Function) as () => void,
@@ -232,7 +232,7 @@ describe("User", () => {
       it("does not call the callback", async () => {
         await user.requestAccess(permissionB);
 
-        expect(handleAccessRequest).not.toHaveBeenCalled();
+        expect(handleAccessRequest).not.toBeCalled();
       });
 
       it("allows access and leaves the permission unchanged", async () => {
@@ -245,7 +245,7 @@ describe("User", () => {
       it("does not call the callback", async () => {
         await user.requestAccess(permissionC);
 
-        expect(handleAccessRequest).not.toHaveBeenCalled();
+        expect(handleAccessRequest).not.toBeCalled();
       });
 
       it("denies access and leaves the permission unchanged", async () => {

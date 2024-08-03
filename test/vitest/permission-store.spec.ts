@@ -161,11 +161,11 @@ describe("PermissionStore()", () => {
       });
 
       it("calls the subscriber", () => {
-        expect(subscriber).toHaveBeenCalledTimes(1);
+        expect(subscriber).toBeCalledTimes(1);
       });
 
       it("calls the subscriber with a callback for matching the descriptor", () => {
-        expect(subscriber).toHaveBeenCalledWith(
+        expect(subscriber).toBeCalledWith(
           expect.any(Function),
           "denied",
           "granted",
@@ -191,7 +191,7 @@ describe("PermissionStore()", () => {
       });
 
       it("does not call the subscriber", () => {
-        expect(subscriber).toHaveBeenCalledTimes(0);
+        expect(subscriber).toBeCalledTimes(0);
       });
     });
   });

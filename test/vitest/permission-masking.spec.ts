@@ -123,7 +123,7 @@ describe("Permission masking", () => {
       });
 
       it("does not dispatch an event to the listener", () => {
-        expect(listener).toHaveBeenCalledTimes(0);
+        expect(listener).toBeCalledTimes(0);
       });
     });
 
@@ -138,7 +138,7 @@ describe("Permission masking", () => {
       });
 
       it("dispatches an event to the listener", () => {
-        expect(listener).toHaveBeenCalledTimes(3);
+        expect(listener).toBeCalledTimes(3);
       });
     });
   });

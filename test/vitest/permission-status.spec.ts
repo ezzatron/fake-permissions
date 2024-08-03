@@ -95,7 +95,7 @@ describe("PermissionStatus", () => {
 
   describe("before adding a change event listener", () => {
     it("does not subscribe to the permission store", () => {
-      expect(subscribe).not.toHaveBeenCalled();
+      expect(subscribe).not.toBeCalled();
     });
   });
 
@@ -119,7 +119,7 @@ describe("PermissionStatus", () => {
     });
 
     it("subscribes to the permission store", () => {
-      expect(subscribe).toHaveBeenCalledTimes(3);
+      expect(subscribe).toBeCalledTimes(3);
     });
 
     it("can be read", () => {
@@ -134,7 +134,7 @@ describe("PermissionStatus", () => {
       });
 
       it("dispatches an event to the listener", () => {
-        expect(listenerA).toHaveBeenCalledTimes(3);
+        expect(listenerA).toBeCalledTimes(3);
       });
     });
 
@@ -153,11 +153,11 @@ describe("PermissionStatus", () => {
         });
 
         it("does not dispatch an event to the old listener", () => {
-          expect(listenerA).toHaveBeenCalledTimes(0);
+          expect(listenerA).toBeCalledTimes(0);
         });
 
         it("dispatches an event to the new listener", () => {
-          expect(listenerB).toHaveBeenCalledTimes(3);
+          expect(listenerB).toBeCalledTimes(3);
         });
       });
     });
@@ -180,7 +180,7 @@ describe("PermissionStatus", () => {
     });
 
     it("subscribes to the permission store", () => {
-      expect(subscribe).toHaveBeenCalledTimes(3);
+      expect(subscribe).toBeCalledTimes(3);
     });
 
     describe("when the user changes the permission state", () => {
@@ -191,7 +191,7 @@ describe("PermissionStatus", () => {
       });
 
       it("dispatches an event to the listener", () => {
-        expect(listener).toHaveBeenCalledTimes(3);
+        expect(listener).toBeCalledTimes(3);
       });
     });
 
@@ -210,7 +210,7 @@ describe("PermissionStatus", () => {
         });
 
         it("dispatches an event to the listener only once", () => {
-          expect(listener).toHaveBeenCalledTimes(3);
+          expect(listener).toBeCalledTimes(3);
         });
       });
     });
@@ -230,7 +230,7 @@ describe("PermissionStatus", () => {
         });
 
         it("does not dispatch an event to the listener", () => {
-          expect(listener).toHaveBeenCalledTimes(0);
+          expect(listener).toBeCalledTimes(0);
         });
       });
     });
@@ -253,7 +253,7 @@ describe("PermissionStatus", () => {
     });
 
     it("subscribes to the permission store", () => {
-      expect(subscribe).toHaveBeenCalledTimes(3);
+      expect(subscribe).toBeCalledTimes(3);
     });
 
     describe("when the user changes the permission state", () => {
@@ -264,7 +264,7 @@ describe("PermissionStatus", () => {
       });
 
       it("dispatches an event to the listener", () => {
-        expect(listener.handleEvent).toHaveBeenCalledTimes(3);
+        expect(listener.handleEvent).toBeCalledTimes(3);
       });
     });
 
@@ -283,7 +283,7 @@ describe("PermissionStatus", () => {
         });
 
         it("dispatches an event to the listener only once", () => {
-          expect(listener.handleEvent).toHaveBeenCalledTimes(3);
+          expect(listener.handleEvent).toBeCalledTimes(3);
         });
       });
     });
@@ -303,7 +303,7 @@ describe("PermissionStatus", () => {
         });
 
         it("does not dispatch an event to the listener", () => {
-          expect(listener.handleEvent).toHaveBeenCalledTimes(0);
+          expect(listener.handleEvent).toBeCalledTimes(0);
         });
       });
     });
@@ -337,7 +337,7 @@ describe("PermissionStatus", () => {
       });
 
       it("dispatches an event to the listener only once", () => {
-        expect(listener).toHaveBeenCalledTimes(3);
+        expect(listener).toBeCalledTimes(3);
       });
     });
 
@@ -356,7 +356,7 @@ describe("PermissionStatus", () => {
         });
 
         it("dispatches an event to the listener only once", () => {
-          expect(listener).toHaveBeenCalledTimes(3);
+          expect(listener).toBeCalledTimes(3);
         });
       });
     });
@@ -376,7 +376,7 @@ describe("PermissionStatus", () => {
         });
 
         it("does not dispatch an event to the listener", () => {
-          expect(listener).toHaveBeenCalledTimes(0);
+          expect(listener).toBeCalledTimes(0);
         });
       });
     });
@@ -410,7 +410,7 @@ describe("PermissionStatus", () => {
       });
 
       it("dispatches an event to the listener", () => {
-        expect(listener).toHaveBeenCalledTimes(3);
+        expect(listener).toBeCalledTimes(3);
       });
     });
 
@@ -427,7 +427,7 @@ describe("PermissionStatus", () => {
         });
 
         it("does not dispatch an event to the listener", () => {
-          expect(listener).toHaveBeenCalledTimes(0);
+          expect(listener).toBeCalledTimes(0);
         });
       });
     });
@@ -457,7 +457,7 @@ describe("PermissionStatus", () => {
       });
 
       it("dispatches an event to the listener", () => {
-        expect(listener).toHaveBeenCalledTimes(3);
+        expect(listener).toBeCalledTimes(3);
       });
     });
 
@@ -476,7 +476,7 @@ describe("PermissionStatus", () => {
         });
 
         it("dispatches an event to the listener only once", () => {
-          expect(listener).toHaveBeenCalledTimes(3);
+          expect(listener).toBeCalledTimes(3);
         });
       });
     });
@@ -496,7 +496,7 @@ describe("PermissionStatus", () => {
         });
 
         it("dispatches an event to the listener in both phases", () => {
-          expect(listener).toHaveBeenCalledTimes(6);
+          expect(listener).toBeCalledTimes(6);
         });
       });
     });
@@ -516,7 +516,7 @@ describe("PermissionStatus", () => {
         });
 
         it("does not dispatch an event to the listener", () => {
-          expect(listener).toHaveBeenCalledTimes(0);
+          expect(listener).toBeCalledTimes(0);
         });
       });
     });
@@ -549,7 +549,7 @@ describe("PermissionStatus", () => {
     });
 
     it("does not subscribe to the permission store", () => {
-      expect(subscribe).not.toHaveBeenCalled();
+      expect(subscribe).not.toBeCalled();
     });
 
     describe("when the relevant event is dispatched", () => {
@@ -558,7 +558,7 @@ describe("PermissionStatus", () => {
       });
 
       it("dispatches the event to the listener", () => {
-        expect(listener).toHaveBeenCalledTimes(1);
+        expect(listener).toBeCalledTimes(1);
       });
     });
 
@@ -573,7 +573,7 @@ describe("PermissionStatus", () => {
         });
 
         it("dispatches the event to the listener only once", () => {
-          expect(listener).toHaveBeenCalledTimes(1);
+          expect(listener).toBeCalledTimes(1);
         });
       });
     });
@@ -589,7 +589,7 @@ describe("PermissionStatus", () => {
         });
 
         it("does not dispatch an event to the listener", () => {
-          expect(listener).toHaveBeenCalledTimes(0);
+          expect(listener).toBeCalledTimes(0);
         });
       });
     });

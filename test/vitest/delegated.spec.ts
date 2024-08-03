@@ -140,9 +140,9 @@ describe("Delegated permissions", () => {
         });
 
         it("dispatches change events", () => {
-          expect(listenerA).toHaveBeenCalledTimes(1);
-          expect(listenerB).toHaveBeenCalledTimes(1);
-          expect(listenerC).toHaveBeenCalledTimes(1);
+          expect(listenerA).toBeCalledTimes(1);
+          expect(listenerB).toBeCalledTimes(1);
+          expect(listenerC).toBeCalledTimes(1);
         });
 
         it("updates the state on the status to match the new state", () => {
@@ -160,9 +160,9 @@ describe("Delegated permissions", () => {
         });
 
         it("does not dispatch change events", () => {
-          expect(listenerA).toHaveBeenCalledTimes(0);
-          expect(listenerB).toHaveBeenCalledTimes(0);
-          expect(listenerC).toHaveBeenCalledTimes(0);
+          expect(listenerA).toBeCalledTimes(0);
+          expect(listenerB).toBeCalledTimes(0);
+          expect(listenerC).toBeCalledTimes(0);
         });
 
         it("does not update the state on the status", () => {
@@ -178,9 +178,9 @@ describe("Delegated permissions", () => {
         });
 
         it("dispatches change events", () => {
-          expect(listenerA).toHaveBeenCalledTimes(1);
-          expect(listenerB).toHaveBeenCalledTimes(1);
-          expect(listenerC).toHaveBeenCalledTimes(1);
+          expect(listenerA).toBeCalledTimes(1);
+          expect(listenerB).toBeCalledTimes(1);
+          expect(listenerC).toBeCalledTimes(1);
         });
 
         it("returns a status with a state that matches the selected delegate", () => {
@@ -200,9 +200,9 @@ describe("Delegated permissions", () => {
         });
 
         it("does not dispatch change events", () => {
-          expect(listenerA).toHaveBeenCalledTimes(0);
-          expect(listenerB).toHaveBeenCalledTimes(0);
-          expect(listenerC).toHaveBeenCalledTimes(0);
+          expect(listenerA).toBeCalledTimes(0);
+          expect(listenerB).toBeCalledTimes(0);
+          expect(listenerC).toBeCalledTimes(0);
         });
 
         it("returns a status with a state that matches the first delegate", () => {
@@ -243,9 +243,9 @@ describe("Delegated permissions", () => {
           });
 
           it("dispatches change events", () => {
-            expect(listenerA).toHaveBeenCalledTimes(1);
-            expect(listenerB).toHaveBeenCalledTimes(1);
-            expect(listenerC).toHaveBeenCalledTimes(1);
+            expect(listenerA).toBeCalledTimes(1);
+            expect(listenerB).toBeCalledTimes(1);
+            expect(listenerC).toBeCalledTimes(1);
           });
         });
       });
@@ -266,7 +266,7 @@ describe("Delegated permissions", () => {
           });
 
           it("dispatches the event to the listener", () => {
-            expect(listenerA).toHaveBeenCalledTimes(1);
+            expect(listenerA).toBeCalledTimes(1);
           });
         });
       });
@@ -312,9 +312,9 @@ describe("Delegated permissions", () => {
         });
 
         it("dispatches change events", () => {
-          expect(listenerA).toHaveBeenCalledTimes(1);
-          expect(listenerB).toHaveBeenCalledTimes(1);
-          expect(listenerC).toHaveBeenCalledTimes(1);
+          expect(listenerA).toBeCalledTimes(1);
+          expect(listenerB).toBeCalledTimes(1);
+          expect(listenerC).toBeCalledTimes(1);
         });
 
         it("updates the state on the status to match the new state", () => {
@@ -332,9 +332,9 @@ describe("Delegated permissions", () => {
         });
 
         it("does not dispatch change events", () => {
-          expect(listenerA).toHaveBeenCalledTimes(0);
-          expect(listenerB).toHaveBeenCalledTimes(0);
-          expect(listenerC).toHaveBeenCalledTimes(0);
+          expect(listenerA).toBeCalledTimes(0);
+          expect(listenerB).toBeCalledTimes(0);
+          expect(listenerC).toBeCalledTimes(0);
         });
 
         it("does not update the state on the status", () => {
