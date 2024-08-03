@@ -68,7 +68,7 @@ describe("Permission masking", () => {
     statusC = await permissions.query(structuredClone(permissionC));
   });
 
-  it("affects masked permission states", async () => {
+  it("affects masked permission states", () => {
     user.denyPermission(permissionB);
     user.grantPermission(permissionC);
 
@@ -80,7 +80,7 @@ describe("Permission masking", () => {
     expect(statusC.state).toBe("denied");
   });
 
-  it("doesn't affect unmasked permission states", async () => {
+  it("doesn't affect unmasked permission states", () => {
     expect(statusA.state).toBe("prompt");
     expect(statusB.state).toBe("prompt");
 

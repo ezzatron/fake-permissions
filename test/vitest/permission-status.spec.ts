@@ -69,18 +69,18 @@ describe("PermissionStatus", () => {
     expect(call).toThrow("Illegal constructor");
   });
 
-  it("has a name that matches the queried permission name", async () => {
+  it("has a name that matches the queried permission name", () => {
     expect(statusA.name).toBe("permission-a");
     expect(statusB.name).toBe("permission-b");
   });
 
-  it("has an initial state that matches the permission store", async () => {
+  it("has an initial state that matches the permission store", () => {
     expect(statusA.state).toBe("prompt");
     expect(statusB.state).toBe("granted");
   });
 
   describe("when the user changes the permission state", () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       user.grantPermission(permissionA);
       user.denyPermission(permissionB);
       user.resetPermission(permissionC);
@@ -127,7 +127,7 @@ describe("PermissionStatus", () => {
     });
 
     describe("when the user changes the permission state", () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         user.grantPermission(permissionA);
         user.denyPermission(permissionB);
         user.resetPermission(permissionC);
@@ -146,7 +146,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -184,7 +184,7 @@ describe("PermissionStatus", () => {
     });
 
     describe("when the user changes the permission state", () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         user.grantPermission(permissionA);
         user.denyPermission(permissionB);
         user.resetPermission(permissionC);
@@ -203,7 +203,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -223,7 +223,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -257,7 +257,7 @@ describe("PermissionStatus", () => {
     });
 
     describe("when the user changes the permission state", () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         user.grantPermission(permissionA);
         user.denyPermission(permissionB);
         user.resetPermission(permissionC);
@@ -276,7 +276,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -296,7 +296,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -326,7 +326,7 @@ describe("PermissionStatus", () => {
     });
 
     describe("when the user changes the permission state multiple times", () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         user.grantPermission(permissionA);
         user.denyPermission(permissionB);
         user.resetPermission(permissionC);
@@ -349,7 +349,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -369,7 +369,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -403,7 +403,7 @@ describe("PermissionStatus", () => {
     });
 
     describe("when the user changes the permission state", () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         user.grantPermission(permissionA);
         user.denyPermission(permissionB);
         user.resetPermission(permissionC);
@@ -420,7 +420,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -450,7 +450,7 @@ describe("PermissionStatus", () => {
     });
 
     describe("when the user changes the permission state", () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         user.grantPermission(permissionA);
         user.denyPermission(permissionB);
         user.resetPermission(permissionC);
@@ -469,7 +469,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -489,7 +489,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -509,7 +509,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the user changes the permission state", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           user.grantPermission(permissionA);
           user.denyPermission(permissionB);
           user.resetPermission(permissionC);
@@ -553,7 +553,7 @@ describe("PermissionStatus", () => {
     });
 
     describe("when the relevant event is dispatched", () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         statusA.dispatchEvent(new Event("event-a"));
       });
 
@@ -568,7 +568,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the relevant event is dispatched", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           statusA.dispatchEvent(new Event("event-a"));
         });
 
@@ -584,7 +584,7 @@ describe("PermissionStatus", () => {
       });
 
       describe("when the relevant event is dispatched", () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           statusA.dispatchEvent(new Event("event-a"));
         });
 
