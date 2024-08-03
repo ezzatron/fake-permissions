@@ -15,6 +15,8 @@ Versioning].
 - **\[BREAKING]** This release changes the way that permission access is
   requested, and how those requests are handled. See [Updated access request
   handling].
+- **\[BREAKING]** The default user response to permission access requests is now
+  to dismiss the request, instead of denying it.
 - **\[BREAKING]** The `handlePermissionRequest` option of the `createUser()`
   function has been renamed to `handleAccessRequest`.
 - **\[BREAKING]** The `HandlePermissionRequest` function type has been renamed
