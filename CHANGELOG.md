@@ -32,6 +32,11 @@ Versioning].
   `Promise<PermissionStatus>`. This boolean value indicates whether the user
   allowed access or not, but does not indicate whether the permission state
   changed as a result of the user's decision.
+- **\[BREAKING]** Repeated calls to `user.requestAccess()` that result in dialog
+  dismissals can now cause the permission state to be set to "denied"
+  automatically. The default threshold for this behavior is 3 dismissals, but
+  this can be configured using the `dismissDenyThreshold` option of the
+  `createUser()` function.
 - **\[BREAKING]** The `PermissionStore` type is now a type, instead of an
   interface.
 - **\[BREAKING]** The `User` type is now a type, instead of an interface.
@@ -75,6 +80,11 @@ const permissions = createPermissions({ permissionStore });
 
 const user = createUser({
   permissionStore,
+
+  // The number of times the user can dismiss a permission dialog before the
+  // permission state is set to "denied" automatically (default: 3)
+  dismissDenyThreshold: Infinity,
+
   handleAccessRequest: async (dialog, descriptor) => {
     // Allow access to geolocation, but don't change permission state
     if (descriptor.name === "geolocation") {

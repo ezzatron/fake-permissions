@@ -2,6 +2,7 @@ import {
   createAccessDialog,
   type HandleAccessRequest,
 } from "./access-dialog.js";
+import { byDescriptor } from "./mapping.js";
 import { PermissionStore } from "./permission-store.js";
 
 export type User = {
@@ -13,13 +14,17 @@ export type User = {
 
 export function createUser({
   permissionStore,
+  dismissDenyThreshold = 3,
   handleAccessRequest = async (dialog) => {
     dialog.dismiss();
   },
 }: {
   permissionStore: PermissionStore;
+  dismissDenyThreshold?: number;
   handleAccessRequest?: HandleAccessRequest;
 }): User {
+  const dismissCounts: Map<PermissionDescriptor, number> = new Map();
+
   return {
     grantPermission(descriptor) {
       permissionStore.set(descriptor, "granted");
@@ -30,6 +35,7 @@ export function createUser({
     },
 
     resetPermission(descriptor) {
+      dismissCounts.set(descriptor, 0);
       permissionStore.set(descriptor, "prompt");
     },
 
@@ -42,7 +48,13 @@ export function createUser({
       const dialog = createAccessDialog();
       await handleAccessRequest(dialog, descriptor);
 
-      if (!dialog.result) return false;
+      if (!dialog.result) {
+        if (incrementDismissCount(descriptor) >= dismissDenyThreshold) {
+          permissionStore.set(descriptor, "denied");
+        }
+
+        return false;
+      }
 
       const { shouldAllow, shouldPersist } = dialog.result;
 
@@ -53,4 +65,13 @@ export function createUser({
       return shouldAllow;
     },
   };
+
+  function incrementDismissCount(descriptor: PermissionDescriptor): number {
+    let count = byDescriptor(permissionStore, dismissCounts, descriptor) ?? 0;
+    ++count;
+
+    dismissCounts.set(descriptor, count);
+
+    return count;
+  }
 }

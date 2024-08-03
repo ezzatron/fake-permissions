@@ -1,6 +1,7 @@
+import { byDescriptor } from "./mapping.js";
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
-import type { PermissionMask, PermissionsMask } from "./permissions-mask.js";
+import type { PermissionsMask } from "./permissions-mask.js";
 
 type PermissionParameters = {
   mask?: PermissionsMask;
@@ -56,21 +57,9 @@ export class Permissions {
 
     return createPermissionStatus({
       descriptor,
-      mask: this.#findMask(descriptor),
+      mask: byDescriptor(this.#permissionStore, this.#mask, descriptor) ?? {},
       permissionStore: this.#permissionStore,
     });
-  }
-
-  #findMask(descriptor: PermissionDescriptor): PermissionMask {
-    for (const [maskDescriptor, mask] of this.#mask.entries()) {
-      if (
-        this.#permissionStore.isMatchingDescriptor(descriptor, maskDescriptor)
-      ) {
-        return mask;
-      }
-    }
-
-    return {};
   }
 
   readonly [Symbol.toStringTag] = "Permissions";

@@ -41,6 +41,38 @@ describe("User", () => {
         expect(await user.requestAccess(permissionA)).toBe(false);
         expect(permissionStore.get(permissionA)).toBe("prompt");
       });
+
+      describe("when the dialog is dismissed repeatedly", () => {
+        beforeEach(async () => {
+          await user.requestAccess(permissionA);
+          await user.requestAccess(permissionA);
+          await user.requestAccess(permissionA);
+        });
+
+        it("denies the permission automatically", () => {
+          expect(permissionStore.get(permissionA)).toBe("denied");
+        });
+
+        it("doesn't affect other permissions", async () => {
+          user.resetPermission(permissionB);
+
+          expect(await user.requestAccess(permissionB)).toBe(false);
+          expect(permissionStore.get(permissionB)).toBe("prompt");
+        });
+
+        describe("when the permission is reset", () => {
+          beforeEach(() => {
+            user.resetPermission(permissionA);
+          });
+
+          it("resets the dismissal count", async () => {
+            await user.requestAccess(permissionA);
+            await user.requestAccess(permissionA);
+
+            expect(permissionStore.get(permissionA)).toBe("prompt");
+          });
+        });
+      });
     });
 
     describe('when access is requested for a permission in the "granted" state', () => {
@@ -104,6 +136,42 @@ describe("User", () => {
         it("denies access and leaves the permission unchanged", async () => {
           expect(await user.requestAccess(permissionA)).toBe(false);
           expect(permissionStore.get(permissionA)).toBe("prompt");
+        });
+      });
+
+      describe("when the dialog is dismissed repeatedly", () => {
+        beforeEach(async () => {
+          handleAccessRequest.mockImplementation(async (dialog) => {
+            dialog.dismiss();
+          });
+
+          await user.requestAccess(permissionA);
+          await user.requestAccess(permissionA);
+          await user.requestAccess(permissionA);
+        });
+
+        it("denies the permission automatically", () => {
+          expect(permissionStore.get(permissionA)).toBe("denied");
+        });
+
+        it("doesn't affect other permissions", async () => {
+          user.resetPermission(permissionB);
+
+          expect(await user.requestAccess(permissionB)).toBe(false);
+          expect(permissionStore.get(permissionB)).toBe("prompt");
+        });
+
+        describe("when the permission is reset", () => {
+          beforeEach(() => {
+            user.resetPermission(permissionA);
+          });
+
+          it("resets the dismissal count", async () => {
+            await user.requestAccess(permissionA);
+            await user.requestAccess(permissionA);
+
+            expect(permissionStore.get(permissionA)).toBe("prompt");
+          });
         });
       });
 
@@ -184,6 +252,25 @@ describe("User", () => {
         expect(await user.requestAccess(permissionC)).toBe(false);
         expect(permissionStore.get(permissionC)).toBe("denied");
       });
+    });
+  });
+
+  describe("when a custom dismissal deny threshold is configured", () => {
+    beforeEach(() => {
+      user = createUser({
+        dismissDenyThreshold: 2,
+        permissionStore,
+      });
+    });
+
+    it("affects how many dismissed dialogs will cause permission denial", async () => {
+      await user.requestAccess(permissionA);
+
+      expect(permissionStore.get(permissionA)).toBe("prompt");
+
+      await user.requestAccess(permissionA);
+
+      expect(permissionStore.get(permissionA)).toBe("denied");
     });
   });
 });

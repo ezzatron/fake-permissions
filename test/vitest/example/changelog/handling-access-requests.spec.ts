@@ -27,6 +27,11 @@ describe("Handling access requests", () => {
 
     const user = createUser({
       permissionStore,
+
+      // The number of times the user can dismiss a permission dialog before the
+      // permission state is set to "denied" automatically (default: 3)
+      dismissDenyThreshold: Infinity,
+
       handleAccessRequest: async (dialog, descriptor) => {
         // Allow access to geolocation, but don't change permission state
         if (descriptor.name === "geolocation") {
