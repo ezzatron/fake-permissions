@@ -1,7 +1,13 @@
+type IsMatchingDescriptor = (
+  a: PermissionDescriptor,
+  b: PermissionDescriptor,
+) => boolean;
+
 export type PermissionStore = {
   has(descriptor: PermissionDescriptor): boolean;
   get(descriptor: PermissionDescriptor): PermissionState;
-  set(descriptor: PermissionDescriptor, state: PermissionState): void;
+  set(descriptor: PermissionDescriptor, toState: PermissionState): void;
+  isMatchingDescriptor: IsMatchingDescriptor;
   subscribe(subscriber: Subscriber): void;
   unsubscribe(subscriber: Subscriber): void;
 };
@@ -32,10 +38,7 @@ export function createPermissionStore({
   },
 }: {
   initialStates?: Map<PermissionDescriptor, PermissionState>;
-  isMatchingDescriptor?: (
-    a: PermissionDescriptor,
-    b: PermissionDescriptor,
-  ) => boolean;
+  isMatchingDescriptor?: IsMatchingDescriptor;
 } = {}): PermissionStore {
   const states = new Map(initialStates);
   const subscribers = new Set<Subscriber>();
@@ -58,18 +61,23 @@ export function createPermissionStore({
       return state;
     },
 
-    set(descriptor, state) {
+    set(descriptor, toState) {
       const existing = find(descriptor);
+      const fromState = existing && states.get(existing);
 
-      if (!existing) {
+      if (!fromState) {
         throw new TypeError(
           `No permission state for descriptor ${JSON.stringify(descriptor)}`,
         );
       }
 
-      states.set(existing, state);
-      dispatch(existing);
+      if (fromState === toState) return;
+
+      states.set(existing, toState);
+      dispatch(existing, toState, fromState);
     },
+
+    isMatchingDescriptor,
 
     subscribe(subscriber) {
       subscribers.add(subscriber);
@@ -88,12 +96,16 @@ export function createPermissionStore({
     return undefined;
   }
 
-  function dispatch(descriptor: PermissionDescriptor) {
+  function dispatch(
+    descriptor: PermissionDescriptor,
+    toState: PermissionState,
+    fromState: PermissionState,
+  ) {
     const isMatching = isMatchingDescriptor.bind(null, descriptor);
 
     for (const subscriber of subscribers) {
       try {
-        subscriber(isMatching);
+        subscriber(isMatching, toState, fromState);
         /* v8 ignore start: impossible to test under Vitest */
       } catch (error) {
         // Throw subscriber errors asynchronously, so that users will at least
@@ -109,4 +121,6 @@ export function createPermissionStore({
 
 type Subscriber = (
   isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
+  toState: PermissionState,
+  fromState: PermissionState,
 ) => void;

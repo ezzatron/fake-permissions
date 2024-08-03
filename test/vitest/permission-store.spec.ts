@@ -165,7 +165,11 @@ describe("PermissionStore()", () => {
       });
 
       it("calls the subscriber with a callback for matching the descriptor", () => {
-        expect(subscriber).toHaveBeenCalledWith(expect.any(Function));
+        expect(subscriber).toHaveBeenCalledWith(
+          expect.any(Function),
+          "denied",
+          "granted",
+        );
 
         const callback = subscriber.mock.calls[0][0] as (
           d: PermissionDescriptor,
@@ -178,6 +182,16 @@ describe("PermissionStore()", () => {
 
         expect(callback(geolocation)).toBe(false);
         expect(callback(geolocationWithExtra)).toBe(false);
+      });
+    });
+
+    describe("when a permission state is updated to the same state", () => {
+      beforeEach(() => {
+        permissionStore.set(pushUserVisibleOnlyFalse, "granted");
+      });
+
+      it("does not call the subscriber", () => {
+        expect(subscriber).toHaveBeenCalledTimes(0);
       });
     });
   });

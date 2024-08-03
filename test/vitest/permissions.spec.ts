@@ -1,4 +1,8 @@
-import { createPermissionStore, createPermissions } from "fake-permissions";
+import {
+  createPermissionStore,
+  createPermissions,
+  type PermissionStore,
+} from "fake-permissions";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Permissions", () => {
@@ -9,11 +13,12 @@ describe("Permissions", () => {
     name: "permission-b" as PermissionName,
   };
 
+  let permissionStore: PermissionStore;
   let permissions: Permissions;
   let callQueryWith: (...a: unknown[]) => () => Promise<unknown>;
 
   beforeEach(() => {
-    const permissionStore = createPermissionStore({
+    permissionStore = createPermissionStore({
       initialStates: new Map([
         [permissionA, "prompt"],
         [permissionB, "prompt"],

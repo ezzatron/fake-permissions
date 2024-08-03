@@ -1,7 +1,9 @@
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
+import type { PermissionMask, PermissionsMask } from "./permissions-mask.js";
 
 type PermissionParameters = {
+  mask?: PermissionsMask;
   permissionStore: PermissionStore;
 };
 
@@ -19,10 +21,11 @@ export class Permissions {
   /**
    * @deprecated Use the `createPermissions()` function instead.
    */
-  constructor({ permissionStore }: PermissionParameters) {
+  constructor({ mask = new Map(), permissionStore }: PermissionParameters) {
     if (!canConstruct) throw new TypeError("Illegal constructor");
     canConstruct = false;
 
+    this.#mask = mask;
     this.#permissionStore = permissionStore;
   }
 
@@ -53,11 +56,25 @@ export class Permissions {
 
     return createPermissionStatus({
       descriptor,
+      mask: this.#findMask(descriptor),
       permissionStore: this.#permissionStore,
     });
   }
 
+  #findMask(descriptor: PermissionDescriptor): PermissionMask {
+    for (const [maskDescriptor, mask] of this.#mask.entries()) {
+      if (
+        this.#permissionStore.isMatchingDescriptor(descriptor, maskDescriptor)
+      ) {
+        return mask;
+      }
+    }
+
+    return {};
+  }
+
   readonly [Symbol.toStringTag] = "Permissions";
 
+  readonly #mask: PermissionsMask;
   readonly #permissionStore: PermissionStore;
 }

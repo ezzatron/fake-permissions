@@ -5,5 +5,6 @@ export type {
   SelectDelegate,
 } from "./delegated-permissions.js";
 export * from "./permission-store.js";
+export type { PermissionsMask } from "./permissions-mask.js";
 export { createPermissions } from "./permissions.js";
 export * from "./user.js";

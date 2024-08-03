@@ -1,8 +1,10 @@
 import { BaseEventTarget } from "./event-target.js";
 import { PermissionStore } from "./permission-store.js";
+import type { PermissionMask } from "./permissions-mask.js";
 
 type PermissionStatusParameters = {
   descriptor: PermissionDescriptor;
+  mask: PermissionMask;
   permissionStore: PermissionStore;
 };
 
@@ -22,7 +24,11 @@ export class PermissionStatus extends BaseEventTarget {
   /**
    * @deprecated Use the `Permissions.query()` method instead.
    */
-  constructor({ descriptor, permissionStore }: PermissionStatusParameters) {
+  constructor({
+    descriptor,
+    mask,
+    permissionStore,
+  }: PermissionStatusParameters) {
     super({
       onListenerCountChange: (type, count) => {
         if (type !== "change") return;
@@ -40,18 +46,30 @@ export class PermissionStatus extends BaseEventTarget {
 
     this.name = descriptor.name;
     this.#descriptor = descriptor;
+    this.#mask = mask;
     this.#permissionStore = permissionStore;
     this.#onchange = null;
 
-    this.#handlePermissionStoreChange = (isMatchingDescriptor) => {
-      if (isMatchingDescriptor(this.#descriptor)) {
-        this.dispatchEvent(new Event("change"));
-      }
+    this.#handlePermissionStoreChange = (
+      isMatchingDescriptor,
+      toState,
+      fromState,
+    ) => {
+      if (!isMatchingDescriptor(this.#descriptor)) return;
+
+      const maskedToState = this.#mask[toState] ?? toState;
+      const maskedFromState = this.#mask[fromState] ?? fromState;
+
+      if (maskedToState === maskedFromState) return;
+
+      this.dispatchEvent(new Event("change"));
     };
   }
 
   get state(): PermissionState {
-    return this.#permissionStore.get(this.#descriptor);
+    const state = this.#permissionStore.get(this.#descriptor);
+
+    return this.#mask[state] ?? state;
   }
 
   get onchange(): EventListener | null {
@@ -67,9 +85,12 @@ export class PermissionStatus extends BaseEventTarget {
   readonly [Symbol.toStringTag] = "PermissionStatus";
 
   readonly #descriptor: PermissionDescriptor;
+  readonly #mask: PermissionMask;
   readonly #permissionStore: PermissionStore;
   #onchange: EventListener | null;
   readonly #handlePermissionStoreChange: (
     isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
+    toState: PermissionState,
+    fromState: PermissionState,
   ) => void;
 }

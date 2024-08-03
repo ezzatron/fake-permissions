@@ -35,7 +35,64 @@ Versioning].
 
 ### Added
 
+- Added [permission masking].
+- Added the `PermissionsMask` and `PermissionMask` types.
 - Added the `AccessDialog` type.
+
+[permission masking]: #permission-masking
+
+#### Permission masking
+
+The `createPermissions()` function now accepts a `mask` option. This option can
+be used to emulate the behavior of browsers like Safari and Firefox, which do
+not always expose the actual permission state via the Permissions API.
+
+The `mask` option accepts a `Map` where the keys are permission descriptors, and
+the values are objects that map permission states to other permission states.
+For example, the following mask would cause the `geolocation` permission to be
+reported as `prompt` when the actual state in the permission store is `denied`:
+
+```ts
+import {
+  createPermissions,
+  createPermissionStore,
+  createUser,
+} from "fake-permissions";
+
+const permissionStore = createPermissionStore({
+  initialStates: new Map([
+    // Set the initial state of the "geolocation" permission to "prompt"
+    [{ name: "geolocation" }, "prompt"],
+  ]),
+});
+const user = createUser({ permissionStore });
+
+const permissions = createPermissions({
+  permissionStore,
+  mask: new Map([
+    [
+      // Mask the "geolocation" permission
+      { name: "geolocation" },
+      {
+        // When the actual state is "denied", report it as "prompt"
+        denied: "prompt",
+
+        // Can mask multiple states if desired
+        // granted: "prompt",
+      },
+    ],
+  ]),
+});
+
+const status = await permissions.query({ name: "geolocation" });
+console.log(status.state); // Outputs "prompt"
+
+user.denyPermission({ name: "geolocation" });
+console.log(status.state); // Outputs "prompt"
+
+user.grantPermission({ name: "geolocation" });
+console.log(status.state); // Outputs "granted"
+```
 
 ## [v0.6.2] - 2024-07-04
 
