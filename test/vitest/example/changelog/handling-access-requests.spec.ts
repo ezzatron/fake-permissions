@@ -66,9 +66,23 @@ describe("Handling access requests", () => {
       notifications.state,
     );
 
+    user.resetPermission({ name: "geolocation" });
+
+    user.setAccessRequestHandler(async (dialog) => {
+      // New behavior for handling access requests
+      dialog.dismiss();
+    });
+
+    // Outputs "false, prompt"
+    console.log(
+      await user.requestAccess({ name: "geolocation" }),
+      geolocation.state,
+    );
+
     expect(vi.mocked(console.log).mock.calls).toEqual([
       [true, "prompt"],
       [false, "denied"],
+      [false, "prompt"],
     ]);
   });
 });

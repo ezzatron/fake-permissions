@@ -120,9 +120,21 @@ console.log(
 );
 ```
 
+The access request handler can also be replaced at any time by using the
+`user.setAccessRequestHandler()` method. This can be useful for changing the
+behavior of the access request handler in different test scenarios.
+
+```ts
+user.setAccessRequestHandler(async (dialog) => {
+  // New behavior for handling access requests
+  dialog.dismiss();
+});
+```
+
 ### Added
 
 - Added [permission masking].
+- Added the `user.setAccessRequestHandler()` method.
 - Added the `PermissionsMask` and `PermissionMask` types.
 - Added the `AccessDialog` type.
 

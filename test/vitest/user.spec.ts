@@ -255,6 +255,20 @@ describe("User", () => {
     });
   });
 
+  describe("when the access request handler is replaced", () => {
+    beforeEach(() => {
+      user = createUser({ permissionStore });
+      user.setAccessRequestHandler(async (dialog) => {
+        dialog.allow(true);
+      });
+    });
+
+    it("uses the new handler", async () => {
+      expect(await user.requestAccess(permissionA)).toBe(true);
+      expect(permissionStore.get(permissionA)).toBe("granted");
+    });
+  });
+
   describe("when a custom dismissal deny threshold is configured", () => {
     beforeEach(() => {
       user = createUser({
