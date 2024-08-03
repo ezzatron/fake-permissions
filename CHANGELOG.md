@@ -12,6 +12,9 @@ Versioning].
 
 ### Changed
 
+- **\[BREAKING]** This release changes the way that permission access is
+  requested, and how those requests are handled. See [Updated access request
+  handling].
 - **\[BREAKING]** The `handlePermissionRequest` option of the `createUser()`
   function has been renamed to `handleAccessRequest`.
 - **\[BREAKING]** The `HandlePermissionRequest` function type has been renamed
@@ -32,6 +35,80 @@ Versioning].
 - **\[BREAKING]** The `PermissionStore` type is now a type, instead of an
   interface.
 - **\[BREAKING]** The `User` type is now a type, instead of an interface.
+
+[updated access request handling]: #updated-access-request-handling
+
+#### Updated access request handling
+
+Browsers like Safari and Firefox let users allow temporary access to sensitive
+permissions like `geolocation` and `notifications` without actually granting the
+associated permission. This release adds support for emulating these more
+nuanced behaviors.
+
+Instead of simply returning a new `PermissionStatus` object when a user requests
+access to a permission, the `user.requestAccess()` method now returns a boolean
+value indicating whether the user allowed access or not. This value does not
+indicate anything about the permission state, only whether the user allows
+access at this time.
+
+When handling access requests, the `handleAccessRequest` handler can now allow,
+deny, or dismiss permission requests using a virtual access "dialog".
+Additionally, when allowing or denying access, the handler can specify whether
+the permission state should be updated based on the user's decision.
+
+```ts
+import {
+  createPermissions,
+  createPermissionStore,
+  createUser,
+} from "fake-permissions";
+
+const permissionStore = createPermissionStore({
+  initialStates: new Map([
+    // Set the initial state of the "geolocation" permission to "prompt"
+    [{ name: "geolocation" }, "prompt"],
+    // Set the initial state of the "notifications" permission to "prompt"
+    [{ name: "notifications" }, "prompt"],
+  ]),
+});
+const permissions = createPermissions({ permissionStore });
+
+const user = createUser({
+  permissionStore,
+  handleAccessRequest: async (dialog, descriptor) => {
+    // Allow access to geolocation, but don't change permission state
+    if (descriptor.name === "geolocation") {
+      dialog.allow(false);
+
+      return;
+    }
+
+    // Deny access to notifications, and change permission state to "denied"
+    if (descriptor.name === "notifications") {
+      dialog.deny(true);
+
+      return;
+    }
+
+    dialog.dismiss();
+  },
+});
+
+const geolocation = await permissions.query({ name: "geolocation" });
+const notifications = await permissions.query({ name: "notifications" });
+
+// Outputs "true, prompt"
+console.log(
+  await user.requestAccess({ name: "geolocation" }),
+  geolocation.state,
+);
+
+// Outputs "false, denied"
+console.log(
+  await user.requestAccess({ name: "notifications" }),
+  notifications.state,
+);
+```
 
 ### Added
 
