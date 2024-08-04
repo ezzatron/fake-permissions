@@ -1,5 +1,9 @@
 import { BaseEventTarget } from "./event-target.js";
-import { PermissionStore } from "./permission-store.js";
+import {
+  PermissionStore,
+  type Subscriber,
+  type Unsubscribe,
+} from "./permission-store.js";
 import type { PermissionMask } from "./permissions-mask.js";
 
 type PermissionStatusParameters = {
@@ -30,15 +34,21 @@ export class PermissionStatus extends BaseEventTarget {
     permissionStore,
   }: PermissionStatusParameters) {
     super({
-      onListenerCountChange: (type, count) => {
-        if (type !== "change") return;
+      onListenerCountChange: (() => {
+        let unsubscribe: Unsubscribe | undefined;
 
-        if (count > 0) {
-          permissionStore.subscribe(this.#handlePermissionStoreChange);
-        } else {
-          permissionStore.unsubscribe(this.#handlePermissionStoreChange);
-        }
-      },
+        return (type, count) => {
+          if (type !== "change") return;
+
+          if (count > 0) {
+            unsubscribe = permissionStore.subscribe(
+              this.#handlePermissionStoreChange,
+            );
+          } else {
+            unsubscribe?.();
+          }
+        };
+      })(),
     });
 
     if (!canConstruct) throw new TypeError("Illegal constructor");
@@ -84,13 +94,9 @@ export class PermissionStatus extends BaseEventTarget {
 
   readonly [Symbol.toStringTag] = "PermissionStatus";
 
+  #onchange: EventListener | null;
   readonly #descriptor: PermissionDescriptor;
+  readonly #handlePermissionStoreChange: Subscriber;
   readonly #mask: PermissionMask;
   readonly #permissionStore: PermissionStore;
-  #onchange: EventListener | null;
-  readonly #handlePermissionStoreChange: (
-    isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
-    toState: PermissionState,
-    fromState: PermissionState,
-  ) => void;
 }

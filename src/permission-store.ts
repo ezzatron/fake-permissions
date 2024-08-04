@@ -8,9 +8,15 @@ export type PermissionStore = {
   get(descriptor: PermissionDescriptor): PermissionState;
   set(descriptor: PermissionDescriptor, toState: PermissionState): void;
   isMatchingDescriptor: IsMatchingDescriptor;
-  subscribe(subscriber: Subscriber): void;
-  unsubscribe(subscriber: Subscriber): void;
+  subscribe(subscriber: Subscriber): Unsubscribe;
 };
+
+export type Unsubscribe = () => void;
+export type Subscriber = (
+  isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
+  toState: PermissionState,
+  fromState: PermissionState,
+) => void;
 
 export function createPermissionStore({
   initialStates = new Map([
@@ -81,10 +87,10 @@ export function createPermissionStore({
 
     subscribe(subscriber) {
       subscribers.add(subscriber);
-    },
 
-    unsubscribe(subscriber) {
-      subscribers.delete(subscriber);
+      return () => {
+        subscribers.delete(subscriber);
+      };
     },
   };
 
@@ -118,9 +124,3 @@ export function createPermissionStore({
     }
   }
 }
-
-type Subscriber = (
-  isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
-  toState: PermissionState,
-  fromState: PermissionState,
-) => void;

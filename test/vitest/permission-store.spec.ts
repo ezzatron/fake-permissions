@@ -146,13 +146,14 @@ describe("PermissionStore()", () => {
 
   describe("subscribe()", () => {
     let subscriber: Mock;
+    let unsubscribe: () => void;
 
     beforeEach(() => {
-      permissionStore.subscribe((subscriber = vi.fn()));
+      unsubscribe = permissionStore.subscribe((subscriber = vi.fn()));
     });
 
     afterEach(() => {
-      permissionStore.unsubscribe(subscriber);
+      unsubscribe();
     });
 
     describe("when a permission state changes", () => {

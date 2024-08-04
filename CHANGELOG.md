@@ -39,6 +39,8 @@ Versioning].
   automatically. The default threshold for this behavior is 3 dismissals, but
   this can be configured using the `dismissDenyThreshold` option of the
   `createUser()` function.
+- **\[BREAKING]** The `PermissionStore.subscribe()` method now returns an
+  unsubscribe callback.
 - **\[BREAKING]** The `PermissionStore` type is now a type, instead of an
   interface.
 - **\[BREAKING]** The `User` type is now a type, instead of an interface.
@@ -132,6 +134,10 @@ user.setAccessRequestHandler(async (dialog) => {
   dialog.dismiss();
 });
 ```
+
+### Removed
+
+- **\[BREAKING]** The `PermissionStore.unsubscribe()` method has been removed.
 
 ### Added
 
