@@ -13,7 +13,7 @@ export type PermissionStore = {
 
 export type Unsubscribe = () => void;
 export type Subscriber = (
-  isMatchingDescriptor: (descriptor: PermissionDescriptor) => boolean,
+  descriptor: PermissionDescriptor,
   toState: PermissionState,
   fromState: PermissionState,
 ) => void;
@@ -107,11 +107,9 @@ export function createPermissionStore({
     toState: PermissionState,
     fromState: PermissionState,
   ) {
-    const isMatching = isMatchingDescriptor.bind(null, descriptor);
-
     for (const subscriber of subscribers) {
       try {
-        subscriber(isMatching, toState, fromState);
+        subscriber(descriptor, toState, fromState);
         /* v8 ignore start: impossible to test under Vitest */
       } catch (error) {
         // Throw subscriber errors asynchronously, so that users will at least

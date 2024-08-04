@@ -60,12 +60,10 @@ export class PermissionStatus extends BaseEventTarget {
     this.#permissionStore = permissionStore;
     this.#onchange = null;
 
-    this.#handlePermissionStoreChange = (
-      isMatchingDescriptor,
-      toState,
-      fromState,
-    ) => {
-      if (!isMatchingDescriptor(this.#descriptor)) return;
+    this.#handlePermissionStoreChange = (descriptor, toState, fromState) => {
+      if (!permissionStore.isMatchingDescriptor(descriptor, this.#descriptor)) {
+        return;
+      }
 
       const maskedToState = this.#mask[toState] ?? toState;
       const maskedFromState = this.#mask[fromState] ?? fromState;

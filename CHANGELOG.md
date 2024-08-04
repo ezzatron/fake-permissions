@@ -39,6 +39,11 @@ Versioning].
   automatically. The default threshold for this behavior is 3 dismissals, but
   this can be configured using the `dismissDenyThreshold` option of the
   `createUser()` function.
+- **\[BREAKING]** Subscribers for `PermissionStore.subscribe()` now take three
+  parameters - the permission descriptor, the "to" state, and the "from" state.
+  Previously, subscribers only took a function for matching permission
+  descriptors against. You can use the new
+  `permissionStore.isMatchingDescriptor()` method to replace the old parameter.
 - **\[BREAKING]** The `PermissionStore.subscribe()` method now returns an
   unsubscribe callback.
 - **\[BREAKING]** The `PermissionStore` type is now a type, instead of an

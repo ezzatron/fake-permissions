@@ -25,10 +25,6 @@ describe("PermissionStore()", () => {
     name: "push",
     userVisibleOnly: true,
   } as PermissionDescriptor;
-  const pushWithExtra: PermissionDescriptor = {
-    name: "push",
-    extra: true,
-  } as PermissionDescriptor;
 
   let permissionStore: PermissionStore;
 
@@ -163,26 +159,11 @@ describe("PermissionStore()", () => {
 
       it("calls the subscriber", () => {
         expect(subscriber).toBeCalledTimes(1);
-      });
-
-      it("calls the subscriber with a callback for matching the descriptor", () => {
         expect(subscriber).toBeCalledWith(
-          expect.any(Function),
+          pushUserVisibleOnlyFalse,
           "denied",
           "granted",
         );
-
-        const callback = subscriber.mock.calls[0][0] as (
-          d: PermissionDescriptor,
-        ) => boolean;
-
-        expect(callback(push)).toBe(true);
-        expect(callback(pushUserVisibleOnlyFalse)).toBe(true);
-        expect(callback(pushUserVisibleOnlyTrue)).toBe(false);
-        expect(callback(pushWithExtra)).toBe(true);
-
-        expect(callback(geolocation)).toBe(false);
-        expect(callback(geolocationWithExtra)).toBe(false);
       });
     });
 
