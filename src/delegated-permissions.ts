@@ -69,7 +69,7 @@ type PermissionParameters = {
   unsubscribe: (subscriber: Subscriber) => void;
 };
 
-export class Permissions {
+class Permissions {
   /**
    * @deprecated Use the `createDelegatedPermissions()` function instead.
    */
