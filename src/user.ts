@@ -10,7 +10,7 @@ export type User = {
   denyPermission(descriptor: PermissionDescriptor): void;
   resetPermission(descriptor: PermissionDescriptor): void;
   requestAccess(descriptor: PermissionDescriptor): Promise<boolean>;
-  setAccessRequestHandler(nextHandler: HandleAccessRequest): void;
+  setAccessRequestHandler(toHandler: HandleAccessRequest): void;
 };
 
 export function createUser({
@@ -66,8 +66,8 @@ export function createUser({
       return shouldAllow;
     },
 
-    setAccessRequestHandler(nextHandler) {
-      handleAccessRequest = nextHandler;
+    setAccessRequestHandler(toHandler) {
+      handleAccessRequest = toHandler;
     },
   };
 

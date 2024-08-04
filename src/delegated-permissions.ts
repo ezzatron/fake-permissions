@@ -35,8 +35,8 @@ export function createDelegatedPermissions({
       },
     }),
 
-    selectDelegate(nextDelegate) {
-      delegate = nextDelegate;
+    selectDelegate(selectedDelegate) {
+      delegate = selectedDelegate;
 
       for (const subscriber of subscribers) {
         try {
