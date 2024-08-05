@@ -160,7 +160,7 @@ export class BaseEventTarget extends EventTarget {
   readonly #onListenerCountChange: OnListenerCountChange;
 }
 
-export function normalizeOptions(
+function normalizeOptions(
   options: AddEventListenerOptions | boolean | undefined,
 ): AddEventListenerOptions {
   return typeof options === "boolean" ? { capture: options } : (options ?? {});
