@@ -10,6 +10,14 @@ Versioning].
 
 ## Unreleased
 
+## [v0.9.2] - 2024-08-06
+
+[v0.9.2]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.9.2
+
+### Fixed
+
+- Improved permission observer correctness.
+
 ## [v0.9.1] - 2024-08-06
 
 [v0.9.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.9.1
