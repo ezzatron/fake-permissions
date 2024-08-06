@@ -13,14 +13,13 @@ describe("PermissionObserver", () => {
   };
 
   let permissionStore: PermissionStore;
-  let permissions: Permissions;
   let observer: PermissionObserver;
 
   beforeEach(async () => {
     permissionStore = createPermissionStore({
       initialStates: new Map([[permissionA, "prompt"]]),
     });
-    permissions = createPermissions({ permissionStore });
+    const permissions = createPermissions({ permissionStore });
     observer = await createPermissionObserver(permissions, permissionA);
   });
 
