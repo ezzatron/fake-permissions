@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.8.0] - 2024-08-06
+
+[v0.8.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.8.0
+
 ### Changed
 
 - This release updates the default permission set to match changes to the
