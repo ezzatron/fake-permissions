@@ -52,10 +52,10 @@ export async function createPermissionObserver(
 
 type NonEmptyPermissionStateArray = PermissionState[] & { 0: PermissionState };
 
-function normalizeStates<T>(states: T): NormalizeStates<T> {
-  return (Array.isArray(states) ? states : [states]) as NormalizeStates<T>;
+function normalizeStates(
+  states: PermissionState | PermissionState[],
+): NonEmptyPermissionStateArray {
+  return (
+    Array.isArray(states) ? states : [states]
+  ) as NonEmptyPermissionStateArray;
 }
-
-type NormalizeStates<T> = T extends PermissionState
-  ? NonEmptyPermissionStateArray
-  : T;
