@@ -15,6 +15,15 @@ describe("PermissionStore()", () => {
     name: "geolocation",
     extra: true,
   } as PermissionDescriptor;
+  const midi: PermissionDescriptor = { name: "midi" };
+  const midiSysexFalse: PermissionDescriptor = {
+    name: "midi",
+    sysex: false,
+  } as PermissionDescriptor;
+  const midiSysexTrue: PermissionDescriptor = {
+    name: "midi",
+    sysex: true,
+  } as PermissionDescriptor;
   const notifications: PermissionDescriptor = { name: "notifications" };
   const push: PermissionDescriptor = { name: "push" };
   const pushUserVisibleOnlyFalse: PermissionDescriptor = {
@@ -32,11 +41,18 @@ describe("PermissionStore()", () => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
         [geolocation, "denied"],
+        [midiSysexFalse, "granted"],
+        [midiSysexTrue, "prompt"],
         [pushUserVisibleOnlyFalse, "granted"],
         [pushUserVisibleOnlyTrue, "prompt"],
       ]),
 
       isMatchingDescriptor(a, b) {
+        if (a.name === "midi" && b.name === "midi") {
+          // a.sysex is always present (comes from an initialStates key)
+          return "sysex" in a && a.sysex === ("sysex" in b ? b.sysex : false);
+        }
+
         if (a.name === "push" && b.name === "push") {
           // a.userVisibleOnly is always present (comes from an initialStates key)
           return (
@@ -185,17 +201,31 @@ describe("PermissionStore()", () => {
 
     it.each([
       ["geolocation"],
+      ["midi"],
       ["notifications"],
       ["persistent-storage"],
       ["push"],
       ["screen-wake-lock"],
-      ["xr-spatial-tracking"],
+      ["storage-access"],
     ] as const)(
       "should create a permission store with the standard permissions (%s)",
       (name) => {
         expect(permissionStore.has({ name })).toBe(true);
       },
     );
+
+    it("should create a permission store that understands midi descriptors with the sysex property", () => {
+      expect(permissionStore.get(midi)).toBe("prompt");
+      expect(permissionStore.get(midiSysexFalse)).toBe("prompt");
+      expect(permissionStore.get(midiSysexTrue)).toBe("prompt");
+
+      permissionStore.set(midiSysexTrue, "denied");
+      permissionStore.set(midiSysexFalse, "granted");
+
+      expect(permissionStore.get(midi)).toBe("granted");
+      expect(permissionStore.get(midiSysexFalse)).toBe("granted");
+      expect(permissionStore.get(midiSysexTrue)).toBe("denied");
+    });
 
     it("should create a permission store that understands push descriptors with the userVisibleOnly property", () => {
       expect(permissionStore.get(push)).toBe("prompt");
@@ -217,8 +247,23 @@ describe("PermissionStore()", () => {
         initialStates: new Map([
           [push, "granted"],
           [pushUserVisibleOnlyTrue, "prompt"],
+          [midi, "granted"],
+          [midiSysexTrue, "prompt"],
         ]),
       });
+    });
+
+    it("should create a permission store that understands non-normalized midi descriptors in the initial states", () => {
+      expect(permissionStore.get(midi)).toBe("granted");
+      expect(permissionStore.get(midiSysexFalse)).toBe("granted");
+      expect(permissionStore.get(midiSysexTrue)).toBe("prompt");
+
+      permissionStore.set(midiSysexFalse, "prompt");
+      permissionStore.set(midiSysexTrue, "denied");
+
+      expect(permissionStore.get(midi)).toBe("prompt");
+      expect(permissionStore.get(midiSysexFalse)).toBe("prompt");
+      expect(permissionStore.get(midiSysexTrue)).toBe("denied");
     });
 
     it("should create a permission store that understands non-normalized push descriptors in the initial states", () => {

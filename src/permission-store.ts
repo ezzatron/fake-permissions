@@ -21,6 +21,8 @@ export type Subscriber = (
 export function createPermissionStore({
   initialStates = new Map([
     [{ name: "geolocation" }, "prompt"],
+    [{ name: "midi", sysex: false } as PermissionDescriptor, "prompt"],
+    [{ name: "midi", sysex: true } as PermissionDescriptor, "prompt"],
     [{ name: "notifications" }, "prompt"],
     [{ name: "persistent-storage" }, "prompt"],
     [
@@ -29,10 +31,16 @@ export function createPermissionStore({
     ],
     [{ name: "push", userVisibleOnly: true } as PermissionDescriptor, "prompt"],
     [{ name: "screen-wake-lock" }, "prompt"],
-    [{ name: "xr-spatial-tracking" }, "prompt"],
+    [{ name: "storage-access" }, "prompt"],
   ]),
 
   isMatchingDescriptor = (a, b) => {
+    if (a.name === "midi" && b.name === "midi") {
+      return (
+        ("sysex" in a ? a.sysex : false) === ("sysex" in b ? b.sysex : false)
+      );
+    }
+
     if (a.name === "push" && b.name === "push") {
       return (
         ("userVisibleOnly" in a ? a.userVisibleOnly : false) ===

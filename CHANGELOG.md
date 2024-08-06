@@ -10,6 +10,29 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- This release updates the default permission set to match changes to the
+  `@types/web` definition of the `PermissionName` type. The new default
+  permissions are:
+  - `geolocation`
+  - `midi` (with support for the `sysex` property)
+  - `notifications`
+  - `persistent-storage`
+  - `push` (with support for the `userVisibleOnly` property)
+  - `screen-wake-lock`
+  - `storage-access`
+
+### Removed
+
+- **\[BREAKING]** Removed the `xr-spatial-tracking` permission from the default
+  permission set.
+
+### Added
+
+- Added the `midi` permission with support for the `sysex` descriptor property
+  to the default permission set.
+
 ## [v0.7.0] - 2024-08-04
 
 [v0.7.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.7.0
