@@ -4,6 +4,8 @@ export type {
   IsDelegateSelected,
   SelectDelegate,
 } from "./delegated-permissions.js";
+export { createPermissionObserver } from "./permission-observer.js";
+export type { PermissionObserver } from "./permission-observer.js";
 export { createPermissionStore } from "./permission-store.js";
 export type { PermissionStore } from "./permission-store.js";
 export type { PermissionsMask } from "./permissions-mask.js";

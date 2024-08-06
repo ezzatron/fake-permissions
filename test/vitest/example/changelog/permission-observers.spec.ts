@@ -1,0 +1,70 @@
+import {
+  createPermissionObserver,
+  createPermissions,
+  createPermissionStore,
+  createUser,
+} from "fake-permissions";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+beforeEach(() => {
+  vi.spyOn(console, "log").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  vi.mocked(console.log).mockRestore();
+});
+
+describe("Permission observers", () => {
+  it("works", async () => {
+    const permissionStore = createPermissionStore({
+      initialStates: new Map([
+        // Set the initial state of the "geolocation" permission to "prompt"
+        [{ name: "geolocation" }, "prompt"],
+      ]),
+    });
+    const user = createUser({ permissionStore });
+    const permissions = createPermissions({ permissionStore });
+
+    // We're dealing with the "geolocation" permission
+    const descriptor: PermissionDescriptor = { name: "geolocation" };
+
+    // Start a Permissions API query
+    const status = await permissions.query(descriptor);
+
+    // Start observing the permission
+    const observer = await createPermissionObserver(permissions, descriptor);
+
+    // Wait for the state to be "prompt"
+    await observer.waitForState("prompt");
+    // Outputs "prompt"
+    console.log(status.state);
+
+    user.denyPermission(descriptor);
+
+    // Wait for the state to be "prompt" OR "denied"
+    await observer.waitForState(["prompt", "denied"]);
+    // Outputs "denied"
+    console.log(status.state);
+
+    // Wait for the state to be "granted", while running a task
+    await observer.waitForState("granted", async () => {
+      user.grantPermission(descriptor);
+    });
+    // Outputs "granted"
+    console.log(status.state);
+
+    // Wait for the state to be "prompt" OR "denied", while running a task
+    await observer.waitForState(["prompt", "denied"], async () => {
+      user.resetPermission(descriptor);
+    });
+    // Outputs "prompt"
+    console.log(status.state);
+
+    expect(vi.mocked(console.log).mock.calls).toEqual([
+      ["prompt"],
+      ["denied"],
+      ["granted"],
+      ["prompt"],
+    ]);
+  });
+});

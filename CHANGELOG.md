@@ -10,6 +10,78 @@ Versioning].
 
 ## Unreleased
 
+### Added
+
+- Added [permission observers].
+
+[permission observers]: #permission-observers
+
+#### Permission observers
+
+This release adds permission observers, which can be used to wait for specific
+changes to permission states. This can be useful for testing scenarios where you
+want to wait for a specific permission state to be reached before continuing.
+
+You can create a permission observer by calling the `createPermissionObserver()`
+function, and then wait for a specific permission state change by calling either
+`observer.waitForState()` or `observer.waitForStateChange()`. These methods are
+similar, but `waitForState()` can resolve immediately if the permission state is
+already in the desired state, whereas `waitForStateChange()` will only resolve
+if the permission state changes to the desired state _after_ being called.
+
+```ts
+import {
+  createPermissionObserver,
+  createPermissions,
+  createPermissionStore,
+  createUser,
+} from "fake-permissions";
+
+const permissionStore = createPermissionStore({
+  initialStates: new Map([
+    // Set the initial state of the "geolocation" permission to "prompt"
+    [{ name: "geolocation" }, "prompt"],
+  ]),
+});
+const user = createUser({ permissionStore });
+const permissions = createPermissions({ permissionStore });
+
+// We're dealing with the "geolocation" permission
+const descriptor: PermissionDescriptor = { name: "geolocation" };
+
+// Start a Permissions API query
+const status = await permissions.query(descriptor);
+
+// Start observing the permission
+const observer = await createPermissionObserver(permissions, descriptor);
+
+// Wait for the state to be "prompt"
+await observer.waitForState("prompt");
+// Outputs "prompt"
+console.log(status.state);
+
+user.denyPermission(descriptor);
+
+// Wait for the state to be "prompt" OR "denied"
+await observer.waitForState(["prompt", "denied"]);
+// Outputs "denied"
+console.log(status.state);
+
+// Wait for the state to be "granted", while running a task
+await observer.waitForState("granted", async () => {
+  user.grantPermission(descriptor);
+});
+// Outputs "granted"
+console.log(status.state);
+
+// Wait for the state to be "prompt" OR "denied", while running a task
+await observer.waitForState(["prompt", "denied"], async () => {
+  user.resetPermission(descriptor);
+});
+// Outputs "prompt"
+console.log(status.state);
+```
+
 ## [v0.8.0] - 2024-08-06
 
 [v0.8.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.8.0
