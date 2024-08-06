@@ -1,10 +1,10 @@
 export type PermissionObserver = {
   waitForState: (
-    states: PermissionState | NonEmptyPermissionStateArray,
+    stateOrStates: PermissionState | NonEmptyPermissionStateArray,
     task?: () => Promise<void>,
   ) => Promise<void>;
   waitForStateChange: (
-    states?: PermissionState | PermissionState[],
+    stateOrStates?: PermissionState | PermissionState[],
     task?: () => Promise<void>,
   ) => Promise<void>;
 };
@@ -16,8 +16,8 @@ export async function createPermissionObserver(
   const status = await permissions.query(descriptor);
 
   return {
-    async waitForState(states, task) {
-      states = normalizeStates(states);
+    async waitForState(stateOrStates, task) {
+      const states = normalizeStates(stateOrStates);
 
       if (states.length < 1) throw new Error("No states provided");
       if (states.includes(status.state)) return;
@@ -29,10 +29,10 @@ export async function createPermissionObserver(
   };
 
   async function waitForStateChange(
-    states: PermissionState | PermissionState[] = [],
+    stateOrStates: PermissionState | PermissionState[] = [],
     task?: () => Promise<void>,
   ) {
-    states = normalizeStates(states);
+    const states = normalizeStates(stateOrStates);
 
     await Promise.all([
       new Promise<void>((resolve) => {
@@ -54,8 +54,6 @@ type NonEmptyPermissionStateArray = PermissionState[] & { 0: PermissionState };
 
 function normalizeStates(
   states: PermissionState | PermissionState[],
-): NonEmptyPermissionStateArray {
-  return (
-    Array.isArray(states) ? states : [states]
-  ) as NonEmptyPermissionStateArray;
+): PermissionState[] {
+  return Array.isArray(states) ? states : [states];
 }
