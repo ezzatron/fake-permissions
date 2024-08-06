@@ -17,6 +17,8 @@ export async function createPermissionObserver(
 
   return {
     async waitForState(states, task) {
+      states = normalizeStates(states);
+
       if (states.length < 1) throw new Error("No states provided");
       if (states.includes(status.state)) return;
 
@@ -30,6 +32,8 @@ export async function createPermissionObserver(
     states: PermissionState | PermissionState[] = [],
     task?: () => Promise<void>,
   ) {
+    states = normalizeStates(states);
+
     await Promise.all([
       new Promise<void>((resolve) => {
         status.addEventListener("change", onChange);
@@ -47,3 +51,11 @@ export async function createPermissionObserver(
 }
 
 type NonEmptyPermissionStateArray = PermissionState[] & { 0: PermissionState };
+
+function normalizeStates<T>(states: T): NormalizeStates<T> {
+  return (Array.isArray(states) ? states : [states]) as NormalizeStates<T>;
+}
+
+type NormalizeStates<T> = T extends PermissionState
+  ? NonEmptyPermissionStateArray
+  : T;
