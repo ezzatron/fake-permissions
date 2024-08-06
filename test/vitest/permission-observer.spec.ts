@@ -54,7 +54,7 @@ describe("PermissionObserver", () => {
         await expect(promise).resolves.toBeUndefined();
       });
 
-      it("does not resolve when the permission state changes to a different state", async () => {
+      it("doesn't resolve when the permission state changes to a different state", async () => {
         let isResolved = false;
         const promise = observer.waitForState("granted").then(() => {
           isResolved = true;
@@ -155,7 +155,7 @@ describe("PermissionObserver", () => {
         await expect(promise).resolves.toBeUndefined();
       });
 
-      it("does not resolve when the permission state already matches the desired state", async () => {
+      it("doesn't resolve when the permission state already matches the desired state", async () => {
         let isResolved = false;
         const promise = observer.waitForStateChange("prompt").then(() => {
           isResolved = true;
@@ -176,7 +176,7 @@ describe("PermissionObserver", () => {
         await expect(promise).resolves.toBeUndefined();
       });
 
-      it("does not resolve when the permission state changes to a different state", async () => {
+      it("doesn't resolve when the permission state changes to a different state", async () => {
         let isResolved = false;
         const promise = observer.waitForStateChange("granted").then(() => {
           isResolved = true;
@@ -218,7 +218,7 @@ describe("PermissionObserver", () => {
       });
 
       it.each([["granted"], ["denied"]] as const)(
-        "does not resolve when the permission state already matches one of the desired states",
+        "doesn't resolve when the permission state already matches one of the desired states",
         async (initialState) => {
           const initialStateObserved =
             observer.waitForStateChange(initialState);
@@ -246,7 +246,7 @@ describe("PermissionObserver", () => {
         },
       );
 
-      it("does not resolve when the permission state changes to a different state", async () => {
+      it("doesn't resolve when the permission state changes to a different state", async () => {
         let isResolved = false;
         const promise = observer
           .waitForStateChange(["prompt", "granted"])
