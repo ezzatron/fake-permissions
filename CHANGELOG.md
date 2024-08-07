@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Removed
+
+- **\[BREAKING]** Removed the `waitForStateChange()` method from permission
+  observers.
+
 ## [v0.9.4] - 2024-08-07
 
 [v0.9.4]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.9.4

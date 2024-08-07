@@ -3,10 +3,6 @@ export type PermissionObserver = {
     stateOrStates: PermissionState | NonEmptyPermissionStateArray,
     task?: () => Promise<void>,
   ) => Promise<void>;
-  waitForStateChange: (
-    stateOrStates?: PermissionState | PermissionState[],
-    task?: () => Promise<void>,
-  ) => Promise<void>;
 };
 
 export async function createPermissionObserver(
@@ -22,32 +18,21 @@ export async function createPermissionObserver(
       if (states.length < 1) throw new Error("No states provided");
       if (states.includes(status.state)) return;
 
-      await waitForStateChange(states, task);
+      await Promise.all([
+        new Promise<void>((resolve) => {
+          status.addEventListener("change", onChange);
+
+          function onChange() {
+            if (states.length > 0 && !states.includes(status.state)) return;
+
+            status.removeEventListener("change", onChange);
+            resolve();
+          }
+        }),
+        Promise.resolve(task?.()),
+      ]);
     },
-
-    waitForStateChange,
   };
-
-  async function waitForStateChange(
-    stateOrStates: PermissionState | PermissionState[] = [],
-    task?: () => Promise<void>,
-  ) {
-    const states = normalizeStates(stateOrStates);
-
-    await Promise.all([
-      new Promise<void>((resolve) => {
-        status.addEventListener("change", onChange);
-
-        function onChange() {
-          if (states.length > 0 && !states.includes(status.state)) return;
-
-          status.removeEventListener("change", onChange);
-          resolve();
-        }
-      }),
-      Promise.resolve(task?.()),
-    ]);
-  }
 }
 
 type NonEmptyPermissionStateArray = PermissionState[] & { 0: PermissionState };
