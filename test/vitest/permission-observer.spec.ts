@@ -13,6 +13,7 @@ describe("PermissionObserver", () => {
   };
 
   let permissionStore: PermissionStore;
+  let status: PermissionStatus;
   let observer: PermissionObserver;
 
   beforeEach(async () => {
@@ -20,6 +21,7 @@ describe("PermissionObserver", () => {
       initialStates: new Map([[permissionA, "prompt"]]),
     });
     const permissions = createPermissions({ permissionStore });
+    status = await permissions.query(permissionA);
     observer = await createPermissionObserver(permissions, permissionA);
   });
 
@@ -52,6 +54,7 @@ describe("PermissionObserver", () => {
         permissionStore.set(permissionA, "granted");
 
         await expect(promise).resolves.toBeUndefined();
+        expect(status.state).toBe("granted");
       });
 
       it("doesn't resolve when the permission state changes to a different state", async () => {
@@ -102,6 +105,7 @@ describe("PermissionObserver", () => {
         permissionStore.set(permissionA, "granted");
 
         await expect(promise).resolves.toBeUndefined();
+        expect(status.state).toBe("granted");
       });
     });
 
@@ -112,6 +116,7 @@ describe("PermissionObserver", () => {
             permissionStore.set(permissionA, "granted");
           }),
         ).resolves.toBeUndefined();
+        expect(status.state).toBe("granted");
       });
     });
   });
@@ -134,6 +139,7 @@ describe("PermissionObserver", () => {
           permissionStore.set(permissionA, "granted");
 
           await expect(promise).resolves.toBeUndefined();
+          expect(status.state).toBe("granted");
         },
       );
     });
@@ -153,6 +159,7 @@ describe("PermissionObserver", () => {
         permissionStore.set(permissionA, "granted");
 
         await expect(promise).resolves.toBeUndefined();
+        expect(status.state).toBe("granted");
       });
 
       it("doesn't resolve when the permission state already matches the desired state", async () => {
@@ -215,6 +222,7 @@ describe("PermissionObserver", () => {
         permissionStore.set(permissionA, "granted");
 
         await expect(promise).resolves.toBeUndefined();
+        expect(status.state).toBe("granted");
       });
 
       it.each([["granted"], ["denied"]] as const)(
@@ -277,6 +285,7 @@ describe("PermissionObserver", () => {
             permissionStore.set(permissionA, "granted");
           }),
         ).resolves.toBeUndefined();
+        expect(status.state).toBe("granted");
       });
     });
   });
