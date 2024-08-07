@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.10.0] - 2024-08-08
+
+[v0.10.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.10.0
+
 ### Changed
 
 - **\[BREAKING]** The `createPermissionObserver()` function is no longer
