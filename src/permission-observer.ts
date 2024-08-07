@@ -5,17 +5,18 @@ export type PermissionObserver = {
   ) => Promise<void>;
 };
 
-export async function createPermissionObserver(
+export function createPermissionObserver(
   permissions: Permissions,
   descriptor: PermissionDescriptor,
-): Promise<PermissionObserver> {
-  const status = await permissions.query(descriptor);
-
+): PermissionObserver {
   return {
     async waitForState(stateOrStates, task) {
       const states = normalizeStates(stateOrStates);
 
       if (states.length < 1) throw new Error("No states provided");
+
+      const status = await permissions.query(descriptor);
+
       if (states.includes(status.state)) return;
 
       await Promise.all([

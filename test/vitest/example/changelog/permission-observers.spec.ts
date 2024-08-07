@@ -32,7 +32,7 @@ describe("Permission observers", () => {
     const status = await permissions.query(descriptor);
 
     // Start observing the permission
-    const observer = await createPermissionObserver(permissions, descriptor);
+    const observer = createPermissionObserver(permissions, descriptor);
 
     // Wait for the state to be "prompt"
     await observer.waitForState("prompt");

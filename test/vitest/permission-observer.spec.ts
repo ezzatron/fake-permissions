@@ -22,7 +22,7 @@ describe("PermissionObserver", () => {
     });
     const permissions = createPermissions({ permissionStore });
     status = await permissions.query(permissionA);
-    observer = await createPermissionObserver(permissions, permissionA);
+    observer = createPermissionObserver(permissions, permissionA);
   });
 
   describe("waitForState()", () => {
@@ -47,6 +47,7 @@ describe("PermissionObserver", () => {
 
           return;
         });
+        await Promise.resolve();
 
         expect(isResolved).toBe(false);
 
@@ -63,10 +64,12 @@ describe("PermissionObserver", () => {
 
           return;
         });
+        await Promise.resolve();
 
         expect(isResolved).toBe(false);
 
         permissionStore.set(permissionA, "denied");
+        await Promise.resolve();
 
         expect(isResolved).toBe(false);
 
@@ -95,6 +98,7 @@ describe("PermissionObserver", () => {
 
             return;
           });
+        await Promise.resolve();
 
         expect(isResolved).toBe(false);
 

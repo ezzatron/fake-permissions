@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **\[BREAKING]** The `createPermissionObserver()` function is no longer
+  asynchronous.
+
 ### Removed
 
 - **\[BREAKING]** Removed the `waitForStateChange()` method from permission
