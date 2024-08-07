@@ -47,7 +47,6 @@ describe("PermissionObserver", () => {
 
           return;
         });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -64,12 +63,10 @@ describe("PermissionObserver", () => {
 
           return;
         });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
         permissionStore.set(permissionA, "denied");
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -98,7 +95,6 @@ describe("PermissionObserver", () => {
 
             return;
           });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -132,7 +128,6 @@ describe("PermissionObserver", () => {
 
             return;
           });
-          await runTaskQueue();
 
           expect(isResolved).toBe(false);
 
@@ -152,7 +147,6 @@ describe("PermissionObserver", () => {
 
           return;
         });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -169,12 +163,10 @@ describe("PermissionObserver", () => {
 
           return;
         });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
         permissionStore.set(permissionA, "granted");
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -190,12 +182,10 @@ describe("PermissionObserver", () => {
 
           return;
         });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
         permissionStore.set(permissionA, "denied");
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -215,7 +205,6 @@ describe("PermissionObserver", () => {
 
             return;
           });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -239,12 +228,10 @@ describe("PermissionObserver", () => {
 
             return;
           });
-          await runTaskQueue();
 
           expect(isResolved).toBe(false);
 
           permissionStore.set(permissionA, "prompt");
-          await runTaskQueue();
 
           expect(isResolved).toBe(false);
 
@@ -263,12 +250,10 @@ describe("PermissionObserver", () => {
 
             return;
           });
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
         permissionStore.set(permissionA, "denied");
-        await runTaskQueue();
 
         expect(isResolved).toBe(false);
 
@@ -290,11 +275,3 @@ describe("PermissionObserver", () => {
     });
   });
 });
-
-async function runTaskQueue(): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 0);
-  });
-}
