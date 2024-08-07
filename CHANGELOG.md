@@ -10,6 +10,15 @@ Versioning].
 
 ## Unreleased
 
+## [v0.9.4] - 2024-08-07
+
+[v0.9.4]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.9.4
+
+### Fixed
+
+- Errors thrown by permission store subscribers are now thrown asynchronously
+  using `queueMicrotask()` instead of `setTimeout()`.
+
 ## [v0.9.3] - 2024-08-06
 
 [v0.9.3]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.9.3
