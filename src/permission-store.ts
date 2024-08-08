@@ -6,8 +6,7 @@ import {
 export type PermissionStore = {
   isKnownDescriptor: (descriptor: PermissionDescriptor) => boolean;
   isMatchingDescriptor: IsMatchingDescriptor;
-  // TODO: rename to findByDescriptor
-  selectByDescriptor: <T>(
+  findByDescriptor: <T>(
     iterable: Iterable<[PermissionDescriptor, T]>,
     descriptor: PermissionDescriptor,
   ) => T | undefined;
@@ -103,7 +102,7 @@ export function createPermissionStore({
 
     isMatchingDescriptor,
 
-    selectByDescriptor<T>(
+    findByDescriptor<T>(
       iterable: Iterable<[PermissionDescriptor, T]>,
       descriptor: PermissionDescriptor,
     ): T | undefined {

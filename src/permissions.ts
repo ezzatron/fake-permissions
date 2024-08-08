@@ -57,7 +57,7 @@ export class Permissions {
     return createPermissionStatus({
       descriptor,
       mask:
-        this.#permissionStore.selectByDescriptor(this.#mask, descriptor) ?? {},
+        this.#permissionStore.findByDescriptor(this.#mask, descriptor) ?? {},
       permissionStore: this.#permissionStore,
     });
   }

@@ -118,7 +118,7 @@ describe("PermissionStore()", () => {
     });
   });
 
-  describe("selectByDescriptor()", () => {
+  describe("findByDescriptor()", () => {
     it("selects from any iterable keyed on permission descriptors", () => {
       const iterable = new Map([
         [structuredClone(geolocation), "a"],
@@ -127,19 +127,19 @@ describe("PermissionStore()", () => {
       ]);
 
       expect(
-        permissionStore.selectByDescriptor(
+        permissionStore.findByDescriptor(
           iterable,
           structuredClone(geolocation),
         ),
       ).toBe("a");
       expect(
-        permissionStore.selectByDescriptor(
+        permissionStore.findByDescriptor(
           iterable,
           structuredClone(midiSysexFalse),
         ),
       ).toBe("b");
       expect(
-        permissionStore.selectByDescriptor(
+        permissionStore.findByDescriptor(
           iterable,
           structuredClone(midiSysexTrue),
         ),
