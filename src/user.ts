@@ -2,10 +2,10 @@ import { type HandleAccessRequest } from "./access-dialog.js";
 import { PermissionStore } from "./permission-store.js";
 
 export type User = {
-  grantPermission(descriptor: PermissionDescriptor): void;
-  denyPermission(descriptor: PermissionDescriptor): void;
-  resetPermission(descriptor: PermissionDescriptor): void;
-  setAccessRequestHandler(toHandler: HandleAccessRequest): void;
+  grantPermission: (descriptor: PermissionDescriptor) => void;
+  denyPermission: (descriptor: PermissionDescriptor) => void;
+  resetPermission: (descriptor: PermissionDescriptor) => void;
+  setAccessRequestHandler: (toHandler: HandleAccessRequest) => void;
 };
 
 export function createUser({

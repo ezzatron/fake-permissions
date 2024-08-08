@@ -4,17 +4,20 @@ import {
 } from "./access-dialog.js";
 
 export type PermissionStore = {
-  isKnownDescriptor(descriptor: PermissionDescriptor): boolean;
+  isKnownDescriptor: (descriptor: PermissionDescriptor) => boolean;
   isMatchingDescriptor: IsMatchingDescriptor;
-  selectByDescriptor<T>(
+  selectByDescriptor: <T>(
     iterable: Iterable<[PermissionDescriptor, T]>,
     descriptor: PermissionDescriptor,
-  ): T | undefined;
-  getState(descriptor: PermissionDescriptor): PermissionState;
-  setState(descriptor: PermissionDescriptor, toState: PermissionState): void;
-  requestAccess(descriptor: PermissionDescriptor): Promise<boolean>;
-  setAccessRequestHandler(toHandler: HandleAccessRequest): void;
-  subscribe(subscriber: Subscriber): Unsubscribe;
+  ) => T | undefined;
+  getState: (descriptor: PermissionDescriptor) => PermissionState;
+  setState: (
+    descriptor: PermissionDescriptor,
+    toState: PermissionState,
+  ) => void;
+  requestAccess: (descriptor: PermissionDescriptor) => Promise<boolean>;
+  setAccessRequestHandler: (toHandler: HandleAccessRequest) => void;
+  subscribe: (subscriber: Subscriber) => Unsubscribe;
 };
 
 export type Unsubscribe = () => void;

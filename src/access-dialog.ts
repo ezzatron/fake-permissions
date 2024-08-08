@@ -1,7 +1,7 @@
 export type AccessDialog = {
-  dismiss(): void;
-  allow(shouldPersist: boolean): void;
-  deny(shouldPersist: boolean): void;
+  dismiss: () => void;
+  allow: (shouldPersist: boolean) => void;
+  deny: (shouldPersist: boolean) => void;
   readonly result: AccessDialogResult | undefined;
 };
 
