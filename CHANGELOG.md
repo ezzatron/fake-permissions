@@ -38,6 +38,15 @@ Versioning].
   - `grantPermission()` -> `grantAccess()`
   - `denyPermission()` -> `blockAccess()`
   - `resetPermission()` -> `resetAccess()`
+- **\[BREAKING]** The `mask` option of `createPermissions()` was renamed to
+  `masks`.
+- **\[BREAKING]** Permission masks now map `PermissionAccessStatus` values
+  `PermissionState` values. Previously they could only map from one
+  `PermissionState` to another.
+
+### Removed
+
+- Removed the `PermissionsMask` type.
 
 ### Added
 
@@ -66,6 +75,10 @@ Versioning].
 - Added the `PermissionStoreSubscriber` type. This type was already used
   for permission store subscribers, but is now exported for use in user-defined
   code.
+
+### Fixed
+
+- Exported the `PermissionMask` type that was missing from the `v0.7.0` release.
 
 ## [v0.10.0] - 2024-08-08
 

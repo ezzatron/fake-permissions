@@ -89,7 +89,7 @@ describe("PermissionStatus", () => {
     ${"ALLOWED"}               | ${"prompt"}
     ${"DENIED"}                | ${"prompt"}
   `(
-    "maps permission store statuses to W3C permission states",
+    "has a default mask that maps permission store statuses to W3C permission states",
     ({
       status,
       state,

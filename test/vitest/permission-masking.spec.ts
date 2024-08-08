@@ -45,18 +45,18 @@ describe("Permission masking", () => {
 
     user = createUser({ permissionStore });
     permissions = createPermissions({
-      mask: new Map([
+      masks: new Map([
         [
           permissionB,
           {
-            denied: "prompt",
+            BLOCKED: "prompt",
           },
         ],
         [
           permissionC,
           {
-            granted: "prompt",
-            prompt: "denied",
+            GRANTED: "prompt",
+            PROMPT: "denied",
           },
         ],
       ]),

@@ -25,16 +25,18 @@ describe("Permission masking", () => {
 
     const permissions = createPermissions({
       permissionStore,
-      mask: new Map([
+      masks: new Map([
         [
           // Mask the "geolocation" permission
           { name: "geolocation" },
           {
-            // When the actual state is "denied", report it as "prompt"
-            denied: "prompt",
+            // When the actual status is "BLOCKED" or "BLOCKED_AUTOMATICALLY",
+            // report it as the "prompt" state
+            BLOCKED: "prompt",
+            BLOCKED_AUTOMATICALLY: "prompt",
 
-            // Can mask multiple states if desired
-            // granted: "prompt",
+            // Can mask other statuses if desired
+            // GRANTED: "prompt",
           },
         ],
       ]),
