@@ -12,12 +12,27 @@ Versioning].
 
 ### Changed
 
+- **\[BREAKING]** Permission access requests are now handled by the permission
+  store instead of the user. This means:
+  - The `user.requestAccess()` method has moved to
+    `permissionStore.requestAccess()`.
+  - The `dismissDenyThreshold` option has moved from `createUser()` to
+    `createPermissionStore()`.
+  - Access request handlers are still configured via the user, either by
+    passing a `handleAccessRequest` option to `createUser()`, or by calling
+    `user.setAccessRequestHandler()`.
 - **\[BREAKING]** The `permissionStore.has()` method was renamed to
   `isKnownDescriptor()`.
 - **\[BREAKING]** The `permissionStore.get()` method was renamed to
   `getState()`.
 - **\[BREAKING]** The `permissionStore.set()` method was renamed to
   `setState()`.
+
+### Added
+
+- Added the `permissionStore.findByDescriptor()` method. This utility method can
+  be used to find a value in any iterable whose keys are permission descriptors,
+  using the permission store's configured `isMatchingDescriptor` logic.
 
 ## [v0.10.0] - 2024-08-08
 

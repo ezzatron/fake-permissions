@@ -1,3 +1,8 @@
+import {
+  createAccessDialog,
+  type HandleAccessRequest,
+} from "./access-dialog.js";
+
 type IsMatchingDescriptor = (
   a: PermissionDescriptor,
   b: PermissionDescriptor,
@@ -6,8 +11,14 @@ type IsMatchingDescriptor = (
 export type PermissionStore = {
   isKnownDescriptor(descriptor: PermissionDescriptor): boolean;
   isMatchingDescriptor: IsMatchingDescriptor;
+  selectByDescriptor<T>(
+    iterable: Iterable<[PermissionDescriptor, T]>,
+    descriptor: PermissionDescriptor,
+  ): T | undefined;
   getState(descriptor: PermissionDescriptor): PermissionState;
   setState(descriptor: PermissionDescriptor, toState: PermissionState): void;
+  requestAccess(descriptor: PermissionDescriptor): Promise<boolean>;
+  setAccessRequestHandler(toHandler: HandleAccessRequest): void;
   subscribe(subscriber: Subscriber): Unsubscribe;
 };
 
@@ -19,6 +30,7 @@ export type Subscriber = (
 ) => void;
 
 export function createPermissionStore({
+  dismissDenyThreshold = 3,
   initialStates = new Map([
     [{ name: "geolocation" }, "prompt"],
     [{ name: "midi", sysex: false } as PermissionDescriptor, "prompt"],
@@ -51,46 +63,69 @@ export function createPermissionStore({
     return a.name === b.name;
   },
 }: {
+  dismissDenyThreshold?: number;
   initialStates?: Map<PermissionDescriptor, PermissionState>;
   isMatchingDescriptor?: IsMatchingDescriptor;
 } = {}): PermissionStore {
   const states = new Map(initialStates);
   const subscribers = new Set<Subscriber>();
+  const dismissCounts: Map<PermissionDescriptor, number> = new Map();
+
+  let handleAccessRequest: HandleAccessRequest = async (dialog) => {
+    dialog.dismiss();
+  };
 
   return {
     isKnownDescriptor(descriptor) {
-      return Boolean(find(descriptor));
+      return Boolean(findDescriptor(descriptor));
     },
 
     isMatchingDescriptor,
 
-    getState(descriptor) {
-      const existing = find(descriptor);
-      const state = existing && states.get(existing);
+    selectByDescriptor,
 
-      if (!state) {
-        throw new TypeError(
-          `No permission state for descriptor ${JSON.stringify(descriptor)}`,
-        );
-      }
+    getState(descriptor) {
+      const [state] = resolveState(descriptor);
 
       return state;
     },
 
     setState(descriptor, toState) {
-      const existing = find(descriptor);
-      const fromState = existing && states.get(existing);
-
-      if (!fromState) {
-        throw new TypeError(
-          `No permission state for descriptor ${JSON.stringify(descriptor)}`,
-        );
-      }
+      const [fromState, existing] = resolveState(descriptor);
 
       if (fromState === toState) return;
 
-      states.set(existing, toState);
-      dispatch(existing, toState, fromState);
+      updateState(existing, toState, fromState);
+    },
+
+    async requestAccess(descriptor) {
+      const [state, existing] = resolveState(descriptor);
+
+      if (state === "granted") return true;
+      if (state === "denied") return false;
+
+      const dialog = createAccessDialog();
+      await handleAccessRequest(dialog, structuredClone(existing));
+
+      if (!dialog.result) {
+        if (incrementDismissCount(existing) >= dismissDenyThreshold) {
+          updateState(existing, "denied", "prompt");
+        }
+
+        return false;
+      }
+
+      const { shouldAllow, shouldPersist } = dialog.result;
+
+      if (shouldPersist) {
+        updateState(existing, shouldAllow ? "granted" : "denied", "prompt");
+      }
+
+      return shouldAllow;
+    },
+
+    setAccessRequestHandler(toHandler) {
+      handleAccessRequest = toHandler;
     },
 
     subscribe(subscriber) {
@@ -102,7 +137,20 @@ export function createPermissionStore({
     },
   };
 
-  function find(query: PermissionDescriptor) {
+  function selectByDescriptor<T>(
+    iterable: Iterable<[PermissionDescriptor, T]>,
+    descriptor: PermissionDescriptor,
+  ): T | undefined {
+    for (const [d, v] of iterable) {
+      if (isMatchingDescriptor(descriptor, d)) return v;
+    }
+
+    return undefined;
+  }
+
+  function findDescriptor(
+    query: PermissionDescriptor,
+  ): PermissionDescriptor | undefined {
     for (const [descriptor] of states) {
       if (isMatchingDescriptor(descriptor, query)) return descriptor;
     }
@@ -110,11 +158,36 @@ export function createPermissionStore({
     return undefined;
   }
 
+  function resolveState(
+    descriptor: PermissionDescriptor,
+  ): [PermissionState, PermissionDescriptor] {
+    const existing = findDescriptor(descriptor);
+    const state = existing && states.get(existing);
+
+    if (!state) {
+      throw new TypeError(
+        `No permission state for descriptor ${JSON.stringify(descriptor)}`,
+      );
+    }
+
+    return [state, existing];
+  }
+
+  function updateState(
+    descriptor: PermissionDescriptor,
+    toState: PermissionState,
+    fromState: PermissionState,
+  ): void {
+    if (toState === "prompt") dismissCounts.set(descriptor, 0);
+    states.set(descriptor, toState);
+    dispatch(descriptor, toState, fromState);
+  }
+
   function dispatch(
     descriptor: PermissionDescriptor,
     toState: PermissionState,
     fromState: PermissionState,
-  ) {
+  ): void {
     for (const subscriber of subscribers) {
       try {
         subscriber(descriptor, toState, fromState);
@@ -128,5 +201,14 @@ export function createPermissionStore({
       }
       /* v8 ignore stop */
     }
+  }
+
+  function incrementDismissCount(descriptor: PermissionDescriptor): number {
+    let count = selectByDescriptor(dismissCounts, descriptor) ?? 0;
+    ++count;
+
+    dismissCounts.set(descriptor, count);
+
+    return count;
   }
 }

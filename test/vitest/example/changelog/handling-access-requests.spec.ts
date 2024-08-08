@@ -16,6 +16,10 @@ afterEach(() => {
 describe("Handling access requests", () => {
   it("works", async () => {
     const permissionStore = createPermissionStore({
+      // The number of times the user can dismiss a permission dialog before the
+      // permission state is set to "denied" automatically (default: 3)
+      dismissDenyThreshold: Infinity,
+
       initialStates: new Map([
         // Set the initial state of the "geolocation" permission to "prompt"
         [{ name: "geolocation" }, "prompt"],
@@ -27,10 +31,6 @@ describe("Handling access requests", () => {
 
     const user = createUser({
       permissionStore,
-
-      // The number of times the user can dismiss a permission dialog before the
-      // permission state is set to "denied" automatically (default: 3)
-      dismissDenyThreshold: Infinity,
 
       handleAccessRequest: async (dialog, descriptor) => {
         // Allow access to geolocation, but don't change permission state
@@ -56,13 +56,13 @@ describe("Handling access requests", () => {
 
     // Outputs "true, prompt"
     console.log(
-      await user.requestAccess({ name: "geolocation" }),
+      await permissionStore.requestAccess({ name: "geolocation" }),
       geolocation.state,
     );
 
     // Outputs "false, denied"
     console.log(
-      await user.requestAccess({ name: "notifications" }),
+      await permissionStore.requestAccess({ name: "notifications" }),
       notifications.state,
     );
 
@@ -75,7 +75,7 @@ describe("Handling access requests", () => {
 
     // Outputs "false, prompt"
     console.log(
-      await user.requestAccess({ name: "geolocation" }),
+      await permissionStore.requestAccess({ name: "geolocation" }),
       geolocation.state,
     );
 

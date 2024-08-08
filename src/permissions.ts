@@ -1,4 +1,3 @@
-import { byDescriptor } from "./mapping.js";
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
 import type { PermissionsMask } from "./permissions-mask.js";
@@ -57,7 +56,8 @@ export class Permissions {
 
     return createPermissionStatus({
       descriptor,
-      mask: byDescriptor(this.#permissionStore, this.#mask, descriptor) ?? {},
+      mask:
+        this.#permissionStore.selectByDescriptor(this.#mask, descriptor) ?? {},
       permissionStore: this.#permissionStore,
     });
   }
