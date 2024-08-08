@@ -24,15 +24,48 @@ Versioning].
 - **\[BREAKING]** The `permissionStore.has()` method was renamed to
   `isKnownDescriptor()`.
 - **\[BREAKING]** The `permissionStore.get()` method was renamed to
-  `getState()`.
+  `getStatus()`, and now returns a `PermissionAccessStatus` instead of a
+  `PermissionState`.
 - **\[BREAKING]** The `permissionStore.set()` method was renamed to
-  `setState()`.
+  `setStatus()`, and now takes a `PermissionAccessStatus` instead of a
+  `PermissionState`.
+- **\[BREAKING]** Permission store subscribers now take `PermissionAccessStatus`
+  values instead of `PermissionState` values for the "to" and "from" statuses.
+- **\[BREAKING]** The permission store's initial states are now specified as
+  either `PermissionAccessState` or `PermissionAccessStatus` values, instead of
+  `PermissionState` values.
+- **\[BREAKING]** The user permission modifier methods were all renamed:
+  - `grantPermission()` -> `grantAccess()`
+  - `denyPermission()` -> `blockAccess()`
+  - `resetPermission()` -> `resetAccess()`
 
 ### Added
 
+- Added the `permissionStore.hasAccess()` method. This method is similar to
+  `permissionStore.requestAccess()`, in that it returns a boolean indicating
+  whether access is allowed, but it does not trigger an access request dialog.
 - Added the `permissionStore.findByDescriptor()` method. This utility method can
   be used to find a value in any iterable whose keys are permission descriptors,
   using the permission store's configured `isMatchingDescriptor` logic.
+- Added the `PermissionAccessState` type. This is an object type containing the
+  full state of a permission known to the permission store, including:
+  - A `status` property, which is a `PermissionAccessStatus` value.
+  - A `dismissCount` property, which is the number of times the user has
+    dismissed access requests for this permission.
+- Added the `PermissionAccessStatus` type. This is a union type of all
+  permission access states supported by the permission store, including:
+  - `PROMPT` — Interaction with the user is required to gain access.
+  - `GRANTED` — Access is allowed, and will continue to be allowed on subsequent
+    visits.
+  - `BLOCKED` — Access is denied, and will continue to be denied on subsequent
+    visits.
+  - `BLOCKED_AUTOMATICALLY` — Access is denied automatically, without user
+    interaction (e.g. due to repeated dismissals of access requests).
+  - `ALLOWED` — Access is allowed, but only for the current visit.
+  - `DENIED` — Access is denied, but only for the current visit.
+- Added the `PermissionStoreSubscriber` type. This type was already used
+  for permission store subscribers, but is now exported for use in user-defined
+  code.
 
 ## [v0.10.0] - 2024-08-08
 

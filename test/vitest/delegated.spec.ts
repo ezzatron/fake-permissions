@@ -44,16 +44,16 @@ describe("Delegated permissions", () => {
   beforeEach(() => {
     permissionStoreA = createPermissionStore({
       initialStates: new Map([
-        [permissionA, "prompt"],
-        [permissionB, "granted"],
-        [permissionC, "denied"],
+        [permissionA, "PROMPT"],
+        [permissionB, "GRANTED"],
+        [permissionC, "BLOCKED"],
       ]),
     });
     permissionStoreB = createPermissionStore({
       initialStates: new Map([
-        [permissionA, "granted"],
-        [permissionB, "denied"],
-        [permissionC, "prompt"],
+        [permissionA, "GRANTED"],
+        [permissionB, "BLOCKED"],
+        [permissionC, "PROMPT"],
       ]),
     });
 
@@ -134,9 +134,9 @@ describe("Delegated permissions", () => {
 
       describe("when the first delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.setState(permissionA, "denied");
-          permissionStoreA.setState(permissionB, "prompt");
-          permissionStoreA.setState(permissionC, "granted");
+          permissionStoreA.setStatus(permissionA, "BLOCKED");
+          permissionStoreA.setStatus(permissionB, "PROMPT");
+          permissionStoreA.setStatus(permissionC, "GRANTED");
         });
 
         it("dispatches change events", () => {
@@ -154,9 +154,9 @@ describe("Delegated permissions", () => {
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.setState(permissionA, "denied");
-          permissionStoreB.setState(permissionB, "prompt");
-          permissionStoreB.setState(permissionC, "granted");
+          permissionStoreB.setStatus(permissionA, "BLOCKED");
+          permissionStoreB.setStatus(permissionB, "PROMPT");
+          permissionStoreB.setStatus(permissionC, "GRANTED");
         });
 
         it("does not dispatch change events", () => {
@@ -192,17 +192,17 @@ describe("Delegated permissions", () => {
 
       describe("when selecting a delegate with the same state", () => {
         beforeEach(() => {
-          permissionStoreB.setState(
+          permissionStoreB.setStatus(
             permissionA,
-            permissionStoreA.getState(permissionA),
+            permissionStoreA.getStatus(permissionA),
           );
-          permissionStoreB.setState(
+          permissionStoreB.setStatus(
             permissionB,
-            permissionStoreA.getState(permissionB),
+            permissionStoreA.getStatus(permissionB),
           );
-          permissionStoreB.setState(
+          permissionStoreB.setStatus(
             permissionC,
-            permissionStoreA.getState(permissionC),
+            permissionStoreA.getStatus(permissionC),
           );
 
           selectDelegate(delegateB);
@@ -246,9 +246,9 @@ describe("Delegated permissions", () => {
 
         describe("when the first delegate's state changes", () => {
           beforeEach(() => {
-            permissionStoreA.setState(permissionA, "denied");
-            permissionStoreA.setState(permissionB, "prompt");
-            permissionStoreA.setState(permissionC, "granted");
+            permissionStoreA.setStatus(permissionA, "BLOCKED");
+            permissionStoreA.setStatus(permissionB, "PROMPT");
+            permissionStoreA.setStatus(permissionC, "GRANTED");
           });
 
           it("dispatches change events", () => {
@@ -315,9 +315,9 @@ describe("Delegated permissions", () => {
 
       describe("when the selected delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.setState(permissionA, "prompt");
-          permissionStoreB.setState(permissionB, "granted");
-          permissionStoreB.setState(permissionC, "denied");
+          permissionStoreB.setStatus(permissionA, "PROMPT");
+          permissionStoreB.setStatus(permissionB, "GRANTED");
+          permissionStoreB.setStatus(permissionC, "BLOCKED");
         });
 
         it("dispatches change events", () => {
@@ -335,9 +335,9 @@ describe("Delegated permissions", () => {
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.setState(permissionA, "denied");
-          permissionStoreA.setState(permissionB, "prompt");
-          permissionStoreA.setState(permissionC, "granted");
+          permissionStoreA.setStatus(permissionA, "BLOCKED");
+          permissionStoreA.setStatus(permissionB, "PROMPT");
+          permissionStoreA.setStatus(permissionC, "GRANTED");
         });
 
         it("does not dispatch change events", () => {

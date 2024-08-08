@@ -20,8 +20,8 @@ describe("Permissions", () => {
   beforeEach(() => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
-        [permissionA, "prompt"],
-        [permissionB, "prompt"],
+        [permissionA, "PROMPT"],
+        [permissionB, "PROMPT"],
       ]),
     });
 

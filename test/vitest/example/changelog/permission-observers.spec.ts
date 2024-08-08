@@ -18,8 +18,8 @@ describe("Permission observers", () => {
   it("works", async () => {
     const permissionStore = createPermissionStore({
       initialStates: new Map([
-        // Set the initial state of the "geolocation" permission to "prompt"
-        [{ name: "geolocation" }, "prompt"],
+        // Set the initial status of the "geolocation" permission to "PROMPT"
+        [{ name: "geolocation" }, "PROMPT"],
       ]),
     });
     const user = createUser({ permissionStore });
@@ -39,7 +39,7 @@ describe("Permission observers", () => {
     // Outputs "prompt"
     console.log(status.state);
 
-    user.denyPermission(descriptor);
+    user.blockAccess(descriptor);
 
     // Wait for the state to be "prompt" OR "denied"
     await observer.waitForState(["prompt", "denied"]);
@@ -48,14 +48,14 @@ describe("Permission observers", () => {
 
     // Wait for the state to be "granted", while running a task
     await observer.waitForState("granted", async () => {
-      user.grantPermission(descriptor);
+      user.grantAccess(descriptor);
     });
     // Outputs "granted"
     console.log(status.state);
 
     // Wait for the state to be "prompt" OR "denied", while running a task
     await observer.waitForState(["prompt", "denied"], async () => {
-      user.resetPermission(descriptor);
+      user.resetAccess(descriptor);
     });
     // Outputs "prompt"
     console.log(status.state);

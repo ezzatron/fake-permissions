@@ -37,9 +37,9 @@ describe("Permission masking", () => {
   beforeEach(async () => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
-        [permissionA, "prompt"],
-        [permissionB, "prompt"],
-        [permissionC, "prompt"],
+        [permissionA, "PROMPT"],
+        [permissionB, "PROMPT"],
+        [permissionC, "PROMPT"],
       ]),
     });
 
@@ -69,13 +69,13 @@ describe("Permission masking", () => {
   });
 
   it("affects masked permission states", () => {
-    user.denyPermission(permissionB);
-    user.grantPermission(permissionC);
+    user.blockAccess(permissionB);
+    user.grantAccess(permissionC);
 
     expect(statusB.state).toBe("prompt");
     expect(statusC.state).toBe("prompt");
 
-    user.resetPermission(permissionC);
+    user.resetAccess(permissionC);
 
     expect(statusC.state).toBe("denied");
   });
@@ -84,8 +84,8 @@ describe("Permission masking", () => {
     expect(statusA.state).toBe("prompt");
     expect(statusB.state).toBe("prompt");
 
-    user.denyPermission(permissionA);
-    user.grantPermission(permissionB);
+    user.blockAccess(permissionA);
+    user.grantAccess(permissionB);
 
     expect(statusA.state).toBe("denied");
     expect(statusB.state).toBe("granted");
@@ -110,16 +110,16 @@ describe("Permission masking", () => {
     describe("when a permission state change results in the same permission after masking", () => {
       beforeEach(() => {
         // "prompt" is unmapped for permissionB
-        user.resetPermission(permissionB);
+        user.resetAccess(permissionB);
         // "denied" is unmapped for permissionC
-        user.denyPermission(permissionC);
+        user.blockAccess(permissionC);
 
         listener.mockClear();
 
         // "denied" is mapped to "prompt" for permissionB
-        user.denyPermission(permissionB);
+        user.blockAccess(permissionB);
         // "prompt" is mapped to "denied" for permissionC
-        user.resetPermission(permissionC);
+        user.resetAccess(permissionC);
       });
 
       it("does not dispatch an event to the listener", () => {
@@ -130,11 +130,11 @@ describe("Permission masking", () => {
     describe("when a permission state change results in a different permission after masking", () => {
       beforeEach(() => {
         // unmapped -> unmapped
-        user.grantPermission(permissionB);
+        user.grantAccess(permissionB);
         // mapped -> mapped
-        user.grantPermission(permissionC);
+        user.grantAccess(permissionC);
         // mapped -> unmapped
-        user.denyPermission(permissionC);
+        user.blockAccess(permissionC);
       });
 
       it("dispatches an event to the listener", () => {

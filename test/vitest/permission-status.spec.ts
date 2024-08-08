@@ -4,6 +4,7 @@ import {
   createPermissionStore,
   createPermissions,
   createUser,
+  type PermissionAccessStatus,
 } from "fake-permissions";
 import {
   afterEach,
@@ -39,9 +40,9 @@ describe("PermissionStatus", () => {
   beforeEach(async () => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
-        [permissionA, "prompt"],
-        [permissionB, "granted"],
-        [permissionC, "denied"],
+        [permissionA, "PROMPT"],
+        [permissionB, "GRANTED"],
+        [permissionC, "BLOCKED"],
       ]),
     });
     subscribe = vi.spyOn(permissionStore, "subscribe");
@@ -79,11 +80,34 @@ describe("PermissionStatus", () => {
     expect(statusB.state).toBe("granted");
   });
 
+  it.each`
+    status                     | state
+    ${"PROMPT"}                | ${"prompt"}
+    ${"GRANTED"}               | ${"granted"}
+    ${"BLOCKED"}               | ${"denied"}
+    ${"BLOCKED_AUTOMATICALLY"} | ${"denied"}
+    ${"ALLOWED"}               | ${"prompt"}
+    ${"DENIED"}                | ${"prompt"}
+  `(
+    "maps permission store statuses to W3C permission states",
+    ({
+      status,
+      state,
+    }: {
+      status: PermissionAccessStatus;
+      state: PermissionState;
+    }) => {
+      permissionStore.setStatus(permissionA, status);
+
+      expect(statusA.state).toBe(state);
+    },
+  );
+
   describe("when the user changes the permission state", () => {
     beforeEach(() => {
-      user.grantPermission(permissionA);
-      user.denyPermission(permissionB);
-      user.resetPermission(permissionC);
+      user.grantAccess(permissionA);
+      user.blockAccess(permissionB);
+      user.resetAccess(permissionC);
     });
 
     it("has a state that matches the new state", () => {
@@ -128,9 +152,9 @@ describe("PermissionStatus", () => {
 
     describe("when the user changes the permission state", () => {
       beforeEach(() => {
-        user.grantPermission(permissionA);
-        user.denyPermission(permissionB);
-        user.resetPermission(permissionC);
+        user.grantAccess(permissionA);
+        user.blockAccess(permissionB);
+        user.resetAccess(permissionC);
       });
 
       it("dispatches an event to the listener", () => {
@@ -147,9 +171,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("does not dispatch an event to the old listener", () => {
@@ -185,9 +209,9 @@ describe("PermissionStatus", () => {
 
     describe("when the user changes the permission state", () => {
       beforeEach(() => {
-        user.grantPermission(permissionA);
-        user.denyPermission(permissionB);
-        user.resetPermission(permissionC);
+        user.grantAccess(permissionA);
+        user.blockAccess(permissionB);
+        user.resetAccess(permissionC);
       });
 
       it("dispatches an event to the listener", () => {
@@ -204,9 +228,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("dispatches an event to the listener only once", () => {
@@ -224,9 +248,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("does not dispatch an event to the listener", () => {
@@ -258,9 +282,9 @@ describe("PermissionStatus", () => {
 
     describe("when the user changes the permission state", () => {
       beforeEach(() => {
-        user.grantPermission(permissionA);
-        user.denyPermission(permissionB);
-        user.resetPermission(permissionC);
+        user.grantAccess(permissionA);
+        user.blockAccess(permissionB);
+        user.resetAccess(permissionC);
       });
 
       it("dispatches an event to the listener", () => {
@@ -277,9 +301,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("dispatches an event to the listener only once", () => {
@@ -297,9 +321,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("does not dispatch an event to the listener", () => {
@@ -327,13 +351,13 @@ describe("PermissionStatus", () => {
 
     describe("when the user changes the permission state multiple times", () => {
       beforeEach(() => {
-        user.grantPermission(permissionA);
-        user.denyPermission(permissionB);
-        user.resetPermission(permissionC);
+        user.grantAccess(permissionA);
+        user.blockAccess(permissionB);
+        user.resetAccess(permissionC);
 
-        user.resetPermission(permissionA);
-        user.grantPermission(permissionB);
-        user.denyPermission(permissionC);
+        user.resetAccess(permissionA);
+        user.grantAccess(permissionB);
+        user.blockAccess(permissionC);
       });
 
       it("dispatches an event to the listener only once", () => {
@@ -350,9 +374,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("dispatches an event to the listener only once", () => {
@@ -370,9 +394,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("does not dispatch an event to the listener", () => {
@@ -404,9 +428,9 @@ describe("PermissionStatus", () => {
 
     describe("when the user changes the permission state", () => {
       beforeEach(() => {
-        user.grantPermission(permissionA);
-        user.denyPermission(permissionB);
-        user.resetPermission(permissionC);
+        user.grantAccess(permissionA);
+        user.blockAccess(permissionB);
+        user.resetAccess(permissionC);
       });
 
       it("dispatches an event to the listener", () => {
@@ -421,9 +445,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("does not dispatch an event to the listener", () => {
@@ -451,9 +475,9 @@ describe("PermissionStatus", () => {
 
     describe("when the user changes the permission state", () => {
       beforeEach(() => {
-        user.grantPermission(permissionA);
-        user.denyPermission(permissionB);
-        user.resetPermission(permissionC);
+        user.grantAccess(permissionA);
+        user.blockAccess(permissionB);
+        user.resetAccess(permissionC);
       });
 
       it("dispatches an event to the listener", () => {
@@ -470,9 +494,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("dispatches an event to the listener only once", () => {
@@ -490,9 +514,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("dispatches an event to the listener in both phases", () => {
@@ -510,9 +534,9 @@ describe("PermissionStatus", () => {
 
       describe("when the user changes the permission state", () => {
         beforeEach(() => {
-          user.grantPermission(permissionA);
-          user.denyPermission(permissionB);
-          user.resetPermission(permissionC);
+          user.grantAccess(permissionA);
+          user.blockAccess(permissionB);
+          user.resetAccess(permissionC);
         });
 
         it("does not dispatch an event to the listener", () => {

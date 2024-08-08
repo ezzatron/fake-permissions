@@ -21,10 +21,10 @@ describe("Handling access requests", () => {
       dismissDenyThreshold: Infinity,
 
       initialStates: new Map([
-        // Set the initial state of the "geolocation" permission to "prompt"
-        [{ name: "geolocation" }, "prompt"],
-        // Set the initial state of the "notifications" permission to "prompt"
-        [{ name: "notifications" }, "prompt"],
+        // Set the initial status of the "geolocation" permission to "PROMPT"
+        [{ name: "geolocation" }, "PROMPT"],
+        // Set the initial status of the "notifications" permission to "PROMPT"
+        [{ name: "notifications" }, "PROMPT"],
       ]),
     });
     const permissions = createPermissions({ permissionStore });
@@ -66,7 +66,7 @@ describe("Handling access requests", () => {
       notifications.state,
     );
 
-    user.resetPermission({ name: "geolocation" });
+    user.resetAccess({ name: "geolocation" });
 
     user.setAccessRequestHandler(async (dialog) => {
       // New behavior for handling access requests

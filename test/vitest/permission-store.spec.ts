@@ -2,6 +2,7 @@ import {
   PermissionStore,
   createPermissionStore,
   type HandleAccessRequest,
+  type PermissionAccessState,
 } from "fake-permissions";
 import {
   afterEach,
@@ -44,12 +45,12 @@ describe("PermissionStore()", () => {
   beforeEach(() => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
-        [geolocation, "denied"],
-        [midiSysexFalse, "granted"],
-        [midiSysexTrue, "prompt"],
-        [pushUserVisibleOnlyFalse, "granted"],
-        [pushUserVisibleOnlyTrue, "prompt"],
-      ]),
+        [geolocation, "BLOCKED"],
+        [midiSysexFalse, "GRANTED"],
+        [midiSysexTrue, "PROMPT"],
+        [pushUserVisibleOnlyFalse, { status: "GRANTED", dismissCount: 0 }],
+        [pushUserVisibleOnlyTrue, { status: "PROMPT", dismissCount: 0 }],
+      ] as [PermissionDescriptor, PermissionAccessState][]),
 
       isMatchingDescriptor(a, b) {
         if (a.name === "midi" && b.name === "midi") {
@@ -146,11 +147,11 @@ describe("PermissionStore()", () => {
     });
   });
 
-  describe("getState()", () => {
+  describe("getStatus()", () => {
     describe("when called with an unknown descriptor", () => {
       it("throws a TypeError", () => {
         const call = () => {
-          permissionStore.getState(notifications);
+          permissionStore.getStatus(notifications);
         };
 
         expect(call).toThrow(TypeError);
@@ -161,30 +162,30 @@ describe("PermissionStore()", () => {
     });
 
     describe("when called with a known descriptor", () => {
-      it("returns the state of the permission", () => {
-        expect(permissionStore.getState(geolocation)).toBe("denied");
-        expect(permissionStore.getState(push)).toBe("granted");
-        expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
-          "granted",
+      it("returns the status of the permission", () => {
+        expect(permissionStore.getStatus(geolocation)).toBe("BLOCKED");
+        expect(permissionStore.getStatus(push)).toBe("GRANTED");
+        expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
+          "GRANTED",
         );
-        expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe(
-          "prompt",
+        expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe(
+          "PROMPT",
         );
       });
     });
 
     describe("when called with a known descriptor with extra properties", () => {
-      it("returns the state of the permission", () => {
-        expect(permissionStore.getState(geolocationWithExtra)).toBe("denied");
+      it("returns the status of the permission", () => {
+        expect(permissionStore.getStatus(geolocationWithExtra)).toBe("BLOCKED");
       });
     });
   });
 
-  describe("setState()", () => {
+  describe("setStatus()", () => {
     describe("when called with an unknown descriptor", () => {
       it("throws a TypeError", () => {
         const call = () => {
-          permissionStore.setState(notifications, "prompt");
+          permissionStore.setStatus(notifications, "PROMPT");
         };
 
         expect(call).toThrow(TypeError);
@@ -195,27 +196,71 @@ describe("PermissionStore()", () => {
     });
 
     describe("when called with a known descriptor", () => {
-      it("sets the state of the permission", () => {
-        permissionStore.setState(geolocation, "granted");
-        permissionStore.setState(pushUserVisibleOnlyFalse, "prompt");
-        permissionStore.setState(pushUserVisibleOnlyTrue, "denied");
+      it("sets the status of the permission", () => {
+        permissionStore.setStatus(geolocation, "GRANTED");
+        permissionStore.setStatus(pushUserVisibleOnlyFalse, "PROMPT");
+        permissionStore.setStatus(pushUserVisibleOnlyTrue, "BLOCKED");
 
-        expect(permissionStore.getState(geolocation)).toBe("granted");
-        expect(permissionStore.getState(push)).toBe("prompt");
-        expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
-          "prompt",
+        expect(permissionStore.getStatus(geolocation)).toBe("GRANTED");
+        expect(permissionStore.getStatus(push)).toBe("PROMPT");
+        expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
+          "PROMPT",
         );
-        expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe(
-          "denied",
+        expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe(
+          "BLOCKED",
         );
       });
     });
 
     describe("when called with a known descriptor with extra properties", () => {
-      it("sets the state of the permission", () => {
-        permissionStore.setState(geolocationWithExtra, "prompt");
+      it("sets the status of the permission", () => {
+        permissionStore.setStatus(geolocationWithExtra, "PROMPT");
 
-        expect(permissionStore.getState(geolocation)).toBe("prompt");
+        expect(permissionStore.getStatus(geolocation)).toBe("PROMPT");
+      });
+    });
+  });
+
+  describe("hasAccess()", () => {
+    describe("when called with an unknown descriptor", () => {
+      it("throws a TypeError", () => {
+        const call = () => {
+          permissionStore.hasAccess(notifications);
+        };
+
+        expect(call).toThrow(TypeError);
+        expect(call).toThrow(
+          'No permission state for descriptor {"name":"notifications"}',
+        );
+      });
+    });
+
+    describe("when called with a known descriptor", () => {
+      it("returns true when access is allowed", () => {
+        expect(permissionStore.hasAccess(push)).toBe(true);
+        expect(permissionStore.hasAccess(pushUserVisibleOnlyFalse)).toBe(true);
+        expect(permissionStore.hasAccess(midi)).toBe(true);
+        expect(permissionStore.hasAccess(midiSysexFalse)).toBe(true);
+      });
+
+      it("returns false when access is not allowed", () => {
+        expect(permissionStore.hasAccess(geolocation)).toBe(false);
+        expect(permissionStore.hasAccess(pushUserVisibleOnlyTrue)).toBe(false);
+        expect(permissionStore.hasAccess(midiSysexTrue)).toBe(false);
+      });
+    });
+
+    describe("when called with a known descriptor with extra properties", () => {
+      it("returns true when access is allowed", () => {
+        permissionStore.setStatus(geolocationWithExtra, "GRANTED");
+
+        expect(permissionStore.hasAccess(geolocationWithExtra)).toBe(true);
+      });
+
+      it("returns false when access is not allowed", () => {
+        permissionStore.setStatus(geolocationWithExtra, "BLOCKED");
+
+        expect(permissionStore.hasAccess(geolocationWithExtra)).toBe(false);
       });
     });
   });
@@ -235,12 +280,12 @@ describe("PermissionStore()", () => {
     });
 
     describe("when no access request handler is configured", () => {
-      describe('when access is requested for a permission in the "prompt" state', () => {
-        it("denies access and leaves the permission unchanged", async () => {
+      describe('when access is requested for a permission in the "PROMPT" status', () => {
+        it("denies access", async () => {
           expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(
             false,
           );
-          expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+          expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
         });
 
         describe("when the dialog is dismissed repeatedly", () => {
@@ -250,47 +295,82 @@ describe("PermissionStore()", () => {
             await permissionStore.requestAccess(midiSysexTrue);
           });
 
-          it("denies the permission automatically", () => {
-            expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
+          it("blocks the permission automatically", () => {
+            expect(permissionStore.getStatus(midiSysexTrue)).toBe(
+              "BLOCKED_AUTOMATICALLY",
+            );
           });
 
           it("doesn't affect other permissions", async () => {
             expect(
               await permissionStore.requestAccess(pushUserVisibleOnlyTrue),
             ).toBe(false);
-            expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe(
-              "prompt",
+            expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe(
+              "PROMPT",
             );
           });
 
           describe("when the permission is reset", () => {
             beforeEach(() => {
-              permissionStore.setState(midiSysexTrue, "prompt");
+              permissionStore.setStatus(midiSysexTrue, "PROMPT");
             });
 
             it("resets the dismissal count", async () => {
               await permissionStore.requestAccess(midiSysexTrue);
               await permissionStore.requestAccess(midiSysexTrue);
 
-              expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+              expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
             });
           });
         });
       });
 
-      describe('when access is requested for a permission in the "granted" state', () => {
-        it("allows access and leaves the permission unchanged", async () => {
+      describe('when access is requested for a permission in the "GRANTED" status', () => {
+        it("allows access", async () => {
           expect(await permissionStore.requestAccess(midiSysexFalse)).toBe(
             true,
           );
-          expect(permissionStore.getState(midiSysexFalse)).toBe("granted");
+          expect(permissionStore.getStatus(midiSysexFalse)).toBe("GRANTED");
         });
       });
 
-      describe('when access is requested for a permission in the "denied" state', () => {
-        it("denies access and leaves the permission unchanged", async () => {
+      describe('when access is requested for a permission in the "ALLOWED" status', () => {
+        it("allows access", async () => {
+          permissionStore.setStatus(midiSysexFalse, "ALLOWED");
+
+          expect(await permissionStore.requestAccess(midiSysexFalse)).toBe(
+            true,
+          );
+          expect(permissionStore.getStatus(midiSysexFalse)).toBe("ALLOWED");
+        });
+      });
+
+      describe('when access is requested for a permission in the "BLOCKED" status', () => {
+        it("denies access", async () => {
           expect(await permissionStore.requestAccess(geolocation)).toBe(false);
-          expect(permissionStore.getState(geolocation)).toBe("denied");
+          expect(permissionStore.getStatus(geolocation)).toBe("BLOCKED");
+        });
+      });
+
+      describe('when access is requested for a permission in the "BLOCKED_AUTOMATICALLY" status', () => {
+        beforeEach(() => {
+          permissionStore.setStatus(geolocation, "BLOCKED_AUTOMATICALLY");
+        });
+
+        it("denies access", async () => {
+          expect(await permissionStore.requestAccess(geolocation)).toBe(false);
+          expect(permissionStore.getStatus(geolocation)).toBe(
+            "BLOCKED_AUTOMATICALLY",
+          );
+        });
+      });
+
+      describe('when access is requested for a permission in the "DENIED" status', () => {
+        it("denies access", async () => {
+          permissionStore.setStatus(geolocation, "DENIED");
+
+          expect(await permissionStore.requestAccess(geolocation)).toBe(false);
+          expect(permissionStore.getStatus(geolocation)).toBe("DENIED");
         });
       });
     });
@@ -317,7 +397,7 @@ describe("PermissionStore()", () => {
         ).rejects.toThrow("Access dialog already dismissed");
       });
 
-      describe('when access is requested for a permission in the "prompt" state', () => {
+      describe('when access is requested for a permission in the "PROMPT" status', () => {
         it("calls the callback with a dialog and the permission descriptor", async () => {
           await permissionStore.requestAccess(midiSysexTrue);
 
@@ -338,11 +418,11 @@ describe("PermissionStore()", () => {
             });
           });
 
-          it("denies access and leaves the permission unchanged", async () => {
+          it("denies access", async () => {
             expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(
               false,
             );
-            expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+            expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
           });
         });
 
@@ -357,29 +437,31 @@ describe("PermissionStore()", () => {
             await permissionStore.requestAccess(midiSysexTrue);
           });
 
-          it("denies the permission automatically", () => {
-            expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
+          it("blocks the permission automatically", () => {
+            expect(permissionStore.getStatus(midiSysexTrue)).toBe(
+              "BLOCKED_AUTOMATICALLY",
+            );
           });
 
           it("doesn't affect other permissions", async () => {
             expect(
               await permissionStore.requestAccess(pushUserVisibleOnlyTrue),
             ).toBe(false);
-            expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe(
-              "prompt",
+            expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe(
+              "PROMPT",
             );
           });
 
           describe("when the permission is reset", () => {
             beforeEach(() => {
-              permissionStore.setState(midiSysexTrue, "prompt");
+              permissionStore.setStatus(midiSysexTrue, "PROMPT");
             });
 
             it("resets the dismissal count", async () => {
               await permissionStore.requestAccess(midiSysexTrue);
               await permissionStore.requestAccess(midiSysexTrue);
 
-              expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+              expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
             });
           });
         });
@@ -391,11 +473,11 @@ describe("PermissionStore()", () => {
             });
           });
 
-          it("allows access and leaves the permission unchanged", async () => {
+          it("allows access and permission", async () => {
             expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(
               true,
             );
-            expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+            expect(permissionStore.getStatus(midiSysexTrue)).toBe("ALLOWED");
           });
         });
 
@@ -406,11 +488,11 @@ describe("PermissionStore()", () => {
             });
           });
 
-          it("allows access and grants the permission", async () => {
+          it("allows access and grants permission", async () => {
             expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(
               true,
             );
-            expect(permissionStore.getState(midiSysexTrue)).toBe("granted");
+            expect(permissionStore.getStatus(midiSysexTrue)).toBe("GRANTED");
           });
         });
 
@@ -421,11 +503,11 @@ describe("PermissionStore()", () => {
             });
           });
 
-          it("denies access and leaves the permission unchanged", async () => {
+          it("denies access and permission", async () => {
             expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(
               false,
             );
-            expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+            expect(permissionStore.getStatus(midiSysexTrue)).toBe("DENIED");
           });
         });
 
@@ -436,40 +518,95 @@ describe("PermissionStore()", () => {
             });
           });
 
-          it("denies access and denies the permission", async () => {
+          it("denies access and blocks permission", async () => {
             expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(
               false,
             );
-            expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
+            expect(permissionStore.getStatus(midiSysexTrue)).toBe("BLOCKED");
           });
         });
       });
 
-      describe('when access is requested for a permission in the "granted" state', () => {
+      describe('when access is requested for a permission in the "GRANTED" status', () => {
         it("does not call the callback", async () => {
           await permissionStore.requestAccess(midiSysexFalse);
 
           expect(handleAccessRequest).not.toBeCalled();
         });
 
-        it("allows access and leaves the permission unchanged", async () => {
+        it("allows access", async () => {
           expect(await permissionStore.requestAccess(midiSysexFalse)).toBe(
             true,
           );
-          expect(permissionStore.getState(midiSysexFalse)).toBe("granted");
+          expect(permissionStore.getStatus(midiSysexFalse)).toBe("GRANTED");
         });
       });
 
-      describe('when access is requested for a permission in the "denied" state', () => {
+      describe('when access is requested for a permission in the "ALLOWED" status', () => {
+        beforeEach(() => {
+          permissionStore.setStatus(midiSysexFalse, "ALLOWED");
+        });
+
+        it("does not call the callback", async () => {
+          await permissionStore.requestAccess(midiSysexFalse);
+
+          expect(handleAccessRequest).not.toBeCalled();
+        });
+
+        it("allows access", async () => {
+          expect(await permissionStore.requestAccess(midiSysexFalse)).toBe(
+            true,
+          );
+          expect(permissionStore.getStatus(midiSysexFalse)).toBe("ALLOWED");
+        });
+      });
+
+      describe('when access is requested for a permission in the "BLOCKED" status', () => {
         it("does not call the callback", async () => {
           await permissionStore.requestAccess(geolocation);
 
           expect(handleAccessRequest).not.toBeCalled();
         });
 
-        it("denies access and leaves the permission unchanged", async () => {
+        it("denies access", async () => {
           expect(await permissionStore.requestAccess(geolocation)).toBe(false);
-          expect(permissionStore.getState(geolocation)).toBe("denied");
+          expect(permissionStore.getStatus(geolocation)).toBe("BLOCKED");
+        });
+      });
+
+      describe('when access is requested for a permission in the "BLOCKED_AUTOMATICALLY" status', () => {
+        beforeEach(() => {
+          permissionStore.setStatus(geolocation, "BLOCKED_AUTOMATICALLY");
+        });
+
+        it("does not call the callback", async () => {
+          await permissionStore.requestAccess(geolocation);
+
+          expect(handleAccessRequest).not.toBeCalled();
+        });
+
+        it("denies access", async () => {
+          expect(await permissionStore.requestAccess(geolocation)).toBe(false);
+          expect(permissionStore.getStatus(geolocation)).toBe(
+            "BLOCKED_AUTOMATICALLY",
+          );
+        });
+      });
+
+      describe('when access is requested for a permission in the "DENIED" status', () => {
+        beforeEach(() => {
+          permissionStore.setStatus(geolocation, "DENIED");
+        });
+
+        it("does not call the callback", async () => {
+          await permissionStore.requestAccess(geolocation);
+
+          expect(handleAccessRequest).not.toBeCalled();
+        });
+
+        it("denies access", async () => {
+          expect(await permissionStore.requestAccess(geolocation)).toBe(false);
+          expect(permissionStore.getStatus(geolocation)).toBe("DENIED");
         });
       });
     });
@@ -478,18 +615,42 @@ describe("PermissionStore()", () => {
       beforeEach(() => {
         permissionStore = createPermissionStore({
           dismissDenyThreshold: 2,
-          initialStates: new Map([[midiSysexTrue, "prompt"]]),
+          initialStates: new Map([[midiSysexTrue, "PROMPT"]]),
         });
       });
 
-      it("affects how many dismissed dialogs will cause permission denial", async () => {
+      it("affects how many dismissed dialogs will cause an automatic permission block", async () => {
         await permissionStore.requestAccess(midiSysexTrue);
 
-        expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+        expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
 
         await permissionStore.requestAccess(midiSysexTrue);
 
-        expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
+        expect(permissionStore.getStatus(midiSysexTrue)).toBe(
+          "BLOCKED_AUTOMATICALLY",
+        );
+      });
+    });
+
+    describe("when a starting dismissal count is configured", () => {
+      beforeEach(() => {
+        permissionStore = createPermissionStore({
+          initialStates: new Map([
+            [midiSysexTrue, { status: "PROMPT", dismissCount: 1 }],
+          ]),
+        });
+      });
+
+      it("affects how many dismissed dialogs will cause an automatic permission block", async () => {
+        await permissionStore.requestAccess(midiSysexTrue);
+
+        expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
+
+        await permissionStore.requestAccess(midiSysexTrue);
+
+        expect(permissionStore.getStatus(midiSysexTrue)).toBe(
+          "BLOCKED_AUTOMATICALLY",
+        );
       });
     });
   });
@@ -506,24 +667,24 @@ describe("PermissionStore()", () => {
       unsubscribe();
     });
 
-    describe("when a permission state changes", () => {
+    describe("when a permission status changes", () => {
       beforeEach(() => {
-        permissionStore.setState(pushUserVisibleOnlyFalse, "denied");
+        permissionStore.setStatus(pushUserVisibleOnlyFalse, "BLOCKED");
       });
 
       it("calls the subscriber", () => {
         expect(subscriber).toBeCalledTimes(1);
         expect(subscriber).toBeCalledWith(
           pushUserVisibleOnlyFalse,
-          "denied",
-          "granted",
+          "BLOCKED",
+          "GRANTED",
         );
       });
     });
 
-    describe("when a permission state is updated to the same state", () => {
+    describe("when a permission status is updated to the same status", () => {
       beforeEach(() => {
-        permissionStore.setState(pushUserVisibleOnlyFalse, "granted");
+        permissionStore.setStatus(pushUserVisibleOnlyFalse, "GRANTED");
       });
 
       it("does not call the subscriber", () => {
@@ -553,31 +714,35 @@ describe("PermissionStore()", () => {
     );
 
     it("should create a permission store that understands midi descriptors with the sysex property", () => {
-      expect(permissionStore.getState(midi)).toBe("prompt");
-      expect(permissionStore.getState(midiSysexFalse)).toBe("prompt");
-      expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+      expect(permissionStore.getStatus(midi)).toBe("PROMPT");
+      expect(permissionStore.getStatus(midiSysexFalse)).toBe("PROMPT");
+      expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
 
-      permissionStore.setState(midiSysexTrue, "denied");
-      permissionStore.setState(midiSysexFalse, "granted");
+      permissionStore.setStatus(midiSysexTrue, "BLOCKED");
+      permissionStore.setStatus(midiSysexFalse, "GRANTED");
 
-      expect(permissionStore.getState(midi)).toBe("granted");
-      expect(permissionStore.getState(midiSysexFalse)).toBe("granted");
-      expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
+      expect(permissionStore.getStatus(midi)).toBe("GRANTED");
+      expect(permissionStore.getStatus(midiSysexFalse)).toBe("GRANTED");
+      expect(permissionStore.getStatus(midiSysexTrue)).toBe("BLOCKED");
     });
 
     it("should create a permission store that understands push descriptors with the userVisibleOnly property", () => {
-      expect(permissionStore.getState(push)).toBe("prompt");
-      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe("prompt");
-      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("prompt");
-
-      permissionStore.setState(pushUserVisibleOnlyTrue, "denied");
-      permissionStore.setState(pushUserVisibleOnlyFalse, "granted");
-
-      expect(permissionStore.getState(push)).toBe("granted");
-      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
-        "granted",
+      expect(permissionStore.getStatus(push)).toBe("PROMPT");
+      expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
+        "PROMPT",
       );
-      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("denied");
+      expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe("PROMPT");
+
+      permissionStore.setStatus(pushUserVisibleOnlyTrue, "BLOCKED");
+      permissionStore.setStatus(pushUserVisibleOnlyFalse, "GRANTED");
+
+      expect(permissionStore.getStatus(push)).toBe("GRANTED");
+      expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
+        "GRANTED",
+      );
+      expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe(
+        "BLOCKED",
+      );
     });
 
     describe("isMatchingDescriptor()", () => {
@@ -605,40 +770,44 @@ describe("PermissionStore()", () => {
     beforeEach(() => {
       permissionStore = createPermissionStore({
         initialStates: new Map([
-          [push, "granted"],
-          [pushUserVisibleOnlyTrue, "prompt"],
-          [midi, "granted"],
-          [midiSysexTrue, "prompt"],
+          [push, "GRANTED"],
+          [pushUserVisibleOnlyTrue, "PROMPT"],
+          [midi, "GRANTED"],
+          [midiSysexTrue, "PROMPT"],
         ]),
       });
     });
 
     it("should create a permission store that understands non-normalized midi descriptors in the initial states", () => {
-      expect(permissionStore.getState(midi)).toBe("granted");
-      expect(permissionStore.getState(midiSysexFalse)).toBe("granted");
-      expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
+      expect(permissionStore.getStatus(midi)).toBe("GRANTED");
+      expect(permissionStore.getStatus(midiSysexFalse)).toBe("GRANTED");
+      expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
 
-      permissionStore.setState(midiSysexFalse, "prompt");
-      permissionStore.setState(midiSysexTrue, "denied");
+      permissionStore.setStatus(midiSysexFalse, "PROMPT");
+      permissionStore.setStatus(midiSysexTrue, "BLOCKED");
 
-      expect(permissionStore.getState(midi)).toBe("prompt");
-      expect(permissionStore.getState(midiSysexFalse)).toBe("prompt");
-      expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
+      expect(permissionStore.getStatus(midi)).toBe("PROMPT");
+      expect(permissionStore.getStatus(midiSysexFalse)).toBe("PROMPT");
+      expect(permissionStore.getStatus(midiSysexTrue)).toBe("BLOCKED");
     });
 
     it("should create a permission store that understands non-normalized push descriptors in the initial states", () => {
-      expect(permissionStore.getState(push)).toBe("granted");
-      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
-        "granted",
+      expect(permissionStore.getStatus(push)).toBe("GRANTED");
+      expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
+        "GRANTED",
       );
-      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("prompt");
+      expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe("PROMPT");
 
-      permissionStore.setState(pushUserVisibleOnlyFalse, "prompt");
-      permissionStore.setState(pushUserVisibleOnlyTrue, "denied");
+      permissionStore.setStatus(pushUserVisibleOnlyFalse, "PROMPT");
+      permissionStore.setStatus(pushUserVisibleOnlyTrue, "BLOCKED");
 
-      expect(permissionStore.getState(push)).toBe("prompt");
-      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe("prompt");
-      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("denied");
+      expect(permissionStore.getStatus(push)).toBe("PROMPT");
+      expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
+        "PROMPT",
+      );
+      expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe(
+        "BLOCKED",
+      );
     });
   });
 });

@@ -17,8 +17,8 @@ describe("Permission masking", () => {
   it("works", async () => {
     const permissionStore = createPermissionStore({
       initialStates: new Map([
-        // Set the initial state of the "geolocation" permission to "prompt"
-        [{ name: "geolocation" }, "prompt"],
+        // Set the initial status of the "geolocation" permission to "PROMPT"
+        [{ name: "geolocation" }, "PROMPT"],
       ]),
     });
     const user = createUser({ permissionStore });
@@ -43,10 +43,10 @@ describe("Permission masking", () => {
     const status = await permissions.query({ name: "geolocation" });
     console.log(status.state); // Outputs "prompt"
 
-    user.denyPermission({ name: "geolocation" });
+    user.blockAccess({ name: "geolocation" });
     console.log(status.state); // Outputs "prompt"
 
-    user.grantPermission({ name: "geolocation" });
+    user.grantAccess({ name: "geolocation" });
     console.log(status.state); // Outputs "granted"
 
     expect(vi.mocked(console.log).mock.calls).toEqual([

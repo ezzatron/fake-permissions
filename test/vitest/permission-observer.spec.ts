@@ -18,7 +18,7 @@ describe("PermissionObserver", () => {
 
   beforeEach(async () => {
     permissionStore = createPermissionStore({
-      initialStates: new Map([[permissionA, "prompt"]]),
+      initialStates: new Map([[permissionA, "PROMPT"]]),
     });
     const permissions = createPermissions({ permissionStore });
     status = await permissions.query(permissionA);
@@ -51,7 +51,7 @@ describe("PermissionObserver", () => {
 
         expect(isResolved).toBe(false);
 
-        permissionStore.setState(permissionA, "granted");
+        permissionStore.setStatus(permissionA, "GRANTED");
 
         await expect(promise).resolves.toBeUndefined();
         expect(status.state).toBe("granted");
@@ -68,12 +68,12 @@ describe("PermissionObserver", () => {
 
         expect(isResolved).toBe(false);
 
-        permissionStore.setState(permissionA, "denied");
+        permissionStore.setStatus(permissionA, "BLOCKED");
         await Promise.resolve();
 
         expect(isResolved).toBe(false);
 
-        permissionStore.setState(permissionA, "granted");
+        permissionStore.setStatus(permissionA, "GRANTED");
 
         await expect(promise).resolves.toBeUndefined();
       });
@@ -102,7 +102,7 @@ describe("PermissionObserver", () => {
 
         expect(isResolved).toBe(false);
 
-        permissionStore.setState(permissionA, "granted");
+        permissionStore.setStatus(permissionA, "GRANTED");
 
         await expect(promise).resolves.toBeUndefined();
         expect(status.state).toBe("granted");
@@ -113,7 +113,7 @@ describe("PermissionObserver", () => {
       it("runs the task while waiting", async () => {
         await expect(
           observer.waitForState("granted", async () => {
-            permissionStore.setState(permissionA, "granted");
+            permissionStore.setStatus(permissionA, "GRANTED");
           }),
         ).resolves.toBeUndefined();
         expect(status.state).toBe("granted");

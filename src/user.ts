@@ -2,9 +2,9 @@ import { type HandleAccessRequest } from "./access-dialog.js";
 import { PermissionStore } from "./permission-store.js";
 
 export type User = {
-  grantPermission: (descriptor: PermissionDescriptor) => void;
-  denyPermission: (descriptor: PermissionDescriptor) => void;
-  resetPermission: (descriptor: PermissionDescriptor) => void;
+  grantAccess: (descriptor: PermissionDescriptor) => void;
+  blockAccess: (descriptor: PermissionDescriptor) => void;
+  resetAccess: (descriptor: PermissionDescriptor) => void;
   setAccessRequestHandler: (toHandler: HandleAccessRequest) => void;
 };
 
@@ -20,16 +20,16 @@ export function createUser({
   }
 
   return {
-    grantPermission(descriptor) {
-      permissionStore.setState(descriptor, "granted");
+    grantAccess(descriptor) {
+      permissionStore.setStatus(descriptor, "GRANTED");
     },
 
-    denyPermission(descriptor) {
-      permissionStore.setState(descriptor, "denied");
+    blockAccess(descriptor) {
+      permissionStore.setStatus(descriptor, "BLOCKED");
     },
 
-    resetPermission(descriptor) {
-      permissionStore.setState(descriptor, "prompt");
+    resetAccess(descriptor) {
+      permissionStore.setStatus(descriptor, "PROMPT");
     },
 
     setAccessRequestHandler(toHandler) {

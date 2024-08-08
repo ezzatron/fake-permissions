@@ -1,7 +1,8 @@
 import { BaseEventTarget } from "./event-target.js";
 import {
   PermissionStore,
-  type Subscriber,
+  type PermissionAccessStatus,
+  type PermissionStoreSubscriber,
   type Unsubscribe,
 } from "./permission-store.js";
 import type { PermissionMask } from "./permissions-mask.js";
@@ -60,12 +61,15 @@ export class PermissionStatus extends BaseEventTarget {
     this.#permissionStore = permissionStore;
     this.#onchange = null;
 
-    this.#handlePermissionStoreChange = (descriptor, toState, fromState) => {
+    this.#handlePermissionStoreChange = (descriptor, toStatus, fromStatus) => {
       if (!permissionStore.isMatchingDescriptor(descriptor, this.#descriptor)) {
         return;
       }
 
+      const toState = statusToState(toStatus);
       const maskedToState = this.#mask[toState] ?? toState;
+
+      const fromState = statusToState(fromStatus);
       const maskedFromState = this.#mask[fromState] ?? fromState;
 
       if (maskedToState === maskedFromState) return;
@@ -75,7 +79,9 @@ export class PermissionStatus extends BaseEventTarget {
   }
 
   get state(): PermissionState {
-    const state = this.#permissionStore.getState(this.#descriptor);
+    const state = statusToState(
+      this.#permissionStore.getStatus(this.#descriptor),
+    );
 
     return this.#mask[state] ?? state;
   }
@@ -94,7 +100,14 @@ export class PermissionStatus extends BaseEventTarget {
 
   #onchange: EventListener | null;
   readonly #descriptor: PermissionDescriptor;
-  readonly #handlePermissionStoreChange: Subscriber;
+  readonly #handlePermissionStoreChange: PermissionStoreSubscriber;
   readonly #mask: PermissionMask;
   readonly #permissionStore: PermissionStore;
+}
+
+function statusToState(status: PermissionAccessStatus): PermissionState {
+  if (status === "GRANTED") return "granted";
+  if (status === "BLOCKED") return "denied";
+  if (status === "BLOCKED_AUTOMATICALLY") return "denied";
+  return "prompt";
 }

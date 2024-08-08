@@ -12,46 +12,42 @@ describe("User", () => {
   const permissionB: PermissionDescriptor = {
     name: "permission-b" as PermissionName,
   };
-  const permissionC: PermissionDescriptor = {
-    name: "permission-c" as PermissionName,
-  };
 
   let permissionStore: PermissionStore;
 
   beforeEach(() => {
     permissionStore = createPermissionStore({
       initialStates: new Map([
-        [permissionA, "prompt"],
-        [permissionB, "granted"],
-        [permissionC, "denied"],
+        [permissionA, "PROMPT"],
+        [permissionB, "GRANTED"],
       ]),
     });
   });
 
-  describe("grantPermission()", () => {
-    it("grants the permission", () => {
+  describe("grantAccess()", () => {
+    it("changes the permission to GRANTED", () => {
       const user = createUser({ permissionStore });
-      user.grantPermission(permissionA);
+      user.grantAccess(permissionA);
 
-      expect(permissionStore.getState(permissionA)).toBe("granted");
+      expect(permissionStore.getStatus(permissionA)).toBe("GRANTED");
     });
   });
 
-  describe("denyPermission()", () => {
-    it("denies the permission", () => {
+  describe("blockAccess()", () => {
+    it("changes the permission to BLOCKED", () => {
       const user = createUser({ permissionStore });
-      user.denyPermission(permissionA);
+      user.blockAccess(permissionA);
 
-      expect(permissionStore.getState(permissionA)).toBe("denied");
+      expect(permissionStore.getStatus(permissionA)).toBe("BLOCKED");
     });
   });
 
-  describe("resetPermission()", () => {
-    it("resets the permission", () => {
+  describe("resetAccess()", () => {
+    it("changes the permission to PROMPT", () => {
       const user = createUser({ permissionStore });
-      user.resetPermission(permissionB);
+      user.resetAccess(permissionB);
 
-      expect(permissionStore.getState(permissionB)).toBe("prompt");
+      expect(permissionStore.getStatus(permissionB)).toBe("PROMPT");
     });
   });
 
@@ -65,7 +61,7 @@ describe("User", () => {
       await expect(permissionStore.requestAccess(permissionA)).resolves.toBe(
         true,
       );
-      expect(permissionStore.getState(permissionA)).toBe("granted");
+      expect(permissionStore.getStatus(permissionA)).toBe("GRANTED");
     });
   });
 
@@ -81,7 +77,7 @@ describe("User", () => {
       await expect(permissionStore.requestAccess(permissionA)).resolves.toBe(
         true,
       );
-      expect(permissionStore.getState(permissionA)).toBe("granted");
+      expect(permissionStore.getStatus(permissionA)).toBe("GRANTED");
     });
   });
 });

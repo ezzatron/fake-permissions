@@ -6,42 +6,58 @@ import {
 export type PermissionStore = {
   isKnownDescriptor: (descriptor: PermissionDescriptor) => boolean;
   isMatchingDescriptor: IsMatchingDescriptor;
+  // TODO: rename to findByDescriptor
   selectByDescriptor: <T>(
     iterable: Iterable<[PermissionDescriptor, T]>,
     descriptor: PermissionDescriptor,
   ) => T | undefined;
-  getState: (descriptor: PermissionDescriptor) => PermissionState;
-  setState: (
+  getStatus: (descriptor: PermissionDescriptor) => PermissionAccessStatus;
+  setStatus: (
     descriptor: PermissionDescriptor,
-    toState: PermissionState,
+    toStatus: PermissionAccessStatus,
   ) => void;
+  hasAccess: (descriptor: PermissionDescriptor) => boolean;
   requestAccess: (descriptor: PermissionDescriptor) => Promise<boolean>;
   setAccessRequestHandler: (toHandler: HandleAccessRequest) => void;
-  subscribe: (subscriber: Subscriber) => Unsubscribe;
+  subscribe: (subscriber: PermissionStoreSubscriber) => Unsubscribe;
 };
 
-export type Unsubscribe = () => void;
-export type Subscriber = (
+export type PermissionAccessState = {
+  status: PermissionAccessStatus;
+  dismissCount: number;
+};
+
+export type PermissionAccessStatus =
+  | "PROMPT"
+  | "GRANTED"
+  | "BLOCKED"
+  | "BLOCKED_AUTOMATICALLY"
+  | "ALLOWED"
+  | "DENIED";
+
+export type PermissionStoreSubscriber = (
   descriptor: PermissionDescriptor,
-  toState: PermissionState,
-  fromState: PermissionState,
+  toStatus: PermissionAccessStatus,
+  fromStatus: PermissionAccessStatus,
 ) => void;
+
+export type Unsubscribe = () => void;
 
 export function createPermissionStore({
   dismissDenyThreshold = 3,
   initialStates = new Map([
-    [{ name: "geolocation" }, "prompt"],
-    [{ name: "midi", sysex: false } as PermissionDescriptor, "prompt"],
-    [{ name: "midi", sysex: true } as PermissionDescriptor, "prompt"],
-    [{ name: "notifications" }, "prompt"],
-    [{ name: "persistent-storage" }, "prompt"],
+    [{ name: "geolocation" }, "PROMPT"],
+    [{ name: "midi", sysex: false } as PermissionDescriptor, "PROMPT"],
+    [{ name: "midi", sysex: true } as PermissionDescriptor, "PROMPT"],
+    [{ name: "notifications" }, "PROMPT"],
+    [{ name: "persistent-storage" }, "PROMPT"],
     [
       { name: "push", userVisibleOnly: false } as PermissionDescriptor,
-      "prompt",
+      "PROMPT",
     ],
-    [{ name: "push", userVisibleOnly: true } as PermissionDescriptor, "prompt"],
-    [{ name: "screen-wake-lock" }, "prompt"],
-    [{ name: "storage-access" }, "prompt"],
+    [{ name: "push", userVisibleOnly: true } as PermissionDescriptor, "PROMPT"],
+    [{ name: "screen-wake-lock" }, "PROMPT"],
+    [{ name: "storage-access" }, "PROMPT"],
   ]),
 
   isMatchingDescriptor = (a, b) => {
@@ -62,12 +78,19 @@ export function createPermissionStore({
   },
 }: {
   dismissDenyThreshold?: number;
-  initialStates?: Map<PermissionDescriptor, PermissionState>;
+  initialStates?: Map<
+    PermissionDescriptor,
+    PermissionAccessStatus | PermissionAccessState
+  >;
   isMatchingDescriptor?: IsMatchingDescriptor;
 } = {}): PermissionStore {
-  const states = new Map(initialStates);
-  const subscribers = new Set<Subscriber>();
-  const dismissCounts: Map<PermissionDescriptor, number> = new Map();
+  const states: Map<PermissionDescriptor, PermissionAccessState> = new Map(
+    [...initialStates].map(([d, s]) => [
+      d,
+      typeof s === "string" ? { status: s, dismissCount: 0 } : s,
+    ]),
+  );
+  const subscribers = new Set<PermissionStoreSubscriber>();
 
   let handleAccessRequest: HandleAccessRequest = async (dialog) => {
     dialog.dismiss();
@@ -80,34 +103,55 @@ export function createPermissionStore({
 
     isMatchingDescriptor,
 
-    selectByDescriptor,
+    selectByDescriptor<T>(
+      iterable: Iterable<[PermissionDescriptor, T]>,
+      descriptor: PermissionDescriptor,
+    ): T | undefined {
+      for (const [d, v] of iterable) {
+        if (isMatchingDescriptor(descriptor, d)) return v;
+      }
 
-    getState(descriptor) {
-      const [state] = resolveState(descriptor);
-
-      return state;
+      return undefined;
     },
 
-    setState(descriptor, toState) {
+    getStatus(descriptor) {
+      const [{ status }] = resolveState(descriptor);
+
+      return status;
+    },
+
+    setStatus(descriptor, toStatus) {
       const [fromState, existing] = resolveState(descriptor);
 
-      if (fromState === toState) return;
+      updateState(existing, { status: toStatus, dismissCount: 0 }, fromState);
+    },
 
-      updateState(existing, toState, fromState);
+    hasAccess(descriptor) {
+      const [{ status }] = resolveState(descriptor);
+
+      return isAllowed(status);
     },
 
     async requestAccess(descriptor) {
       const [state, existing] = resolveState(descriptor);
+      const { status } = state;
 
-      if (state === "granted") return true;
-      if (state === "denied") return false;
+      if (status !== "PROMPT") return isAllowed(status);
 
       const dialog = createAccessDialog();
       await handleAccessRequest(dialog, structuredClone(existing));
 
       if (!dialog.result) {
-        if (incrementDismissCount(existing) >= dismissDenyThreshold) {
-          updateState(existing, "denied", "prompt");
+        const dismissCount = state.dismissCount + 1;
+
+        if (dismissCount >= dismissDenyThreshold) {
+          updateState(
+            existing,
+            { status: "BLOCKED_AUTOMATICALLY", dismissCount },
+            state,
+          );
+        } else {
+          updateState(existing, { status: "PROMPT", dismissCount }, state);
         }
 
         return false;
@@ -115,9 +159,20 @@ export function createPermissionStore({
 
       const { shouldAllow, shouldPersist } = dialog.result;
 
-      if (shouldPersist) {
-        updateState(existing, shouldAllow ? "granted" : "denied", "prompt");
-      }
+      updateState(
+        existing,
+        {
+          status: shouldAllow
+            ? shouldPersist
+              ? "GRANTED"
+              : "ALLOWED"
+            : shouldPersist
+              ? "BLOCKED"
+              : "DENIED",
+          dismissCount: 0,
+        },
+        state,
+      );
 
       return shouldAllow;
     },
@@ -135,17 +190,6 @@ export function createPermissionStore({
     },
   };
 
-  function selectByDescriptor<T>(
-    iterable: Iterable<[PermissionDescriptor, T]>,
-    descriptor: PermissionDescriptor,
-  ): T | undefined {
-    for (const [d, v] of iterable) {
-      if (isMatchingDescriptor(descriptor, d)) return v;
-    }
-
-    return undefined;
-  }
-
   function findDescriptor(
     query: PermissionDescriptor,
   ): PermissionDescriptor | undefined {
@@ -158,7 +202,7 @@ export function createPermissionStore({
 
   function resolveState(
     descriptor: PermissionDescriptor,
-  ): [PermissionState, PermissionDescriptor] {
+  ): [PermissionAccessState, PermissionDescriptor] {
     const existing = findDescriptor(descriptor);
     const state = existing && states.get(existing);
 
@@ -173,22 +217,19 @@ export function createPermissionStore({
 
   function updateState(
     descriptor: PermissionDescriptor,
-    toState: PermissionState,
-    fromState: PermissionState,
+    toState: PermissionAccessState,
+    fromState: PermissionAccessState,
   ): void {
-    if (toState === "prompt") dismissCounts.set(descriptor, 0);
     states.set(descriptor, toState);
-    dispatch(descriptor, toState, fromState);
-  }
 
-  function dispatch(
-    descriptor: PermissionDescriptor,
-    toState: PermissionState,
-    fromState: PermissionState,
-  ): void {
+    const toStatus = toState.status;
+    const fromStatus = fromState.status;
+
+    if (toStatus === fromStatus) return;
+
     for (const subscriber of subscribers) {
       try {
-        subscriber(descriptor, toState, fromState);
+        subscriber(descriptor, toStatus, fromStatus);
         /* v8 ignore start: impossible to test under Vitest */
       } catch (error) {
         // Throw subscriber errors asynchronously, so that users will at least
@@ -201,13 +242,8 @@ export function createPermissionStore({
     }
   }
 
-  function incrementDismissCount(descriptor: PermissionDescriptor): number {
-    let count = selectByDescriptor(dismissCounts, descriptor) ?? 0;
-    ++count;
-
-    dismissCounts.set(descriptor, count);
-
-    return count;
+  function isAllowed(status: PermissionAccessStatus): boolean {
+    return status === "ALLOWED" || status === "GRANTED";
   }
 }
 
