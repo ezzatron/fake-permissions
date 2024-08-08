@@ -10,6 +10,18 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **\[BREAKING]** The arguments taken by permission store subscribers have
+  changed. Instead of taking "from" status and "to" status as the second and
+  third arguments, they now take a single object as the second argument, with
+  the following properties:
+  - `hasAccess` — A boolean indicating whether access is allowed.
+  - `hadAccess` — A boolean indicating whether access was allowed before the
+    change.
+  - `toStatus` — The new `PermissionAccessStatus`.
+  - `fromStatus` — The previous `PermissionAccessStatus`.
+
 ## [v0.11.0] - 2024-08-08
 
 [v0.11.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.11.0

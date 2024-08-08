@@ -674,11 +674,12 @@ describe("PermissionStore()", () => {
 
       it("calls the subscriber", () => {
         expect(subscriber).toBeCalledTimes(1);
-        expect(subscriber).toBeCalledWith(
-          pushUserVisibleOnlyFalse,
-          "BLOCKED",
-          "GRANTED",
-        );
+        expect(subscriber).toBeCalledWith(pushUserVisibleOnlyFalse, {
+          hasAccess: false,
+          hadAccess: true,
+          toStatus: "BLOCKED",
+          fromStatus: "GRANTED",
+        });
       });
     });
 

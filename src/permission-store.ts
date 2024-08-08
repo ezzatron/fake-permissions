@@ -36,8 +36,12 @@ export type PermissionAccessStatus =
 
 export type PermissionStoreSubscriber = (
   descriptor: PermissionDescriptor,
-  toStatus: PermissionAccessStatus,
-  fromStatus: PermissionAccessStatus,
+  details: {
+    hasAccess: boolean;
+    hadAccess: boolean;
+    toStatus: PermissionAccessStatus;
+    fromStatus: PermissionAccessStatus;
+  },
 ) => void;
 
 export type Unsubscribe = () => void;
@@ -226,9 +230,12 @@ export function createPermissionStore({
 
     if (toStatus === fromStatus) return;
 
+    const hasAccess = isAllowed(toStatus);
+    const hadAccess = isAllowed(fromStatus);
+
     for (const subscriber of subscribers) {
       try {
-        subscriber(descriptor, toStatus, fromStatus);
+        subscriber(descriptor, { hasAccess, hadAccess, toStatus, fromStatus });
         /* v8 ignore start: impossible to test under Vitest */
       } catch (error) {
         // Throw subscriber errors asynchronously, so that users will at least
