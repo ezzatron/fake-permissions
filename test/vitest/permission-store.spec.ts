@@ -96,6 +96,23 @@ describe("PermissionStore()", () => {
     });
   });
 
+  describe("isMatchingDescriptor()", () => {
+    it("forwards the call to the configured isMatchingDescriptor option", () => {
+      expect(permissionStore.isMatchingDescriptor(midiSysexFalse, midi)).toBe(
+        true,
+      );
+      expect(permissionStore.isMatchingDescriptor(midi, midiSysexFalse)).toBe(
+        false,
+      );
+      expect(permissionStore.isMatchingDescriptor(midiSysexTrue, midi)).toBe(
+        false,
+      );
+      expect(permissionStore.isMatchingDescriptor(midi, midiSysexTrue)).toBe(
+        false,
+      );
+    });
+  });
+
   describe("getState()", () => {
     describe("when called with an unknown descriptor", () => {
       it("throws a TypeError", () => {
@@ -254,6 +271,26 @@ describe("PermissionStore()", () => {
         "granted",
       );
       expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("denied");
+    });
+
+    describe("isMatchingDescriptor()", () => {
+      it("returns true for matching descriptors", () => {
+        expect(permissionStore.isMatchingDescriptor(midiSysexFalse, midi)).toBe(
+          true,
+        );
+        expect(permissionStore.isMatchingDescriptor(midi, midiSysexFalse)).toBe(
+          true,
+        );
+      });
+
+      it("returns false for non-matching descriptors", () => {
+        expect(permissionStore.isMatchingDescriptor(midiSysexTrue, midi)).toBe(
+          false,
+        );
+        expect(permissionStore.isMatchingDescriptor(midi, midiSysexTrue)).toBe(
+          false,
+        );
+      });
     });
   });
 
