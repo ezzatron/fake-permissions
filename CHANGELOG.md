@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.12.0] - 2024-08-08
+
+[v0.12.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.12.0
+
 ### Changed
 
 - **\[BREAKING]** The arguments taken by permission store subscribers have
