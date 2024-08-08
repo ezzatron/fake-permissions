@@ -3,11 +3,6 @@ import {
   type HandleAccessRequest,
 } from "./access-dialog.js";
 
-type IsMatchingDescriptor = (
-  a: PermissionDescriptor,
-  b: PermissionDescriptor,
-) => boolean;
-
 export type PermissionStore = {
   isKnownDescriptor(descriptor: PermissionDescriptor): boolean;
   isMatchingDescriptor: IsMatchingDescriptor;
@@ -212,3 +207,8 @@ export function createPermissionStore({
     return count;
   }
 }
+
+type IsMatchingDescriptor = (
+  a: PermissionDescriptor,
+  b: PermissionDescriptor,
+) => boolean;
