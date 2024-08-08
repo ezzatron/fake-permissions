@@ -4,10 +4,10 @@ type IsMatchingDescriptor = (
 ) => boolean;
 
 export type PermissionStore = {
-  has(descriptor: PermissionDescriptor): boolean;
-  get(descriptor: PermissionDescriptor): PermissionState;
-  set(descriptor: PermissionDescriptor, toState: PermissionState): void;
+  isKnownDescriptor(descriptor: PermissionDescriptor): boolean;
   isMatchingDescriptor: IsMatchingDescriptor;
+  getState(descriptor: PermissionDescriptor): PermissionState;
+  setState(descriptor: PermissionDescriptor, toState: PermissionState): void;
   subscribe(subscriber: Subscriber): Unsubscribe;
 };
 
@@ -58,11 +58,13 @@ export function createPermissionStore({
   const subscribers = new Set<Subscriber>();
 
   return {
-    has(descriptor) {
+    isKnownDescriptor(descriptor) {
       return Boolean(find(descriptor));
     },
 
-    get(descriptor) {
+    isMatchingDescriptor,
+
+    getState(descriptor) {
       const existing = find(descriptor);
       const state = existing && states.get(existing);
 
@@ -75,7 +77,7 @@ export function createPermissionStore({
       return state;
     },
 
-    set(descriptor, toState) {
+    setState(descriptor, toState) {
       const existing = find(descriptor);
       const fromState = existing && states.get(existing);
 
@@ -90,8 +92,6 @@ export function createPermissionStore({
       states.set(existing, toState);
       dispatch(existing, toState, fromState);
     },
-
-    isMatchingDescriptor,
 
     subscribe(subscriber) {
       subscribers.add(subscriber);

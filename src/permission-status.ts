@@ -75,7 +75,7 @@ export class PermissionStatus extends BaseEventTarget {
   }
 
   get state(): PermissionState {
-    const state = this.#permissionStore.get(this.#descriptor);
+    const state = this.#permissionStore.getState(this.#descriptor);
 
     return this.#mask[state] ?? state;
   }

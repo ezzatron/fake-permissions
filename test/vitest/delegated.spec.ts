@@ -134,9 +134,9 @@ describe("Delegated permissions", () => {
 
       describe("when the first delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.set(permissionA, "denied");
-          permissionStoreA.set(permissionB, "prompt");
-          permissionStoreA.set(permissionC, "granted");
+          permissionStoreA.setState(permissionA, "denied");
+          permissionStoreA.setState(permissionB, "prompt");
+          permissionStoreA.setState(permissionC, "granted");
         });
 
         it("dispatches change events", () => {
@@ -154,9 +154,9 @@ describe("Delegated permissions", () => {
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.set(permissionA, "denied");
-          permissionStoreB.set(permissionB, "prompt");
-          permissionStoreB.set(permissionC, "granted");
+          permissionStoreB.setState(permissionA, "denied");
+          permissionStoreB.setState(permissionB, "prompt");
+          permissionStoreB.setState(permissionC, "granted");
         });
 
         it("does not dispatch change events", () => {
@@ -192,9 +192,18 @@ describe("Delegated permissions", () => {
 
       describe("when selecting a delegate with the same state", () => {
         beforeEach(() => {
-          permissionStoreB.set(permissionA, permissionStoreA.get(permissionA));
-          permissionStoreB.set(permissionB, permissionStoreA.get(permissionB));
-          permissionStoreB.set(permissionC, permissionStoreA.get(permissionC));
+          permissionStoreB.setState(
+            permissionA,
+            permissionStoreA.getState(permissionA),
+          );
+          permissionStoreB.setState(
+            permissionB,
+            permissionStoreA.getState(permissionB),
+          );
+          permissionStoreB.setState(
+            permissionC,
+            permissionStoreA.getState(permissionC),
+          );
 
           selectDelegate(delegateB);
         });
@@ -237,9 +246,9 @@ describe("Delegated permissions", () => {
 
         describe("when the first delegate's state changes", () => {
           beforeEach(() => {
-            permissionStoreA.set(permissionA, "denied");
-            permissionStoreA.set(permissionB, "prompt");
-            permissionStoreA.set(permissionC, "granted");
+            permissionStoreA.setState(permissionA, "denied");
+            permissionStoreA.setState(permissionB, "prompt");
+            permissionStoreA.setState(permissionC, "granted");
           });
 
           it("dispatches change events", () => {
@@ -306,9 +315,9 @@ describe("Delegated permissions", () => {
 
       describe("when the selected delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreB.set(permissionA, "prompt");
-          permissionStoreB.set(permissionB, "granted");
-          permissionStoreB.set(permissionC, "denied");
+          permissionStoreB.setState(permissionA, "prompt");
+          permissionStoreB.setState(permissionB, "granted");
+          permissionStoreB.setState(permissionC, "denied");
         });
 
         it("dispatches change events", () => {
@@ -326,9 +335,9 @@ describe("Delegated permissions", () => {
 
       describe("when another delegate's state changes", () => {
         beforeEach(() => {
-          permissionStoreA.set(permissionA, "denied");
-          permissionStoreA.set(permissionB, "prompt");
-          permissionStoreA.set(permissionC, "granted");
+          permissionStoreA.setState(permissionA, "denied");
+          permissionStoreA.setState(permissionB, "prompt");
+          permissionStoreA.setState(permissionC, "granted");
         });
 
         it("does not dispatch change events", () => {

@@ -28,20 +28,20 @@ export function createUser({
 
   return {
     grantPermission(descriptor) {
-      permissionStore.set(descriptor, "granted");
+      permissionStore.setState(descriptor, "granted");
     },
 
     denyPermission(descriptor) {
-      permissionStore.set(descriptor, "denied");
+      permissionStore.setState(descriptor, "denied");
     },
 
     resetPermission(descriptor) {
       dismissCounts.set(descriptor, 0);
-      permissionStore.set(descriptor, "prompt");
+      permissionStore.setState(descriptor, "prompt");
     },
 
     async requestAccess(descriptor) {
-      const state = permissionStore.get(descriptor);
+      const state = permissionStore.getState(descriptor);
 
       if (state === "granted") return true;
       if (state === "denied") return false;
@@ -51,7 +51,7 @@ export function createUser({
 
       if (!dialog.result) {
         if (incrementDismissCount(descriptor) >= dismissDenyThreshold) {
-          permissionStore.set(descriptor, "denied");
+          permissionStore.setState(descriptor, "denied");
         }
 
         return false;
@@ -60,7 +60,10 @@ export function createUser({
       const { shouldAllow, shouldPersist } = dialog.result;
 
       if (shouldPersist) {
-        permissionStore.set(descriptor, shouldAllow ? "granted" : "denied");
+        permissionStore.setState(
+          descriptor,
+          shouldAllow ? "granted" : "denied",
+        );
       }
 
       return shouldAllow;

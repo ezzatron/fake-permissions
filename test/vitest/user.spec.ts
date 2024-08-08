@@ -39,7 +39,7 @@ describe("User", () => {
     describe('when access is requested for a permission in the "prompt" state', () => {
       it("denies access and leaves the permission unchanged", async () => {
         expect(await user.requestAccess(permissionA)).toBe(false);
-        expect(permissionStore.get(permissionA)).toBe("prompt");
+        expect(permissionStore.getState(permissionA)).toBe("prompt");
       });
 
       describe("when the dialog is dismissed repeatedly", () => {
@@ -50,14 +50,14 @@ describe("User", () => {
         });
 
         it("denies the permission automatically", () => {
-          expect(permissionStore.get(permissionA)).toBe("denied");
+          expect(permissionStore.getState(permissionA)).toBe("denied");
         });
 
         it("doesn't affect other permissions", async () => {
           user.resetPermission(permissionB);
 
           expect(await user.requestAccess(permissionB)).toBe(false);
-          expect(permissionStore.get(permissionB)).toBe("prompt");
+          expect(permissionStore.getState(permissionB)).toBe("prompt");
         });
 
         describe("when the permission is reset", () => {
@@ -69,7 +69,7 @@ describe("User", () => {
             await user.requestAccess(permissionA);
             await user.requestAccess(permissionA);
 
-            expect(permissionStore.get(permissionA)).toBe("prompt");
+            expect(permissionStore.getState(permissionA)).toBe("prompt");
           });
         });
       });
@@ -78,14 +78,14 @@ describe("User", () => {
     describe('when access is requested for a permission in the "granted" state', () => {
       it("allows access and leaves the permission unchanged", async () => {
         expect(await user.requestAccess(permissionB)).toBe(true);
-        expect(permissionStore.get(permissionB)).toBe("granted");
+        expect(permissionStore.getState(permissionB)).toBe("granted");
       });
     });
 
     describe('when access is requested for a permission in the "denied" state', () => {
       it("denies access and leaves the permission unchanged", async () => {
         expect(await user.requestAccess(permissionC)).toBe(false);
-        expect(permissionStore.get(permissionC)).toBe("denied");
+        expect(permissionStore.getState(permissionC)).toBe("denied");
       });
     });
   });
@@ -135,7 +135,7 @@ describe("User", () => {
 
         it("denies access and leaves the permission unchanged", async () => {
           expect(await user.requestAccess(permissionA)).toBe(false);
-          expect(permissionStore.get(permissionA)).toBe("prompt");
+          expect(permissionStore.getState(permissionA)).toBe("prompt");
         });
       });
 
@@ -151,14 +151,14 @@ describe("User", () => {
         });
 
         it("denies the permission automatically", () => {
-          expect(permissionStore.get(permissionA)).toBe("denied");
+          expect(permissionStore.getState(permissionA)).toBe("denied");
         });
 
         it("doesn't affect other permissions", async () => {
           user.resetPermission(permissionB);
 
           expect(await user.requestAccess(permissionB)).toBe(false);
-          expect(permissionStore.get(permissionB)).toBe("prompt");
+          expect(permissionStore.getState(permissionB)).toBe("prompt");
         });
 
         describe("when the permission is reset", () => {
@@ -170,7 +170,7 @@ describe("User", () => {
             await user.requestAccess(permissionA);
             await user.requestAccess(permissionA);
 
-            expect(permissionStore.get(permissionA)).toBe("prompt");
+            expect(permissionStore.getState(permissionA)).toBe("prompt");
           });
         });
       });
@@ -184,7 +184,7 @@ describe("User", () => {
 
         it("allows access and leaves the permission unchanged", async () => {
           expect(await user.requestAccess(permissionA)).toBe(true);
-          expect(permissionStore.get(permissionA)).toBe("prompt");
+          expect(permissionStore.getState(permissionA)).toBe("prompt");
         });
       });
 
@@ -197,7 +197,7 @@ describe("User", () => {
 
         it("allows access and grants the permission", async () => {
           expect(await user.requestAccess(permissionA)).toBe(true);
-          expect(permissionStore.get(permissionA)).toBe("granted");
+          expect(permissionStore.getState(permissionA)).toBe("granted");
         });
       });
 
@@ -210,7 +210,7 @@ describe("User", () => {
 
         it("denies access and leaves the permission unchanged", async () => {
           expect(await user.requestAccess(permissionA)).toBe(false);
-          expect(permissionStore.get(permissionA)).toBe("prompt");
+          expect(permissionStore.getState(permissionA)).toBe("prompt");
         });
       });
 
@@ -223,7 +223,7 @@ describe("User", () => {
 
         it("denies access and denies the permission", async () => {
           expect(await user.requestAccess(permissionA)).toBe(false);
-          expect(permissionStore.get(permissionA)).toBe("denied");
+          expect(permissionStore.getState(permissionA)).toBe("denied");
         });
       });
     });
@@ -237,7 +237,7 @@ describe("User", () => {
 
       it("allows access and leaves the permission unchanged", async () => {
         expect(await user.requestAccess(permissionB)).toBe(true);
-        expect(permissionStore.get(permissionB)).toBe("granted");
+        expect(permissionStore.getState(permissionB)).toBe("granted");
       });
     });
 
@@ -250,7 +250,7 @@ describe("User", () => {
 
       it("denies access and leaves the permission unchanged", async () => {
         expect(await user.requestAccess(permissionC)).toBe(false);
-        expect(permissionStore.get(permissionC)).toBe("denied");
+        expect(permissionStore.getState(permissionC)).toBe("denied");
       });
     });
   });
@@ -265,7 +265,7 @@ describe("User", () => {
 
     it("uses the new handler", async () => {
       expect(await user.requestAccess(permissionA)).toBe(true);
-      expect(permissionStore.get(permissionA)).toBe("granted");
+      expect(permissionStore.getState(permissionA)).toBe("granted");
     });
   });
 
@@ -280,11 +280,11 @@ describe("User", () => {
     it("affects how many dismissed dialogs will cause permission denial", async () => {
       await user.requestAccess(permissionA);
 
-      expect(permissionStore.get(permissionA)).toBe("prompt");
+      expect(permissionStore.getState(permissionA)).toBe("prompt");
 
       await user.requestAccess(permissionA);
 
-      expect(permissionStore.get(permissionA)).toBe("denied");
+      expect(permissionStore.getState(permissionA)).toBe("denied");
     });
   });
 });

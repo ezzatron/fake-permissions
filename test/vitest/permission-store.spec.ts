@@ -67,34 +67,40 @@ describe("PermissionStore()", () => {
     });
   });
 
-  describe("has()", () => {
-    describe("when called with non-matching descriptor", () => {
+  describe("isKnownDescriptor()", () => {
+    describe("when called with an unknown descriptor", () => {
       it("returns false", () => {
-        expect(permissionStore.has(notifications)).toBe(false);
+        expect(permissionStore.isKnownDescriptor(notifications)).toBe(false);
       });
     });
 
-    describe("when called with matching descriptor", () => {
+    describe("when called with a known descriptor", () => {
       it("returns true", () => {
-        expect(permissionStore.has(geolocation)).toBe(true);
-        expect(permissionStore.has(push)).toBe(true);
-        expect(permissionStore.has(pushUserVisibleOnlyFalse)).toBe(true);
-        expect(permissionStore.has(pushUserVisibleOnlyTrue)).toBe(true);
+        expect(permissionStore.isKnownDescriptor(geolocation)).toBe(true);
+        expect(permissionStore.isKnownDescriptor(push)).toBe(true);
+        expect(
+          permissionStore.isKnownDescriptor(pushUserVisibleOnlyFalse),
+        ).toBe(true);
+        expect(permissionStore.isKnownDescriptor(pushUserVisibleOnlyTrue)).toBe(
+          true,
+        );
       });
     });
 
-    describe("when called with matching descriptor with extra properties", () => {
+    describe("when called with a known descriptor with extra properties", () => {
       it("returns true", () => {
-        expect(permissionStore.has(geolocationWithExtra)).toBe(true);
+        expect(permissionStore.isKnownDescriptor(geolocationWithExtra)).toBe(
+          true,
+        );
       });
     });
   });
 
-  describe("get()", () => {
-    describe("when called with non-matching descriptor", () => {
+  describe("getState()", () => {
+    describe("when called with an unknown descriptor", () => {
       it("throws a TypeError", () => {
         const call = () => {
-          permissionStore.get(notifications);
+          permissionStore.getState(notifications);
         };
 
         expect(call).toThrow(TypeError);
@@ -104,27 +110,31 @@ describe("PermissionStore()", () => {
       });
     });
 
-    describe("when called with matching descriptor", () => {
+    describe("when called with a known descriptor", () => {
       it("returns the state of the permission", () => {
-        expect(permissionStore.get(geolocation)).toBe("denied");
-        expect(permissionStore.get(push)).toBe("granted");
-        expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("granted");
-        expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("prompt");
+        expect(permissionStore.getState(geolocation)).toBe("denied");
+        expect(permissionStore.getState(push)).toBe("granted");
+        expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
+          "granted",
+        );
+        expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe(
+          "prompt",
+        );
       });
     });
 
-    describe("when called with matching descriptor with extra properties", () => {
+    describe("when called with a known descriptor with extra properties", () => {
       it("returns the state of the permission", () => {
-        expect(permissionStore.get(geolocationWithExtra)).toBe("denied");
+        expect(permissionStore.getState(geolocationWithExtra)).toBe("denied");
       });
     });
   });
 
-  describe("set()", () => {
-    describe("when called with non-matching descriptor", () => {
+  describe("setState()", () => {
+    describe("when called with an unknown descriptor", () => {
       it("throws a TypeError", () => {
         const call = () => {
-          permissionStore.set(notifications, "prompt");
+          permissionStore.setState(notifications, "prompt");
         };
 
         expect(call).toThrow(TypeError);
@@ -134,24 +144,28 @@ describe("PermissionStore()", () => {
       });
     });
 
-    describe("when called with matching descriptor", () => {
+    describe("when called with a known descriptor", () => {
       it("sets the state of the permission", () => {
-        permissionStore.set(geolocation, "granted");
-        permissionStore.set(pushUserVisibleOnlyFalse, "prompt");
-        permissionStore.set(pushUserVisibleOnlyTrue, "denied");
+        permissionStore.setState(geolocation, "granted");
+        permissionStore.setState(pushUserVisibleOnlyFalse, "prompt");
+        permissionStore.setState(pushUserVisibleOnlyTrue, "denied");
 
-        expect(permissionStore.get(geolocation)).toBe("granted");
-        expect(permissionStore.get(push)).toBe("prompt");
-        expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("prompt");
-        expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("denied");
+        expect(permissionStore.getState(geolocation)).toBe("granted");
+        expect(permissionStore.getState(push)).toBe("prompt");
+        expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
+          "prompt",
+        );
+        expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe(
+          "denied",
+        );
       });
     });
 
-    describe("when called with matching descriptor with extra properties", () => {
+    describe("when called with a known descriptor with extra properties", () => {
       it("sets the state of the permission", () => {
-        permissionStore.set(geolocationWithExtra, "prompt");
+        permissionStore.setState(geolocationWithExtra, "prompt");
 
-        expect(permissionStore.get(geolocation)).toBe("prompt");
+        expect(permissionStore.getState(geolocation)).toBe("prompt");
       });
     });
   });
@@ -170,7 +184,7 @@ describe("PermissionStore()", () => {
 
     describe("when a permission state changes", () => {
       beforeEach(() => {
-        permissionStore.set(pushUserVisibleOnlyFalse, "denied");
+        permissionStore.setState(pushUserVisibleOnlyFalse, "denied");
       });
 
       it("calls the subscriber", () => {
@@ -185,7 +199,7 @@ describe("PermissionStore()", () => {
 
     describe("when a permission state is updated to the same state", () => {
       beforeEach(() => {
-        permissionStore.set(pushUserVisibleOnlyFalse, "granted");
+        permissionStore.setState(pushUserVisibleOnlyFalse, "granted");
       });
 
       it("does not call the subscriber", () => {
@@ -210,34 +224,36 @@ describe("PermissionStore()", () => {
     ] as const)(
       "should create a permission store with the standard permissions (%s)",
       (name) => {
-        expect(permissionStore.has({ name })).toBe(true);
+        expect(permissionStore.isKnownDescriptor({ name })).toBe(true);
       },
     );
 
     it("should create a permission store that understands midi descriptors with the sysex property", () => {
-      expect(permissionStore.get(midi)).toBe("prompt");
-      expect(permissionStore.get(midiSysexFalse)).toBe("prompt");
-      expect(permissionStore.get(midiSysexTrue)).toBe("prompt");
+      expect(permissionStore.getState(midi)).toBe("prompt");
+      expect(permissionStore.getState(midiSysexFalse)).toBe("prompt");
+      expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
 
-      permissionStore.set(midiSysexTrue, "denied");
-      permissionStore.set(midiSysexFalse, "granted");
+      permissionStore.setState(midiSysexTrue, "denied");
+      permissionStore.setState(midiSysexFalse, "granted");
 
-      expect(permissionStore.get(midi)).toBe("granted");
-      expect(permissionStore.get(midiSysexFalse)).toBe("granted");
-      expect(permissionStore.get(midiSysexTrue)).toBe("denied");
+      expect(permissionStore.getState(midi)).toBe("granted");
+      expect(permissionStore.getState(midiSysexFalse)).toBe("granted");
+      expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
     });
 
     it("should create a permission store that understands push descriptors with the userVisibleOnly property", () => {
-      expect(permissionStore.get(push)).toBe("prompt");
-      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("prompt");
-      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("prompt");
+      expect(permissionStore.getState(push)).toBe("prompt");
+      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe("prompt");
+      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("prompt");
 
-      permissionStore.set(pushUserVisibleOnlyTrue, "denied");
-      permissionStore.set(pushUserVisibleOnlyFalse, "granted");
+      permissionStore.setState(pushUserVisibleOnlyTrue, "denied");
+      permissionStore.setState(pushUserVisibleOnlyFalse, "granted");
 
-      expect(permissionStore.get(push)).toBe("granted");
-      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("granted");
-      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("denied");
+      expect(permissionStore.getState(push)).toBe("granted");
+      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
+        "granted",
+      );
+      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("denied");
     });
   });
 
@@ -254,29 +270,31 @@ describe("PermissionStore()", () => {
     });
 
     it("should create a permission store that understands non-normalized midi descriptors in the initial states", () => {
-      expect(permissionStore.get(midi)).toBe("granted");
-      expect(permissionStore.get(midiSysexFalse)).toBe("granted");
-      expect(permissionStore.get(midiSysexTrue)).toBe("prompt");
+      expect(permissionStore.getState(midi)).toBe("granted");
+      expect(permissionStore.getState(midiSysexFalse)).toBe("granted");
+      expect(permissionStore.getState(midiSysexTrue)).toBe("prompt");
 
-      permissionStore.set(midiSysexFalse, "prompt");
-      permissionStore.set(midiSysexTrue, "denied");
+      permissionStore.setState(midiSysexFalse, "prompt");
+      permissionStore.setState(midiSysexTrue, "denied");
 
-      expect(permissionStore.get(midi)).toBe("prompt");
-      expect(permissionStore.get(midiSysexFalse)).toBe("prompt");
-      expect(permissionStore.get(midiSysexTrue)).toBe("denied");
+      expect(permissionStore.getState(midi)).toBe("prompt");
+      expect(permissionStore.getState(midiSysexFalse)).toBe("prompt");
+      expect(permissionStore.getState(midiSysexTrue)).toBe("denied");
     });
 
     it("should create a permission store that understands non-normalized push descriptors in the initial states", () => {
-      expect(permissionStore.get(push)).toBe("granted");
-      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("granted");
-      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("prompt");
+      expect(permissionStore.getState(push)).toBe("granted");
+      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe(
+        "granted",
+      );
+      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("prompt");
 
-      permissionStore.set(pushUserVisibleOnlyFalse, "prompt");
-      permissionStore.set(pushUserVisibleOnlyTrue, "denied");
+      permissionStore.setState(pushUserVisibleOnlyFalse, "prompt");
+      permissionStore.setState(pushUserVisibleOnlyTrue, "denied");
 
-      expect(permissionStore.get(push)).toBe("prompt");
-      expect(permissionStore.get(pushUserVisibleOnlyFalse)).toBe("prompt");
-      expect(permissionStore.get(pushUserVisibleOnlyTrue)).toBe("denied");
+      expect(permissionStore.getState(push)).toBe("prompt");
+      expect(permissionStore.getState(pushUserVisibleOnlyFalse)).toBe("prompt");
+      expect(permissionStore.getState(pushUserVisibleOnlyTrue)).toBe("denied");
     });
   });
 });

@@ -10,6 +10,15 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **\[BREAKING]** The `permissionStore.has()` method was renamed to
+  `isKnownDescriptor()`.
+- **\[BREAKING]** The `permissionStore.get()` method was renamed to
+  `getState()`.
+- **\[BREAKING]** The `permissionStore.set()` method was renamed to
+  `setState()`.
+
 ## [v0.10.0] - 2024-08-08
 
 [v0.10.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.10.0

@@ -49,7 +49,7 @@ export class Permissions {
       );
     }
 
-    if (!this.#permissionStore.has(descriptor)) {
+    if (!this.#permissionStore.isKnownDescriptor(descriptor)) {
       throw new TypeError(
         `Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value '${descriptor.name}' is not a valid enum value of type PermissionName.`,
       );
