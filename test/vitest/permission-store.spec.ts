@@ -702,6 +702,15 @@ describe("PermissionStore()", () => {
       permissionStore = createPermissionStore();
     });
 
+    it("doesn't remember access dialog decisions by default", async () => {
+      permissionStore.setAccessRequestHandler(async (dialog) => {
+        dialog.allow();
+      });
+
+      expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(true);
+      expect(permissionStore.getStatus(midiSysexTrue)).toBe("ALLOWED");
+    });
+
     it.each([
       ["geolocation"],
       ["midi"],
@@ -812,6 +821,23 @@ describe("PermissionStore()", () => {
       expect(permissionStore.getStatus(pushUserVisibleOnlyTrue)).toBe(
         "BLOCKED",
       );
+    });
+  });
+
+  describe("when created with dialogDefaultRemember set to true", () => {
+    beforeEach(() => {
+      permissionStore = createPermissionStore({
+        dialogDefaultRemember: true,
+      });
+    });
+
+    it("remembers access dialog decisions by default", async () => {
+      permissionStore.setAccessRequestHandler(async (dialog) => {
+        dialog.allow();
+      });
+
+      expect(await permissionStore.requestAccess(midiSysexTrue)).toBe(true);
+      expect(permissionStore.getStatus(midiSysexTrue)).toBe("GRANTED");
     });
   });
 });

@@ -11,9 +11,9 @@ export type AccessDialogResult = {
   shouldRemember: boolean;
 };
 
-export function createAccessDialog(): AccessDialog {
+export function createAccessDialog(defaultRemember: boolean): AccessDialog {
   let isDismissed = false;
-  let shouldRemember = false;
+  let shouldRemember = defaultRemember;
   let result: AccessDialogResult | undefined;
 
   return {

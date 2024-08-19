@@ -81,6 +81,15 @@ console.log(
 );
 ```
 
+### Added
+
+- The `createPermissionStore()` function now takes an option
+  `dialogDefaultRemember` which can be used to control whether access dialog
+  outcomes should affect the permission state by default. The option defaults to
+  `false`. Regardless of the value of this option, the use of
+  `dialog.remember()` in `HandleAccessRequest` functions can still be used to
+  control whether the access dialog outcome should affect the permission state.
+
 ## [v0.12.0] - 2024-08-08
 
 [v0.12.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.12.0

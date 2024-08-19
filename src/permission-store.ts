@@ -47,6 +47,7 @@ export type PermissionStoreSubscriber = (
 export type Unsubscribe = () => void;
 
 export function createPermissionStore({
+  dialogDefaultRemember = false,
   dismissDenyThreshold = 3,
   initialStates = new Map([
     [{ name: "geolocation" }, "PROMPT"],
@@ -80,6 +81,7 @@ export function createPermissionStore({
     return a.name === b.name;
   },
 }: {
+  dialogDefaultRemember?: boolean;
   dismissDenyThreshold?: number;
   initialStates?: Map<
     PermissionDescriptor,
@@ -141,7 +143,7 @@ export function createPermissionStore({
 
       if (status !== "PROMPT") return isAllowed(status);
 
-      const dialog = createAccessDialog();
+      const dialog = createAccessDialog(dialogDefaultRemember);
       await handleAccessRequest(dialog, structuredClone(existing));
 
       if (!dialog.result) {
@@ -160,16 +162,16 @@ export function createPermissionStore({
         return false;
       }
 
-      const { shouldAllow, shouldRemember: shouldPersist } = dialog.result;
+      const { shouldAllow, shouldRemember } = dialog.result;
 
       updateState(
         existing,
         {
           status: shouldAllow
-            ? shouldPersist
+            ? shouldRemember
               ? "GRANTED"
               : "ALLOWED"
-            : shouldPersist
+            : shouldRemember
               ? "BLOCKED"
               : "DENIED",
           dismissCount: 0,
