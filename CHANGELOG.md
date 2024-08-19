@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.13.0] - 2024-08-19
+
+[v0.13.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.13.0
+
 ### Changed
 
 - **\[BREAKING]** The methods available on the dialog taken by
