@@ -1,30 +1,36 @@
 export type AccessDialog = {
+  remember: (isChecked: boolean) => void;
   dismiss: () => void;
-  allow: (shouldPersist: boolean) => void;
-  deny: (shouldPersist: boolean) => void;
+  allow: () => void;
+  deny: () => void;
   readonly result: AccessDialogResult | undefined;
 };
 
 export type AccessDialogResult = {
   shouldAllow: boolean;
-  shouldPersist: boolean;
+  shouldRemember: boolean;
 };
 
 export function createAccessDialog(): AccessDialog {
   let isDismissed = false;
+  let shouldRemember = false;
   let result: AccessDialogResult | undefined;
 
   return {
+    remember(isChecked) {
+      shouldRemember = isChecked;
+    },
+
     dismiss() {
-      isDismissed = true;
+      setResult(undefined);
     },
 
-    allow(shouldPersist) {
-      setResult(true, shouldPersist);
+    allow() {
+      setResult({ shouldAllow: true, shouldRemember });
     },
 
-    deny(shouldPersist) {
-      setResult(false, shouldPersist);
+    deny() {
+      setResult({ shouldAllow: false, shouldRemember });
     },
 
     get result() {
@@ -32,11 +38,11 @@ export function createAccessDialog(): AccessDialog {
     },
   };
 
-  function setResult(shouldAllow: boolean, shouldPersist: boolean) {
+  function setResult(toResult: AccessDialogResult | undefined) {
     if (isDismissed) throw new Error("Access dialog already dismissed");
 
     isDismissed = true;
-    result = { shouldAllow, shouldPersist };
+    result = toResult;
   }
 }
 

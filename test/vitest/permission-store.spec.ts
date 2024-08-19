@@ -380,7 +380,8 @@ describe("PermissionStore()", () => {
 
       beforeEach(() => {
         handleAccessRequest = vi.fn(async (dialog) => {
-          dialog.allow(true);
+          dialog.remember(true);
+          dialog.allow();
         });
 
         permissionStore.setAccessRequestHandler(handleAccessRequest);
@@ -388,8 +389,8 @@ describe("PermissionStore()", () => {
 
       it("can't dismiss the dialog after it's been dismissed", async () => {
         handleAccessRequest.mockImplementation(async (dialog) => {
-          dialog.allow(true);
-          dialog.deny(true);
+          dialog.allow();
+          dialog.deny();
         });
 
         await expect(
@@ -469,7 +470,7 @@ describe("PermissionStore()", () => {
         describe("when access is allowed but the decision is not remembered", () => {
           beforeEach(() => {
             handleAccessRequest.mockImplementation(async (dialog) => {
-              dialog.allow(false);
+              dialog.allow();
             });
           });
 
@@ -484,7 +485,8 @@ describe("PermissionStore()", () => {
         describe("when access is allowed and the decision is remembered", () => {
           beforeEach(() => {
             handleAccessRequest.mockImplementation(async (dialog) => {
-              dialog.allow(true);
+              dialog.remember(true);
+              dialog.allow();
             });
           });
 
@@ -499,7 +501,7 @@ describe("PermissionStore()", () => {
         describe("when access is denied but the decision is not remembered", () => {
           beforeEach(() => {
             handleAccessRequest.mockImplementation(async (dialog) => {
-              dialog.deny(false);
+              dialog.deny();
             });
           });
 
@@ -514,7 +516,8 @@ describe("PermissionStore()", () => {
         describe("when access is denied and the decision is remembered", () => {
           beforeEach(() => {
             handleAccessRequest.mockImplementation(async (dialog) => {
-              dialog.deny(true);
+              dialog.remember(true);
+              dialog.deny();
             });
           });
 

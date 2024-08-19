@@ -13,13 +13,9 @@ afterEach(() => {
   vi.mocked(console.log).mockRestore();
 });
 
-describe("Handling access requests", () => {
+describe("Handling access requests (rework)", () => {
   it("works", async () => {
     const permissionStore = createPermissionStore({
-      // The number of times the user can dismiss a permission dialog before the
-      // permission state is set to "denied" automatically (default: 3)
-      dismissDenyThreshold: Infinity,
-
       initialStates: new Map([
         // Set the initial status of the "geolocation" permission to "PROMPT"
         [{ name: "geolocation" }, "PROMPT"],
@@ -29,12 +25,13 @@ describe("Handling access requests", () => {
     });
     const permissions = createPermissions({ permissionStore });
 
-    const user = createUser({
+    createUser({
       permissionStore,
 
       handleAccessRequest: async (dialog, descriptor) => {
         // Allow access to geolocation, but don't change permission state
         if (descriptor.name === "geolocation") {
+          // This is equivalent to the old dialog.allow(false)
           dialog.allow();
 
           return;
@@ -42,6 +39,7 @@ describe("Handling access requests", () => {
 
         // Deny access to notifications, and change permission state to "denied"
         if (descriptor.name === "notifications") {
+          // This is equivalent to the old dialog.deny(true)
           dialog.remember(true);
           dialog.deny();
 
@@ -67,23 +65,9 @@ describe("Handling access requests", () => {
       notifications.state,
     );
 
-    user.resetAccess({ name: "geolocation" });
-
-    user.setAccessRequestHandler(async (dialog) => {
-      // New behavior for handling access requests
-      dialog.dismiss();
-    });
-
-    // Outputs "false, prompt"
-    console.log(
-      await permissionStore.requestAccess({ name: "geolocation" }),
-      geolocation.state,
-    );
-
     expect(vi.mocked(console.log).mock.calls).toEqual([
       [true, "prompt"],
       [false, "denied"],
-      [false, "prompt"],
     ]);
   });
 });

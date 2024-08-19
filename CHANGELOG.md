@@ -10,6 +10,77 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **\[BREAKING]** The methods available on the dialog taken by
+  `HandleAccessRequest` functions have changed:
+  - The `dialog.allow()` and `dialog.deny()` methods no longer take a
+    `shouldPersist` parameter.
+  - A new `dialog.remember()` method has been added, which takes a single
+    parameter `isChecked`. This method can be used to control whether the access
+    dialog outcome should affect the permission state, similar to the old
+    `shouldPersist` parameter of `dialog.allow()` and `dialog.deny()`.
+
+#### Access request handling with `dialog.remember()`
+
+```ts
+import {
+  createPermissions,
+  createPermissionStore,
+  createUser,
+} from "fake-permissions";
+
+const permissionStore = createPermissionStore({
+  initialStates: new Map([
+    // Set the initial status of the "geolocation" permission to "PROMPT"
+    [{ name: "geolocation" }, "PROMPT"],
+    // Set the initial status of the "notifications" permission to "PROMPT"
+    [{ name: "notifications" }, "PROMPT"],
+  ]),
+});
+const permissions = createPermissions({ permissionStore });
+
+createUser({
+  permissionStore,
+
+  handleAccessRequest: async (dialog, descriptor) => {
+    // Allow access to geolocation, but don't change permission state
+    if (descriptor.name === "geolocation") {
+      // This is equivalent to the old dialog.allow(false)
+      dialog.allow();
+
+      return;
+    }
+
+    // Deny access to notifications, and change permission state to "denied"
+    if (descriptor.name === "notifications") {
+      // This is equivalent to the old dialog.deny(true)
+      dialog.remember(true);
+      dialog.deny();
+
+      return;
+    }
+
+    dialog.dismiss();
+  },
+});
+
+const geolocation = await permissions.query({ name: "geolocation" });
+const notifications = await permissions.query({ name: "notifications" });
+
+// Outputs "true, prompt"
+console.log(
+  await permissionStore.requestAccess({ name: "geolocation" }),
+  geolocation.state,
+);
+
+// Outputs "false, denied"
+console.log(
+  await permissionStore.requestAccess({ name: "notifications" }),
+  notifications.state,
+);
+```
+
 ## [v0.12.0] - 2024-08-08
 
 [v0.12.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.12.0

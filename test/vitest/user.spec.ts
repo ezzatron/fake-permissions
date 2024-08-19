@@ -55,7 +55,8 @@ describe("User", () => {
     it("handles access requests with the handler", async () => {
       const user = createUser({ permissionStore });
       user.setAccessRequestHandler(async (dialog) => {
-        dialog.allow(true);
+        dialog.remember(true);
+        dialog.allow();
       });
 
       await expect(permissionStore.requestAccess(permissionA)).resolves.toBe(
@@ -70,7 +71,8 @@ describe("User", () => {
       createUser({
         permissionStore,
         handleAccessRequest: async (dialog) => {
-          dialog.allow(true);
+          dialog.remember(true);
+          dialog.allow();
         },
       });
 

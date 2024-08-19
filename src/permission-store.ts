@@ -160,7 +160,7 @@ export function createPermissionStore({
         return false;
       }
 
-      const { shouldAllow, shouldPersist } = dialog.result;
+      const { shouldAllow, shouldRemember: shouldPersist } = dialog.result;
 
       updateState(
         existing,
