@@ -711,13 +711,13 @@ describe("PermissionStore()", () => {
       ["screen-wake-lock"],
       ["storage-access"],
     ] as const)(
-      "should create a permission store with the standard permissions (%s)",
+      "creates a permission store with the standard permissions (%s)",
       (name) => {
         expect(permissionStore.isKnownDescriptor({ name })).toBe(true);
       },
     );
 
-    it("should create a permission store that understands midi descriptors with the sysex property", () => {
+    it("creates a permission store that understands midi descriptors with the sysex property", () => {
       expect(permissionStore.getStatus(midi)).toBe("PROMPT");
       expect(permissionStore.getStatus(midiSysexFalse)).toBe("PROMPT");
       expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
@@ -730,7 +730,7 @@ describe("PermissionStore()", () => {
       expect(permissionStore.getStatus(midiSysexTrue)).toBe("BLOCKED");
     });
 
-    it("should create a permission store that understands push descriptors with the userVisibleOnly property", () => {
+    it("creates a permission store that understands push descriptors with the userVisibleOnly property", () => {
       expect(permissionStore.getStatus(push)).toBe("PROMPT");
       expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
         "PROMPT",
@@ -782,7 +782,7 @@ describe("PermissionStore()", () => {
       });
     });
 
-    it("should create a permission store that understands non-normalized midi descriptors in the initial states", () => {
+    it("creates a permission store that understands non-normalized midi descriptors in the initial states", () => {
       expect(permissionStore.getStatus(midi)).toBe("GRANTED");
       expect(permissionStore.getStatus(midiSysexFalse)).toBe("GRANTED");
       expect(permissionStore.getStatus(midiSysexTrue)).toBe("PROMPT");
@@ -795,7 +795,7 @@ describe("PermissionStore()", () => {
       expect(permissionStore.getStatus(midiSysexTrue)).toBe("BLOCKED");
     });
 
-    it("should create a permission store that understands non-normalized push descriptors in the initial states", () => {
+    it("creates a permission store that understands non-normalized push descriptors in the initial states", () => {
       expect(permissionStore.getStatus(push)).toBe("GRANTED");
       expect(permissionStore.getStatus(pushUserVisibleOnlyFalse)).toBe(
         "GRANTED",
