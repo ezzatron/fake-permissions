@@ -167,7 +167,12 @@ describe("User", () => {
   it("handles concurrent access requests", async () => {
     const user = createUser({ permissionStore });
 
-    const { promise, resolve } = Promise.withResolvers<void>();
+    let resolve: (() => void) | undefined;
+    const promise = new Promise<void>((_resolve) => {
+      resolve = _resolve;
+    });
+    if (!resolve) throw new Error("Invariant: resolve is not defined");
+
     user.setAccessRequestHandler(async (dialog, descriptor) => {
       await promise;
 
