@@ -118,35 +118,6 @@ describe("PermissionStore()", () => {
     });
   });
 
-  describe("findByDescriptor()", () => {
-    it("selects from any iterable keyed on permission descriptors", () => {
-      const iterable = new Map([
-        [structuredClone(geolocation), "a"],
-        [structuredClone(midiSysexFalse), "b"],
-        [structuredClone(midiSysexTrue), "c"],
-      ]);
-
-      expect(
-        permissionStore.findByDescriptor(
-          iterable,
-          structuredClone(geolocation),
-        ),
-      ).toBe("a");
-      expect(
-        permissionStore.findByDescriptor(
-          iterable,
-          structuredClone(midiSysexFalse),
-        ),
-      ).toBe("b");
-      expect(
-        permissionStore.findByDescriptor(
-          iterable,
-          structuredClone(midiSysexTrue),
-        ),
-      ).toBe("c");
-    });
-  });
-
   describe("getStatus()", () => {
     describe("when called with an unknown descriptor", () => {
       it("throws a TypeError", () => {

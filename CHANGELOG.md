@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+### Removed
+
+- **\[BREAKING]** Removed the `permissionStore.findByDescriptor()` method.
+
 ### Added
 
 - Added [access request recording].

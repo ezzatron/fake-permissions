@@ -1,4 +1,8 @@
-import { normalizeMask, type PermissionMask } from "./permission-mask.js";
+import {
+  findMask,
+  normalizeMask,
+  type PermissionMask,
+} from "./permission-mask.js";
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
 
@@ -57,7 +61,7 @@ export class Permissions {
     return createPermissionStatus({
       descriptor,
       mask: normalizeMask(
-        this.#permissionStore.findByDescriptor(this.#masks, descriptor) ?? {},
+        findMask(this.#permissionStore, this.#masks, descriptor) ?? {},
       ),
       permissionStore: this.#permissionStore,
     });

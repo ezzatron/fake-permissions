@@ -6,10 +6,6 @@ import {
 export type PermissionStore = {
   isKnownDescriptor: (descriptor: PermissionDescriptor) => boolean;
   isMatchingDescriptor: IsMatchingDescriptor;
-  findByDescriptor: <T>(
-    iterable: Iterable<[PermissionDescriptor, T]>,
-    descriptor: PermissionDescriptor,
-  ) => T | undefined;
   getStatus: (descriptor: PermissionDescriptor) => PermissionAccessStatus;
   setStatus: (
     descriptor: PermissionDescriptor,
@@ -112,17 +108,6 @@ export function createPermissionStore({
     },
 
     isMatchingDescriptor,
-
-    findByDescriptor<T>(
-      iterable: Iterable<[PermissionDescriptor, T]>,
-      descriptor: PermissionDescriptor,
-    ): T | undefined {
-      for (const [d, v] of iterable) {
-        if (isMatchingDescriptor(descriptor, d)) return v;
-      }
-
-      return undefined;
-    },
 
     getStatus(descriptor) {
       const [{ status }] = resolveState(descriptor);
