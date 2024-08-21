@@ -26,6 +26,13 @@ Versioning].
 
 [access request recording]: #access-request-recording
 
+### Changed
+
+- Concurrent access requests for matching permission descriptors are now handled
+  with a single dialog, instead of multiple dialogs. It's still possible to have
+  multiple dialogs open at once when handling access requests for multiple
+  different permission descriptors.
+
 #### Access request recording
 
 Users now record every permission access request that they handle. You can query

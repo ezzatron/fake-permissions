@@ -97,6 +97,10 @@ export function createPermissionStore({
     ]),
   );
   const subscribers = new Set<PermissionStoreSubscriber>();
+  const activeAccessRequests = new Map<
+    PermissionDescriptor,
+    Promise<boolean>
+  >();
 
   let handleAccessRequest: HandleAccessRequest = async (dialog) => {
     dialog.dismiss();
@@ -133,43 +137,7 @@ export function createPermissionStore({
 
       if (status !== "PROMPT") return isAllowed(status);
 
-      const dialog = createAccessDialog(dialogDefaultRemember);
-      await handleAccessRequest(dialog, structuredClone(existing));
-
-      if (!dialog.result) {
-        const dismissCount = state.dismissCount + 1;
-
-        if (dismissCount >= dismissDenyThreshold) {
-          updateState(
-            existing,
-            { status: "BLOCKED_AUTOMATICALLY", dismissCount },
-            state,
-          );
-        } else {
-          updateState(existing, { status: "PROMPT", dismissCount }, state);
-        }
-
-        return false;
-      }
-
-      const { shouldAllow, shouldRemember } = dialog.result;
-
-      updateState(
-        existing,
-        {
-          status: shouldAllow
-            ? shouldRemember
-              ? "GRANTED"
-              : "ALLOWED"
-            : shouldRemember
-              ? "BLOCKED"
-              : "DENIED",
-          dismissCount: 0,
-        },
-        state,
-      );
-
-      return shouldAllow;
+      return createAccessRequest(existing, state);
     },
 
     setAccessRequestHandler(toHandler) {
@@ -242,5 +210,60 @@ export function createPermissionStore({
 
   function isAllowed(status: PermissionAccessStatus): boolean {
     return status === "ALLOWED" || status === "GRANTED";
+  }
+
+  async function createAccessRequest(
+    descriptor: PermissionDescriptor,
+    state: PermissionAccessState,
+  ): Promise<boolean> {
+    const active = activeAccessRequests.get(descriptor);
+
+    if (active) return active;
+
+    const request = (async () => {
+      const dialog = createAccessDialog(dialogDefaultRemember);
+      await handleAccessRequest(dialog, structuredClone(descriptor));
+
+      if (!dialog.result) {
+        const dismissCount = state.dismissCount + 1;
+
+        if (dismissCount >= dismissDenyThreshold) {
+          updateState(
+            descriptor,
+            { status: "BLOCKED_AUTOMATICALLY", dismissCount },
+            state,
+          );
+        } else {
+          updateState(descriptor, { status: "PROMPT", dismissCount }, state);
+        }
+
+        return false;
+      }
+
+      const { shouldAllow, shouldRemember } = dialog.result;
+
+      updateState(
+        descriptor,
+        {
+          status: shouldAllow
+            ? shouldRemember
+              ? "GRANTED"
+              : "ALLOWED"
+            : shouldRemember
+              ? "BLOCKED"
+              : "DENIED",
+          dismissCount: 0,
+        },
+        state,
+      );
+
+      return shouldAllow;
+    })();
+
+    activeAccessRequests.set(descriptor, request);
+
+    return request.finally(() => {
+      activeAccessRequests.delete(descriptor);
+    });
   }
 }
