@@ -21,6 +21,11 @@ export type PermissionStore = {
   subscribe: (subscriber: PermissionStoreSubscriber) => Unsubscribe;
 };
 
+export type IsMatchingDescriptor = (
+  a: PermissionDescriptor,
+  b: PermissionDescriptor,
+) => boolean;
+
 export type PermissionAccessState = {
   status: PermissionAccessStatus;
   dismissCount: number;
@@ -254,8 +259,3 @@ export function createPermissionStore({
     return status === "ALLOWED" || status === "GRANTED";
   }
 }
-
-type IsMatchingDescriptor = (
-  a: PermissionDescriptor,
-  b: PermissionDescriptor,
-) => boolean;

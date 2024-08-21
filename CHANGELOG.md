@@ -10,6 +10,104 @@ Versioning].
 
 ## Unreleased
 
+### Added
+
+- Added [access request recording].
+  - Added the `user.accessRequests()` method.
+  - Added the `user.accessRequestCount()` method.
+  - Added the `user.clearAccessRequests()` method.
+- Added the `AccessDialogResult` type.
+- Added the `AccessRequest` type.
+- Added the `IsMatchingDescriptor` type.
+
+[access request recording]: #access-request-recording
+
+#### Access request recording
+
+Users now record every permission access request that they handle. You can query
+user objects for this information during tests to verify what access requests
+the user has handled.
+
+```ts
+import { createPermissionStore, createUser } from "fake-permissions";
+
+const permissionStore = createPermissionStore({
+  initialStates: new Map([
+    // Set the initial status of the "geolocation" permission to "PROMPT"
+    [{ name: "geolocation" }, "PROMPT"],
+    // Set the initial status of the "notifications" permission to "PROMPT"
+    [{ name: "notifications" }, "PROMPT"],
+  ]),
+});
+
+const user = createUser({
+  permissionStore,
+
+  handleAccessRequest: async (dialog, descriptor) => {
+    // Allow permanent access to geolocation
+    if (descriptor.name === "geolocation") {
+      dialog.remember(true);
+      dialog.allow();
+
+      return;
+    }
+
+    // Dismiss access dialogs for other permissions
+    dialog.dismiss();
+  },
+});
+
+// Request geolocation access twice
+await permissionStore.requestAccess({ name: "geolocation" });
+await permissionStore.requestAccess({ name: "geolocation" });
+// Outputs "1"
+console.log(user.accessRequestCount({ name: "geolocation" }));
+// Outputs "[
+//   {
+//     descriptor: { name: 'geolocation' },
+//     result: { shouldAllow: true, shouldRemember: true }
+//   }
+// ]"
+console.log(user.accessRequests({ name: "geolocation" }));
+
+// Request notifications access twice
+await permissionStore.requestAccess({ name: "notifications" });
+await permissionStore.requestAccess({ name: "notifications" });
+// Outputs "2"
+console.log(user.accessRequestCount({ name: "notifications" }));
+// Outputs "[
+//   { descriptor: { name: 'notifications' }, result: undefined },
+//   { descriptor: { name: 'notifications' }, result: undefined }
+// ]"
+console.log(user.accessRequests({ name: "notifications" }));
+
+// Outputs "3" (total for all descriptors)
+console.log(user.accessRequestCount());
+// Outputs "[
+//   {
+//     descriptor: { name: 'geolocation' },
+//     result: { shouldAllow: true, shouldRemember: true }
+//   },
+//   { descriptor: { name: 'notifications' }, result: undefined },
+//   { descriptor: { name: 'notifications' }, result: undefined }
+// ]"
+console.log(user.accessRequests());
+
+// Clear access requests for geolocation
+user.clearAccessRequests({ name: "geolocation" });
+// Outputs "0"
+console.log(user.accessRequestCount({ name: "geolocation" }));
+// Outputs "[]"
+console.log(user.accessRequests({ name: "geolocation" }));
+
+// Clear access requests for all descriptors
+user.clearAccessRequests();
+// Outputs "0"
+console.log(user.accessRequestCount());
+// Outputs "[]"
+console.log(user.accessRequests());
+```
+
 ## [v0.13.0] - 2024-08-19
 
 [v0.13.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.13.0

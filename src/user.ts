@@ -1,4 +1,7 @@
-import { type HandleAccessRequest } from "./access-dialog.js";
+import {
+  type AccessDialogResult,
+  type HandleAccessRequest,
+} from "./access-dialog.js";
 import { PermissionStore } from "./permission-store.js";
 
 export type User = {
@@ -6,18 +9,27 @@ export type User = {
   blockAccess: (descriptor: PermissionDescriptor) => void;
   resetAccess: (descriptor: PermissionDescriptor) => void;
   setAccessRequestHandler: (toHandler: HandleAccessRequest) => void;
+  accessRequests(descriptor?: PermissionDescriptor): AccessRequest[];
+  accessRequestCount(descriptor?: PermissionDescriptor): number;
+  clearAccessRequests(descriptor?: PermissionDescriptor): void;
+};
+
+export type AccessRequest = {
+  descriptor: PermissionDescriptor;
+  result: AccessDialogResult | undefined;
 };
 
 export function createUser({
   permissionStore,
-  handleAccessRequest,
+  handleAccessRequest = async (dialog) => {
+    dialog.dismiss();
+  },
 }: {
   permissionStore: PermissionStore;
   handleAccessRequest?: HandleAccessRequest;
 }): User {
-  if (handleAccessRequest) {
-    permissionStore.setAccessRequestHandler(handleAccessRequest);
-  }
+  let accessRequests: AccessRequest[] = [];
+  setHandler(handleAccessRequest);
 
   return {
     grantAccess(descriptor) {
@@ -33,7 +45,52 @@ export function createUser({
     },
 
     setAccessRequestHandler(toHandler) {
-      permissionStore.setAccessRequestHandler(toHandler);
+      setHandler(toHandler);
+    },
+
+    accessRequests(descriptor) {
+      if (!descriptor) return structuredClone(accessRequests);
+
+      return structuredClone(
+        accessRequests.filter((r) =>
+          permissionStore.isMatchingDescriptor(descriptor, r.descriptor),
+        ),
+      );
+    },
+
+    accessRequestCount(descriptor) {
+      let count = 0;
+
+      for (const r of accessRequests) {
+        if (
+          !descriptor ||
+          permissionStore.isMatchingDescriptor(descriptor, r.descriptor)
+        ) {
+          ++count;
+        }
+      }
+
+      return count;
+    },
+
+    clearAccessRequests(descriptor) {
+      if (descriptor) {
+        accessRequests = accessRequests.filter(
+          (r) =>
+            !permissionStore.isMatchingDescriptor(descriptor, r.descriptor),
+        );
+      } else {
+        accessRequests = [];
+      }
     },
   };
+
+  function setHandler(toHandler: HandleAccessRequest): void {
+    permissionStore.setAccessRequestHandler(async (dialog, descriptor) => {
+      await toHandler(dialog, descriptor);
+      accessRequests.push(
+        structuredClone({ descriptor, result: dialog.result }),
+      );
+    });
+  }
 }

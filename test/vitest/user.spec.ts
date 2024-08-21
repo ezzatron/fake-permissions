@@ -12,6 +12,9 @@ describe("User", () => {
   const permissionB: PermissionDescriptor = {
     name: "permission-b" as PermissionName,
   };
+  const permissionC: PermissionDescriptor = {
+    name: "permission-c" as PermissionName,
+  };
 
   let permissionStore: PermissionStore;
 
@@ -20,6 +23,7 @@ describe("User", () => {
       initialStates: new Map([
         [permissionA, "PROMPT"],
         [permissionB, "GRANTED"],
+        [permissionC, "PROMPT"],
       ]),
     });
   });
@@ -66,6 +70,85 @@ describe("User", () => {
     });
   });
 
+  describe("when no access request handler is configured", () => {
+    it("records access requests", async () => {
+      const user = createUser({ permissionStore });
+      user.setAccessRequestHandler(async (dialog, descriptor) => {
+        if (descriptor.name === ("permission-a" as PermissionName)) {
+          dialog.allow();
+        } else {
+          dialog.dismiss();
+        }
+      });
+
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionB);
+      await permissionStore.requestAccess(permissionC);
+      await permissionStore.requestAccess(permissionC);
+
+      expect(user.accessRequestCount(permissionA)).toBe(1);
+      expect(user.accessRequests(permissionA)).toEqual([
+        {
+          descriptor: permissionA,
+          result: { shouldAllow: true, shouldRemember: false },
+        },
+      ]);
+
+      expect(user.accessRequestCount(permissionB)).toBe(0);
+      expect(user.accessRequests(permissionB)).toEqual([]);
+
+      expect(user.accessRequestCount(permissionC)).toBe(2);
+      expect(user.accessRequests(permissionC)).toEqual([
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+      ]);
+
+      expect(user.accessRequestCount()).toBe(3);
+      expect(user.accessRequests()).toEqual([
+        {
+          descriptor: permissionA,
+          result: { shouldAllow: true, shouldRemember: false },
+        },
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+      ]);
+    });
+
+    it("can have the recorded access requests cleared", async () => {
+      const user = createUser({ permissionStore });
+
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionC);
+
+      expect(user.accessRequestCount(permissionA)).toBe(2);
+      expect(user.accessRequestCount(permissionC)).toBe(1);
+
+      user.clearAccessRequests(permissionA);
+
+      expect(user.accessRequestCount(permissionA)).toBe(0);
+      expect(user.accessRequestCount(permissionC)).toBe(1);
+
+      user.clearAccessRequests();
+
+      expect(user.accessRequestCount()).toBe(0);
+      expect(user.accessRequests()).toEqual([]);
+    });
+  });
+
   describe("when configured with an access request handler", () => {
     it("handles access requests with the handler", async () => {
       createUser({
@@ -80,6 +163,83 @@ describe("User", () => {
         true,
       );
       expect(permissionStore.getStatus(permissionA)).toBe("GRANTED");
+    });
+
+    it("records access requests", async () => {
+      const user = createUser({ permissionStore });
+      user.setAccessRequestHandler(async (dialog, descriptor) => {
+        if (descriptor.name === ("permission-a" as PermissionName)) {
+          dialog.allow();
+        } else {
+          dialog.dismiss();
+        }
+      });
+
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionB);
+      await permissionStore.requestAccess(permissionC);
+      await permissionStore.requestAccess(permissionC);
+
+      expect(user.accessRequestCount(permissionA)).toBe(1);
+      expect(user.accessRequests(permissionA)).toEqual([
+        {
+          descriptor: permissionA,
+          result: { shouldAllow: true, shouldRemember: false },
+        },
+      ]);
+
+      expect(user.accessRequestCount(permissionB)).toBe(0);
+      expect(user.accessRequests(permissionB)).toEqual([]);
+
+      expect(user.accessRequestCount(permissionC)).toBe(2);
+      expect(user.accessRequests(permissionC)).toEqual([
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+      ]);
+
+      expect(user.accessRequestCount()).toBe(3);
+      expect(user.accessRequests()).toEqual([
+        {
+          descriptor: permissionA,
+          result: { shouldAllow: true, shouldRemember: false },
+        },
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+        {
+          descriptor: permissionC,
+          result: undefined,
+        },
+      ]);
+    });
+
+    it("can have the recorded access requests cleared", async () => {
+      const user = createUser({ permissionStore });
+
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionA);
+      await permissionStore.requestAccess(permissionC);
+
+      expect(user.accessRequestCount(permissionA)).toBe(2);
+      expect(user.accessRequestCount(permissionC)).toBe(1);
+
+      user.clearAccessRequests(permissionA);
+
+      expect(user.accessRequestCount(permissionA)).toBe(0);
+      expect(user.accessRequestCount(permissionC)).toBe(1);
+
+      user.clearAccessRequests();
+
+      expect(user.accessRequestCount()).toBe(0);
+      expect(user.accessRequests()).toEqual([]);
     });
   });
 });
