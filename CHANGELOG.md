@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.14.0] - 2024-08-21
+
+[v0.14.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.14.0
+
 ### Removed
 
 - **\[BREAKING]** Removed the `permissionStore.findByDescriptor()` method.
