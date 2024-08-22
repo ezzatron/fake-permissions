@@ -45,7 +45,8 @@ describe("Access request recording", () => {
     // Outputs "[
     //   {
     //     descriptor: { name: 'geolocation' },
-    //     result: { shouldAllow: true, shouldRemember: true }
+    //     result: { shouldAllow: true, shouldRemember: true },
+    //     isComplete: true
     //   }
     // ]"
     console.log(user.accessRequests({ name: "geolocation" }));
@@ -56,8 +57,16 @@ describe("Access request recording", () => {
     // Outputs "2"
     console.log(user.accessRequestCount({ name: "notifications" }));
     // Outputs "[
-    //   { descriptor: { name: 'notifications' }, result: undefined },
-    //   { descriptor: { name: 'notifications' }, result: undefined }
+    //   {
+    //     descriptor: { name: 'notifications' },
+    //     result: undefined,
+    //     isComplete: true
+    //   },
+    //   {
+    //     descriptor: { name: 'notifications' },
+    //     result: undefined,
+    //     isComplete: true
+    //   }
     // ]"
     console.log(user.accessRequests({ name: "notifications" }));
 
@@ -66,10 +75,19 @@ describe("Access request recording", () => {
     // Outputs "[
     //   {
     //     descriptor: { name: 'geolocation' },
-    //     result: { shouldAllow: true, shouldRemember: true }
+    //     result: { shouldAllow: true, shouldRemember: true },
+    //     isComplete: true
     //   },
-    //   { descriptor: { name: 'notifications' }, result: undefined },
-    //   { descriptor: { name: 'notifications' }, result: undefined }
+    //   {
+    //     descriptor: { name: 'notifications' },
+    //     result: undefined,
+    //     isComplete: true
+    //   },
+    //   {
+    //     descriptor: { name: 'notifications' },
+    //     result: undefined,
+    //     isComplete: true
+    //   }
     // ]"
     console.log(user.accessRequests());
 
@@ -93,15 +111,27 @@ describe("Access request recording", () => {
         [
           {
             descriptor: { name: "geolocation" },
-            result: { shouldAllow: true, shouldRemember: true },
+            result: {
+              shouldAllow: true,
+              shouldRemember: true,
+            },
+            isComplete: true,
           },
         ],
       ],
       [2],
       [
         [
-          { descriptor: { name: "notifications" }, result: undefined },
-          { descriptor: { name: "notifications" }, result: undefined },
+          {
+            descriptor: { name: "notifications" },
+            result: undefined,
+            isComplete: true,
+          },
+          {
+            descriptor: { name: "notifications" },
+            result: undefined,
+            isComplete: true,
+          },
         ],
       ],
       [3],
@@ -109,10 +139,22 @@ describe("Access request recording", () => {
         [
           {
             descriptor: { name: "geolocation" },
-            result: { shouldAllow: true, shouldRemember: true },
+            result: {
+              shouldAllow: true,
+              shouldRemember: true,
+            },
+            isComplete: true,
           },
-          { descriptor: { name: "notifications" }, result: undefined },
-          { descriptor: { name: "notifications" }, result: undefined },
+          {
+            descriptor: { name: "notifications" },
+            result: undefined,
+            isComplete: true,
+          },
+          {
+            descriptor: { name: "notifications" },
+            result: undefined,
+            isComplete: true,
+          },
         ],
       ],
       [0],

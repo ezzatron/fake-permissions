@@ -7,8 +7,8 @@ export type AccessDialog = {
 };
 
 export type AccessDialogResult = {
-  shouldAllow: boolean;
-  shouldRemember: boolean;
+  readonly shouldAllow: boolean;
+  readonly shouldRemember: boolean;
 };
 
 export function createAccessDialog(defaultRemember: boolean): AccessDialog {

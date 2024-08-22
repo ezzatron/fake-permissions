@@ -4,6 +4,7 @@ import {
   createUser,
 } from "fake-permissions";
 import { beforeEach, describe, expect, it } from "vitest";
+import { promiseWithResolvers } from "../async.js";
 
 describe("User", () => {
   const permissionA: PermissionDescriptor = {
@@ -108,6 +109,7 @@ describe("User", () => {
       {
         descriptor: permissionA,
         result: { shouldAllow: true, shouldRemember: false },
+        isComplete: true,
       },
     ]);
 
@@ -119,10 +121,12 @@ describe("User", () => {
       {
         descriptor: permissionC,
         result: undefined,
+        isComplete: true,
       },
       {
         descriptor: permissionC,
         result: undefined,
+        isComplete: true,
       },
     ]);
 
@@ -131,14 +135,50 @@ describe("User", () => {
       {
         descriptor: permissionA,
         result: { shouldAllow: true, shouldRemember: false },
+        isComplete: true,
       },
       {
         descriptor: permissionC,
         result: undefined,
+        isComplete: true,
       },
       {
         descriptor: permissionC,
         result: undefined,
+        isComplete: true,
+      },
+    ]);
+  });
+
+  it("records access requests before the result is known", async () => {
+    const user = createUser({ permissionStore });
+
+    const { promise, resolve } = promiseWithResolvers<void>();
+    user.setAccessRequestHandler(async (dialog) => {
+      await promise;
+      dialog.allow();
+    });
+
+    const accessRequest = permissionStore.requestAccess(permissionA);
+
+    expect(user.accessRequestCount()).toBe(1);
+    expect(user.accessRequests()).toEqual([
+      {
+        descriptor: permissionA,
+        result: undefined,
+        isComplete: false,
+      },
+    ]);
+
+    resolve();
+    await accessRequest;
+
+    expect(user.accessRequestCount()).toBe(1);
+    expect(user.accessRequests()).toEqual([
+      {
+        descriptor: permissionA,
+        result: { shouldAllow: true, shouldRemember: false },
+        isComplete: true,
       },
     ]);
   });
@@ -167,12 +207,7 @@ describe("User", () => {
   it("handles concurrent access requests", async () => {
     const user = createUser({ permissionStore });
 
-    let resolve: (() => void) | undefined;
-    const promise = new Promise<void>((_resolve) => {
-      resolve = _resolve;
-    });
-    if (!resolve) throw new Error("Invariant: resolve is not defined");
-
+    const { promise, resolve } = promiseWithResolvers<void>();
     user.setAccessRequestHandler(async (dialog, descriptor) => {
       await promise;
 
@@ -183,6 +218,28 @@ describe("User", () => {
       }
     });
 
+    const accessRequests = [
+      permissionStore.requestAccess(permissionA),
+      permissionStore.requestAccess(permissionA),
+      permissionStore.requestAccess(permissionC),
+      permissionStore.requestAccess(permissionC),
+      permissionStore.requestAccess(permissionC),
+      permissionStore.requestAccess(permissionC),
+    ];
+
+    expect(user.accessRequests()).toEqual([
+      {
+        descriptor: permissionA,
+        result: undefined,
+        isComplete: false,
+      },
+      {
+        descriptor: permissionC,
+        result: undefined,
+        isComplete: false,
+      },
+    ]);
+
     const [
       isAllowedA1,
       isAllowedA2,
@@ -191,12 +248,7 @@ describe("User", () => {
       isAllowedC3,
       isAllowedC4,
     ] = await Promise.all([
-      permissionStore.requestAccess(permissionA),
-      permissionStore.requestAccess(permissionA),
-      permissionStore.requestAccess(permissionC),
-      permissionStore.requestAccess(permissionC),
-      permissionStore.requestAccess(permissionC),
-      permissionStore.requestAccess(permissionC),
+      ...accessRequests,
       (async () => {
         resolve();
       })(),
@@ -212,10 +264,12 @@ describe("User", () => {
       {
         descriptor: permissionA,
         result: { shouldAllow: true, shouldRemember: false },
+        isComplete: true,
       },
       {
         descriptor: permissionC,
         result: undefined,
+        isComplete: true,
       },
     ]);
     expect(permissionStore.getStatus(permissionA)).toBe("ALLOWED");

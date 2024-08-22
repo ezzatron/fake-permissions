@@ -10,6 +10,17 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- Access requests are now recorded before the async access request handler
+  finishes executing. Each `AccessRequest` now has an additional `isComplete`
+  property that indicates whether the access request has been fully handled.
+  Once the access request is complete, the `isComplete` property will be `true`,
+  and the `result` property will contain the final result. Note that querying
+  access requests with `user.accessRequests()` returns copies of the recorded
+  access requests, so they will not be updated over time. To get the latest
+  access request state, you should query the user object again.
+
 ## [v0.14.0] - 2024-08-21
 
 [v0.14.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.14.0

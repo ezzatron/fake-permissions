@@ -15,8 +15,9 @@ export type User = {
 };
 
 export type AccessRequest = {
-  descriptor: PermissionDescriptor;
-  result: AccessDialogResult | undefined;
+  readonly descriptor: PermissionDescriptor;
+  readonly result: AccessDialogResult | undefined;
+  readonly isComplete: boolean;
 };
 
 export function createUser({
@@ -87,10 +88,15 @@ export function createUser({
 
   function setHandler(toHandler: HandleAccessRequest): void {
     permissionStore.setAccessRequestHandler(async (dialog, descriptor) => {
+      const accessRequest = structuredClone({
+        descriptor,
+        result: undefined,
+        isComplete: false,
+      });
+      accessRequests.push(accessRequest);
+
       await toHandler(dialog, descriptor);
-      accessRequests.push(
-        structuredClone({ descriptor, result: dialog.result }),
-      );
+      Object.assign(accessRequest, { result: dialog.result, isComplete: true });
     });
   }
 }
