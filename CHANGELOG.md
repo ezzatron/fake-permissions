@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.14.1] - 2024-08-22
+
+[v0.14.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.14.1
+
 ### Changed
 
 - Access requests are now recorded before the async access request handler
