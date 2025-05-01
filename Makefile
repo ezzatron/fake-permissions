@@ -1,4 +1,4 @@
-export NODE_OPTIONS := --experimental-vm-modules --redirect-warnings=artifacts/node-warnings
+export NODE_OPTIONS := --redirect-warnings=artifacts/node-warnings
 
 CHANGELOG_TAG_URL_PREFIX := https://github.com/ezzatron/fake-permissions/releases/tag/
 JS_ARETHETYPESWRONG_REQ += artifacts/dist
