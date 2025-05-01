@@ -250,8 +250,8 @@ console.log(
     `permissionStore.requestAccess()`.
   - The `dismissDenyThreshold` option has moved from `createUser()` to
     `createPermissionStore()`.
-  - Access request handlers are still configured via the user, either by
-    passing a `handleAccessRequest` option to `createUser()`, or by calling
+  - Access request handlers are still configured via the user, either by passing
+    a `handleAccessRequest` option to `createUser()`, or by calling
     `user.setAccessRequestHandler()`.
 - **\[BREAKING]** The `permissionStore.has()` method was renamed to
   `isKnownDescriptor()`.
@@ -304,8 +304,8 @@ console.log(
     interaction (e.g. due to repeated dismissals of access requests).
   - `ALLOWED` — Access is allowed, but only for the current visit.
   - `DENIED` — Access is denied, but only for the current visit.
-- Added the `PermissionStoreSubscriber` type. This type was already used
-  for permission store subscribers, but is now exported for use in user-defined
+- Added the `PermissionStoreSubscriber` type. This type was already used for
+  permission store subscribers, but is now exported for use in user-defined
   code.
 
 ### Fixed
@@ -681,7 +681,8 @@ console.log(status.state); // Outputs "granted"
 - Added [`Symbol.toStringTag`] methods to all `Permissions` and
   `PermissionStatus` objects.
 
-[`Symbol.toStringTag`]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
+[`Symbol.toStringTag`]:
+  https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
 
 ## [v0.6.0] - 2023-09-10
 
