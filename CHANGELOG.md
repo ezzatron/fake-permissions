@@ -10,6 +10,14 @@ Versioning].
 
 ## Unreleased
 
+## [v0.16.0] - 2025-05-02
+
+[v0.16.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.16.0
+
+### Removed
+
+- Removed the `Unsubscribe` type.
+
 ## [v0.15.0] - 2025-05-02
 
 [v0.15.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.15.0
