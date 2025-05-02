@@ -28,12 +28,20 @@ export type PermissionAccessState = {
 };
 
 export type PermissionAccessStatus =
-  | "PROMPT"
-  | "GRANTED"
-  | "BLOCKED"
-  | "BLOCKED_AUTOMATICALLY"
-  | "ALLOWED"
-  | "DENIED";
+  | PermissionAccessStatusPrompt
+  | PermissionAccessStatusGranted
+  | PermissionAccessStatusBlocked
+  | PermissionAccessStatusBlockedAutomatically
+  | PermissionAccessStatusAllowed
+  | PermissionAccessStatusDenied;
+
+export type PermissionAccessStatusPrompt = "PROMPT";
+export type PermissionAccessStatusGranted = "GRANTED";
+export type PermissionAccessStatusBlocked = "BLOCKED";
+export type PermissionAccessStatusBlockedAutomatically =
+  "BLOCKED_AUTOMATICALLY";
+export type PermissionAccessStatusAllowed = "ALLOWED";
+export type PermissionAccessStatusDenied = "DENIED";
 
 export type PermissionStoreSubscriber = (
   descriptor: PermissionDescriptor,
@@ -44,6 +52,16 @@ export type PermissionStoreSubscriber = (
     fromStatus: PermissionAccessStatus;
   },
 ) => void;
+
+export type PermissionStoreParameters = {
+  dialogDefaultRemember?: boolean;
+  dismissDenyThreshold?: number;
+  initialStates?: Map<
+    PermissionDescriptor,
+    PermissionAccessStatus | PermissionAccessState
+  >;
+  isMatchingDescriptor?: IsMatchingDescriptor;
+};
 
 export function createPermissionStore({
   dialogDefaultRemember = false,
@@ -79,15 +97,7 @@ export function createPermissionStore({
 
     return a.name === b.name;
   },
-}: {
-  dialogDefaultRemember?: boolean;
-  dismissDenyThreshold?: number;
-  initialStates?: Map<
-    PermissionDescriptor,
-    PermissionAccessStatus | PermissionAccessState
-  >;
-  isMatchingDescriptor?: IsMatchingDescriptor;
-} = {}): PermissionStore {
+}: PermissionStoreParameters = {}): PermissionStore {
   const states: Map<PermissionDescriptor, PermissionAccessState> = new Map(
     [...initialStates].map(([d, s]) => [
       d,

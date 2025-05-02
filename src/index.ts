@@ -17,7 +17,14 @@ export type {
   IsMatchingDescriptor,
   PermissionAccessState,
   PermissionAccessStatus,
+  PermissionAccessStatusAllowed,
+  PermissionAccessStatusBlocked,
+  PermissionAccessStatusBlockedAutomatically,
+  PermissionAccessStatusDenied,
+  PermissionAccessStatusGranted,
+  PermissionAccessStatusPrompt,
   PermissionStore,
+  PermissionStoreParameters,
   PermissionStoreSubscriber,
 } from "./permission-store.js";
 export { createPermissions } from "./permissions.js";

@@ -10,6 +10,16 @@ Versioning].
 
 ## Unreleased
 
+### Added
+
+- Added the `PermissionAccessStatusAllowed` type.
+- Added the `PermissionAccessStatusBlocked` type.
+- Added the `PermissionAccessStatusBlockedAutomatically` type.
+- Added the `PermissionAccessStatusDenied` type.
+- Added the `PermissionAccessStatusGranted` type.
+- Added the `PermissionAccessStatusPrompt` type.
+- Added the `PermissionStoreParameters` type.
+
 ## [v0.16.0] - 2025-05-02
 
 [v0.16.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.16.0
