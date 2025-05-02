@@ -4,7 +4,6 @@ import {
   PermissionStore,
   type PermissionStoreSubscriber,
 } from "./permission-store.js";
-import { type Unsubscribe } from "./unsubscribe.js";
 
 type PermissionStatusParameters = {
   descriptor: PermissionDescriptor;
@@ -35,7 +34,7 @@ export class PermissionStatus extends BaseEventTarget {
   }: PermissionStatusParameters) {
     super({
       onListenerCountChange: (() => {
-        let unsubscribe: Unsubscribe | undefined;
+        let unsubscribe: () => void | undefined;
 
         return (type, count) => {
           if (type !== "change") return;

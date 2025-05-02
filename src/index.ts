@@ -22,6 +22,5 @@ export type {
 } from "./permission-store.js";
 export { createPermissions } from "./permissions.js";
 export type { PermissionsParameters } from "./permissions.js";
-export type { Unsubscribe } from "./unsubscribe.js";
 export { createUser } from "./user.js";
 export type { AccessRequest, User } from "./user.js";

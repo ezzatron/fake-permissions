@@ -2,7 +2,6 @@ import {
   createAccessDialog,
   type HandleAccessRequest,
 } from "./access-dialog.js";
-import type { Unsubscribe } from "./unsubscribe.js";
 
 export type PermissionStore = {
   isKnownDescriptor: (descriptor: PermissionDescriptor) => boolean;
@@ -15,7 +14,7 @@ export type PermissionStore = {
   hasAccess: (descriptor: PermissionDescriptor) => boolean;
   requestAccess: (descriptor: PermissionDescriptor) => Promise<boolean>;
   setAccessRequestHandler: (toHandler: HandleAccessRequest) => void;
-  subscribe: (subscriber: PermissionStoreSubscriber) => Unsubscribe;
+  subscribe: (subscriber: PermissionStoreSubscriber) => () => void;
 };
 
 export type IsMatchingDescriptor = (
