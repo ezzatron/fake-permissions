@@ -68,6 +68,9 @@ export type AccessDialog = {
   readonly result: AccessDialogResult | undefined;
 };
 
+/**
+ * @internal
+ */
 export type AccessDialogResult = {
   readonly shouldAllow: boolean;
   readonly shouldRemember: boolean;
