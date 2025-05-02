@@ -1,6 +1,7 @@
 {
   "entryPoints": ["src"],
 
+  "excludeInternal": true,
   "navigationLinks": {
     "GitHub": "https://github.com/ezzatron/fake-permissions"
   },
