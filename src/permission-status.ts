@@ -3,8 +3,8 @@ import type { PermissionMask } from "./permission-mask.js";
 import {
   PermissionStore,
   type PermissionStoreSubscriber,
-  type Unsubscribe,
 } from "./permission-store.js";
+import { type Unsubscribe } from "./unsubscribe.js";
 
 type PermissionStatusParameters = {
   descriptor: PermissionDescriptor;

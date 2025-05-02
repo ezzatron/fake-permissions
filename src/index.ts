@@ -11,6 +11,7 @@ export type {
 export type { PermissionMask } from "./permission-mask.js";
 export { createPermissionObserver } from "./permission-observer.js";
 export type { PermissionObserver } from "./permission-observer.js";
+export type { NonEmptyPermissionStateArray } from "./permission-state.js";
 export { createPermissionStore } from "./permission-store.js";
 export type {
   IsMatchingDescriptor,
@@ -20,5 +21,7 @@ export type {
   PermissionStoreSubscriber,
 } from "./permission-store.js";
 export { createPermissions } from "./permissions.js";
+export type { PermissionsParameters } from "./permissions.js";
+export type { Unsubscribe } from "./unsubscribe.js";
 export { createUser } from "./user.js";
 export type { AccessRequest, User } from "./user.js";

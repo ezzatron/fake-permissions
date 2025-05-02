@@ -6,7 +6,7 @@ import {
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
 
-type PermissionParameters = {
+export type PermissionsParameters = {
   masks?: Map<PermissionDescriptor, Partial<PermissionMask>>;
   permissionStore: PermissionStore;
 };
@@ -14,7 +14,7 @@ type PermissionParameters = {
 let canConstruct = false;
 
 export function createPermissions(
-  parameters: PermissionParameters,
+  parameters: PermissionsParameters,
 ): globalThis.Permissions {
   canConstruct = true;
 
@@ -25,7 +25,7 @@ export class Permissions {
   /**
    * @deprecated Use the `createPermissions()` function instead.
    */
-  constructor({ masks = new Map(), permissionStore }: PermissionParameters) {
+  constructor({ masks = new Map(), permissionStore }: PermissionsParameters) {
     if (!canConstruct) throw new TypeError("Illegal constructor");
     canConstruct = false;
 

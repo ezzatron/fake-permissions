@@ -1,3 +1,5 @@
+import type { NonEmptyPermissionStateArray } from "./permission-state.js";
+
 export type PermissionObserver = {
   waitForState: (
     stateOrStates: PermissionState | NonEmptyPermissionStateArray,
@@ -35,8 +37,6 @@ export function createPermissionObserver(
     },
   };
 }
-
-type NonEmptyPermissionStateArray = PermissionState[] & { 0: PermissionState };
 
 function normalizeStates(
   states: PermissionState | PermissionState[],

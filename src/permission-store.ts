@@ -2,6 +2,7 @@ import {
   createAccessDialog,
   type HandleAccessRequest,
 } from "./access-dialog.js";
+import type { Unsubscribe } from "./unsubscribe.js";
 
 export type PermissionStore = {
   isKnownDescriptor: (descriptor: PermissionDescriptor) => boolean;
@@ -44,8 +45,6 @@ export type PermissionStoreSubscriber = (
     fromStatus: PermissionAccessStatus;
   },
 ) => void;
-
-export type Unsubscribe = () => void;
 
 export function createPermissionStore({
   dialogDefaultRemember = false,
