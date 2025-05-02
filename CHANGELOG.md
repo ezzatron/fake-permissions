@@ -20,6 +20,12 @@ Versioning].
 - Added the `PermissionAccessStatusPrompt` type.
 - Added the `PermissionStoreParameters` type.
 
+### Changed
+
+- The `HandleAccessRequest` type can now return an optional
+  `HandleAccessRequestComplete` callback that receives the result of the access
+  request once the handler has finished executing.
+
 ## [v0.16.0] - 2025-05-02
 
 [v0.16.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.16.0

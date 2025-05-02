@@ -61,12 +61,6 @@ export type AccessDialog = {
    *   {@link PermissionAccessStatusDenied}.
    */
   deny: () => void;
-
-  /**
-   * The result of the dialog interaction, or `undefined` if the dialog was
-   * dismissed.
-   */
-  readonly result: AccessDialogResult | undefined;
 };
 
 /**
@@ -84,32 +78,33 @@ export type AccessDialogResult = {
   readonly shouldRemember: boolean;
 };
 
-export function createAccessDialog(defaultRemember: boolean): AccessDialog {
+export function createAccessDialog(
+  defaultRemember: boolean,
+): [AccessDialog, () => AccessDialogResult | undefined] {
   let isDismissed = false;
   let shouldRemember = defaultRemember;
   let result: AccessDialogResult | undefined;
 
-  return {
-    remember(nextShouldRemember) {
-      shouldRemember = nextShouldRemember;
-    },
+  return [
+    {
+      remember(nextShouldRemember) {
+        shouldRemember = nextShouldRemember;
+      },
 
-    dismiss() {
-      setResult(undefined);
-    },
+      dismiss() {
+        setResult(undefined);
+      },
 
-    allow() {
-      setResult({ shouldAllow: true, shouldRemember });
-    },
+      allow() {
+        setResult({ shouldAllow: true, shouldRemember });
+      },
 
-    deny() {
-      setResult({ shouldAllow: false, shouldRemember });
+      deny() {
+        setResult({ shouldAllow: false, shouldRemember });
+      },
     },
-
-    get result() {
-      return result;
-    },
-  };
+    () => result,
+  ];
 
   function setResult(toResult: AccessDialogResult | undefined) {
     if (isDismissed) throw new Error("Access dialog already dismissed");
@@ -137,8 +132,24 @@ export function createAccessDialog(defaultRemember: boolean): AccessDialog {
  *
  * @param dialog - The access dialog to show.
  * @param descriptor - The descriptor of the requested permission.
+ *
+ * @returns An optional callback that will be called with the result of the
+ *   access dialog interaction.
  */
 export type HandleAccessRequest = (
   dialog: AccessDialog,
   descriptor: PermissionDescriptor,
-) => Promise<void>;
+) => Promise<HandleAccessRequestComplete | void>;
+
+/**
+ * A callback that is called with the result of an access dialog interaction.
+ *
+ * This is called when {@link HandleAccessRequest} completes, regardless of
+ * whether the dialog was dismissed or not.
+ *
+ * @param result - The result of the access dialog interaction, or `undefined`
+ *   if the dialog was dismissed.
+ */
+export type HandleAccessRequestComplete = (
+  result: AccessDialogResult | undefined,
+) => void;

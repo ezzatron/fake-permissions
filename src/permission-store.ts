@@ -229,10 +229,15 @@ export function createPermissionStore({
     if (active) return active;
 
     const request = (async () => {
-      const dialog = createAccessDialog(dialogDefaultRemember);
-      await handleAccessRequest(dialog, structuredClone(descriptor));
+      const [dialog, getResult] = createAccessDialog(dialogDefaultRemember);
+      const handleAccessRequestComplete = await handleAccessRequest(
+        dialog,
+        structuredClone(descriptor),
+      );
+      const result = getResult();
+      handleAccessRequestComplete?.(result);
 
-      if (!dialog.result) {
+      if (!result) {
         const dismissCount = state.dismissCount + 1;
 
         if (dismissCount >= dismissDenyThreshold) {
@@ -248,7 +253,7 @@ export function createPermissionStore({
         return false;
       }
 
-      const { shouldAllow, shouldRemember } = dialog.result;
+      const { shouldAllow, shouldRemember } = result;
 
       updateState(
         descriptor,

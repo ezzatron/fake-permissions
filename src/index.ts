@@ -2,6 +2,7 @@ export type {
   AccessDialog,
   AccessDialogResult,
   HandleAccessRequest,
+  HandleAccessRequestComplete,
 } from "./access-dialog.js";
 export { createDelegatedPermissions } from "./delegated-permissions.js";
 export type {

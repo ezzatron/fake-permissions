@@ -96,7 +96,10 @@ export function createUser({
       accessRequests.push(accessRequest);
 
       await toHandler(dialog, descriptor);
-      Object.assign(accessRequest, { result: dialog.result, isComplete: true });
+
+      return (result) => {
+        Object.assign(accessRequest, { result, isComplete: true });
+      };
     });
   }
 }
