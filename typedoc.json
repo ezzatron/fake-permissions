@@ -3,5 +3,7 @@
 
   "navigationLinks": {
     "GitHub": "https://github.com/ezzatron/fake-permissions"
-  }
+  },
+
+  "plugin": ["typedoc-plugin-mdn-links"]
 }
