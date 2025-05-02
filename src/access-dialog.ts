@@ -63,16 +63,24 @@ export type AccessDialog = {
   deny: () => void;
 
   /**
-   * @internal
+   * The result of the dialog interaction, or `undefined` if the dialog was
+   * dismissed.
    */
   readonly result: AccessDialogResult | undefined;
 };
 
 /**
- * @internal
+ * The result of an access dialog interaction that wasn't dismissed.
  */
 export type AccessDialogResult = {
+  /**
+   * Whether access should be allowed.
+   */
   readonly shouldAllow: boolean;
+
+  /**
+   * Whether the choice should be remembered.
+   */
   readonly shouldRemember: boolean;
 };
 
