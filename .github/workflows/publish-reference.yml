@@ -1,0 +1,36 @@
+name: Publish reference
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish reference
+    runs-on: ubuntu-latest
+    concurrency: publish-reference-${{ github.ref }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: make link-dependencies
+
+      - name: Make
+        run: make artifacts/docs/typedoc
+
+      - name: Publish reference
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: artifacts/docs/typedoc
