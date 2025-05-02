@@ -10,6 +10,16 @@ Versioning].
 
 ## Unreleased
 
+## [v0.15.0] - 2025-05-02
+
+[v0.15.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.15.0
+
+### Added
+
+- Added the `NonEmptyPermissionStateArray` type.
+- Added the `PermissionsParameters` type.
+- Added the `Unsubscribe` type.
+
 ## [v0.14.1] - 2024-08-22
 
 [v0.14.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.14.1
