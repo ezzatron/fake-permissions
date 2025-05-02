@@ -2,6 +2,11 @@
   "entryPoints": ["src"],
 
   "excludeInternal": true,
+  "externalSymbolLinkMappings": {
+    "@types/web": {
+      "PermissionDescriptor": "https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query#permissiondescriptor"
+    }
+  },
   "navigationLinks": {
     "GitHub": "https://github.com/ezzatron/fake-permissions"
   },

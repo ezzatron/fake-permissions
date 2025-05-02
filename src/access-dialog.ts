@@ -111,6 +111,25 @@ export function createAccessDialog(defaultRemember: boolean): AccessDialog {
   }
 }
 
+/**
+ * Emulate a user's interaction with a permission access dialog.
+ *
+ * This callback is called when access to a permission is requested, and the
+ * permission's access status is {@link PermissionAccessStatusPrompt}. Any other
+ * status will not result in a call to this callback.
+ *
+ * To emulate a user interaction, the callback can inspect the `descriptor` if
+ * desired, and call methods on `dialog` to make a choice about permission
+ * access. If the callback ends without calling any of the `dialog` methods,
+ * it's equivalent to calling {@link AccessDialog.dismiss | `dialog.dismiss()`}.
+ *
+ * Delayed interactions can also be emulated by waiting asynchronously before
+ * interacting with the dialog. Real users never respond instantly, so this can
+ * be used to emulate a more realistic user interaction.
+ *
+ * @param dialog - The access dialog to show.
+ * @param descriptor - The descriptor of the requested permission.
+ */
 export type HandleAccessRequest = (
   dialog: AccessDialog,
   descriptor: PermissionDescriptor,
