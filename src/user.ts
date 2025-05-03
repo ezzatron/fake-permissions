@@ -119,15 +119,30 @@ export type AccessRequestRecord = {
   readonly result: AccessDialogResult | undefined;
 };
 
-export function createUser({
-  permissionStore,
-  handleAccessRequest = async (dialog) => {
-    dialog.dismiss();
-  },
-}: {
+/**
+ * The parameters for creating a user.
+ */
+export type UserParameters = {
+  /**
+   * The permission store to use.
+   */
   permissionStore: PermissionStore;
+
+  /**
+   * The handler to use for permission access requests.
+   *
+   * If omitted, permission access requests will be immediately dismissed.
+   */
   handleAccessRequest?: HandleAccessRequest;
-}): User {
+};
+
+/**
+ * Create a virtual user that can affect the access status of permissions.
+ *
+ * @param params - The parameters for creating the user.
+ */
+export function createUser(params: UserParameters): User {
+  const { permissionStore, handleAccessRequest = async () => {} } = params;
   let accessRequests: AccessRequestRecord[] = [];
   setHandler(handleAccessRequest);
 

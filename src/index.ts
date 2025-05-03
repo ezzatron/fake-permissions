@@ -31,4 +31,4 @@ export type {
 export { createPermissions } from "./permissions.js";
 export type { PermissionsParameters } from "./permissions.js";
 export { createUser } from "./user.js";
-export type { AccessRequestRecord, User } from "./user.js";
+export type { AccessRequestRecord, User, UserParameters } from "./user.js";

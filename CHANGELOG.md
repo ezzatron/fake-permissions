@@ -19,6 +19,7 @@ Versioning].
 - Added the `PermissionAccessStatusGranted` type.
 - Added the `PermissionAccessStatusPrompt` type.
 - Added the `PermissionStoreParameters` type.
+- Added the `UserParameters` type.
 
 ### Changed
 
