@@ -22,6 +22,7 @@ Versioning].
 
 ### Changed
 
+- **\[BREAKING]** Renamed the `AccessRequest` type to `AccessRequestRecord`.
 - The `HandleAccessRequest` type can now return an optional
   `HandleAccessRequestComplete` callback that receives the result of the access
   request once the handler has finished executing.

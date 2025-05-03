@@ -10,13 +10,17 @@ export type AccessDialog = {
    * dialog choice:
    *
    * - If `shouldRemember` is `true` and access is allowed, the permission's
-   *   access status will change to {@link PermissionAccessStatusGranted}.
+   *   access status will change to
+   *   {@link PermissionAccessStatusGranted | `"GRANTED"`}.
    * - If `shouldRemember` is `true` and access is denied, the permission's
-   *   access status will change to {@link PermissionAccessStatusBlocked}.
+   *   access status will change to
+   *   {@link PermissionAccessStatusBlocked | `"BLOCKED"`}.
    * - If `shouldRemember` is `false` and access is allowed, the permission's
-   *   access status will change to {@link PermissionAccessStatusAllowed}.
+   *   access status will change to
+   *   {@link PermissionAccessStatusAllowed | `"ALLOWED"`}.
    * - If `shouldRemember` is `false` and access is denied, the permission's
-   *   access status will change to {@link PermissionAccessStatusDenied}.
+   *   access status will change to
+   *   {@link PermissionAccessStatusDenied | `"DENIED"`}.
    *
    * @param shouldRemember - Whether the choice should be remembered.
    *
@@ -32,7 +36,7 @@ export type AccessDialog = {
    * status, until the number of dismissals reaches
    * {@link PermissionStoreParameters.dismissDenyThreshold}, at which point the
    * permission's access status will change to
-   * {@link PermissionAccessStatusBlockedAutomatically}.
+   * {@link PermissionAccessStatusBlockedAutomatically | `"BLOCKED_AUTOMATICALLY"`}.
    */
   dismiss: () => void;
 
@@ -43,9 +47,9 @@ export type AccessDialog = {
    * change the permission's access status:
    *
    * - If remembered, the permission's access status will change to
-   *   {@link PermissionAccessStatusGranted}.
+   *   {@link PermissionAccessStatusGranted | `"GRANTED"`}.
    * - If not remembered, the permission's access status will change to
-   *   {@link PermissionAccessStatusAllowed}.
+   *   {@link PermissionAccessStatusAllowed | `"ALLOWED"`}.
    */
   allow: () => void;
 
@@ -56,9 +60,9 @@ export type AccessDialog = {
    * change the permission's access status:
    *
    * - If remembered, the permission's access status will change to
-   *   {@link PermissionAccessStatusBlocked}.
+   *   {@link PermissionAccessStatusBlocked | `"BLOCKED"`}.
    * - If not remembered, the permission's access status will change to
-   *   {@link PermissionAccessStatusDenied}.
+   *   {@link PermissionAccessStatusDenied | `"DENIED"`}.
    */
   deny: () => void;
 };
@@ -118,13 +122,14 @@ export function createAccessDialog(
  * Emulate a user's interaction with a permission access dialog.
  *
  * This callback is called when access to a permission is requested, and the
- * permission's access status is {@link PermissionAccessStatusPrompt}. Any other
- * status will not result in a call to this callback.
+ * permission's access status is
+ * {@link PermissionAccessStatusPrompt | `"PROMPT"`}. Any other status will not
+ * result in a call to this callback.
  *
  * To emulate a user interaction, the callback can inspect the `descriptor` if
  * desired, and call methods on `dialog` to make a choice about permission
  * access. If the callback ends without calling any of the `dialog` methods,
- * it's equivalent to calling {@link AccessDialog.dismiss | `dialog.dismiss()`}.
+ * it's equivalent to calling {@link AccessDialog.dismiss}.
  *
  * Delayed interactions can also be emulated by waiting asynchronously before
  * interacting with the dialog. Real users never respond instantly, so this can
@@ -135,6 +140,9 @@ export function createAccessDialog(
  *
  * @returns An optional callback that will be called with the result of the
  *   access dialog interaction.
+ *
+ * @see {@link User.setAccessRequestHandler} to update the access request
+ *   handler for a user.
  */
 export type HandleAccessRequest = (
   dialog: AccessDialog,
