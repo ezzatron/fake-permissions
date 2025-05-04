@@ -12,6 +12,8 @@ Versioning].
 
 ### Added
 
+- Added the `buildInitialPermissionStates` function.
+- Added the `isMatchingDescriptor` function.
 - Added the `PermissionAccessStatusAllowed` type.
 - Added the `PermissionAccessStatusBlocked` type.
 - Added the `PermissionAccessStatusBlockedAutomatically` type.

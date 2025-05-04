@@ -13,7 +13,11 @@ export type { PermissionMask } from "./permission-mask.js";
 export { createPermissionObserver } from "./permission-observer.js";
 export type { PermissionObserver } from "./permission-observer.js";
 export type { NonEmptyPermissionStateArray } from "./permission-state.js";
-export { createPermissionStore } from "./permission-store.js";
+export {
+  buildInitialPermissionStates,
+  createPermissionStore,
+  isMatchingDescriptor,
+} from "./permission-store.js";
 export type {
   IsMatchingDescriptor,
   PermissionAccessState,

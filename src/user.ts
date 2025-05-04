@@ -120,7 +120,7 @@ export type AccessRequestRecord = {
 };
 
 /**
- * The parameters for creating a user.
+ * Parameters for creating a user.
  */
 export type UserParameters = {
   /**
@@ -132,6 +132,8 @@ export type UserParameters = {
    * The handler to use for permission access requests.
    *
    * If omitted, permission access requests will be immediately dismissed.
+   *
+   * @defaultValue async () => {}
    */
   handleAccessRequest?: HandleAccessRequest;
 };
