@@ -13,6 +13,7 @@ Versioning].
 ### Added
 
 - Added the `buildInitialPermissionStates` function.
+- Added the `DelegatedPermissionsParameters` type.
 - Added the `isMatchingDescriptor` function.
 - Added the `PermissionAccessStatusAllowed` type.
 - Added the `PermissionAccessStatusBlocked` type.
@@ -26,9 +27,16 @@ Versioning].
 ### Changed
 
 - **\[BREAKING]** Renamed the `AccessRequest` type to `AccessRequestRecord`.
+- **\[BREAKING]** Renamed the `isDelegateSelected` property of the return value
+  of `createDelegatedPermissions()` to `isSelectedDelegate`.
 - The `HandleAccessRequest` type can now return an optional
   `HandleAccessRequestComplete` callback that receives the result of the access
   request once the handler has finished executing.
+
+### Removed
+
+- **\[BREAKING]** Removed the `SelectDelegate` type.
+- **\[BREAKING]** Removed the `IsDelegateSelected` type.
 
 ## [v0.16.0] - 2025-05-02
 

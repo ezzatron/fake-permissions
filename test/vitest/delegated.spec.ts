@@ -1,7 +1,5 @@
 import {
-  IsDelegateSelected,
   PermissionStore,
-  SelectDelegate,
   createDelegatedPermissions,
   createPermissionStore,
   createPermissions,
@@ -32,8 +30,8 @@ describe("Delegated permissions", () => {
   let delegateA: Permissions;
   let delegateB: Permissions;
   let permissions: Permissions;
-  let selectDelegate: SelectDelegate;
-  let isDelegateSelected: IsDelegateSelected;
+  let selectDelegate: (delegate: Permissions) => void;
+  let isSelectedDelegate: (delegate: Permissions) => boolean;
   let statusA: PermissionStatus;
   let statusB: PermissionStatus;
   let statusC: PermissionStatus;
@@ -60,10 +58,8 @@ describe("Delegated permissions", () => {
     delegateA = createPermissions({ permissionStore: permissionStoreA });
     delegateB = createPermissions({ permissionStore: permissionStoreB });
 
-    ({ permissions, selectDelegate, isDelegateSelected } =
-      createDelegatedPermissions({
-        delegates: [delegateA, delegateB],
-      }));
+    ({ permissions, selectDelegate, isSelectedDelegate } =
+      createDelegatedPermissions({ delegates: [delegateA, delegateB] }));
   });
 
   it("has a string tag", () => {
@@ -99,10 +95,29 @@ describe("Delegated permissions", () => {
     expect(call).toThrow("No delegates provided");
   });
 
+  it("doesn't allow selecting a delegate that is not in the list", () => {
+    const delegateC = createPermissions({
+      permissionStore: createPermissionStore({
+        initialStates: new Map([
+          [permissionA, "PROMPT"],
+          [permissionB, "GRANTED"],
+          [permissionC, "BLOCKED"],
+        ]),
+      }),
+    });
+
+    const call = () => {
+      selectDelegate(delegateC);
+    };
+
+    expect(call).toThrow(TypeError);
+    expect(call).toThrow("Unknown delegate");
+  });
+
   describe("before selecting a delegate", () => {
     it("has selected the first delegate", () => {
-      expect(isDelegateSelected(delegateA)).toBe(true);
-      expect(isDelegateSelected(delegateB)).toBe(false);
+      expect(isSelectedDelegate(delegateA)).toBe(true);
+      expect(isSelectedDelegate(delegateB)).toBe(false);
     });
 
     describe("when querying a permission", () => {
@@ -288,8 +303,8 @@ describe("Delegated permissions", () => {
     });
 
     it("has selected the specified delegate", () => {
-      expect(isDelegateSelected(delegateB)).toBe(true);
-      expect(isDelegateSelected(delegateA)).toBe(false);
+      expect(isSelectedDelegate(delegateB)).toBe(true);
+      expect(isSelectedDelegate(delegateA)).toBe(false);
     });
 
     describe("when querying a permission", () => {

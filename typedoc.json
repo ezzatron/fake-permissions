@@ -4,7 +4,8 @@
   "excludeInternal": true,
   "externalSymbolLinkMappings": {
     "@types/web": {
-      "PermissionDescriptor": "https://developer.mozilla.org/docs/Web/API/Permissions/query#permissiondescriptor"
+      "PermissionDescriptor": "https://developer.mozilla.org/docs/Web/API/Permissions/query#permissiondescriptor",
+      "PermissionState": "https://developer.mozilla.org/docs/Web/API/PermissionStatus/state"
     }
   },
   "navigationLinks": {
