@@ -1,10 +1,32 @@
+/**
+ * An observer for permission state changes.
+ */
 export type PermissionObserver = {
+  /**
+   * Wait for the permission state to change to one of the specified states.
+   *
+   * @param stateOrStates - The desired permission state(s).
+   * @param task - An optional task to execute while waiting for the state
+   *   change. You can use this to guarantee that certain actions are performed
+   *   after observation has started.
+   * @returns A promise that resolves when the permission state matches one of
+   *   the desired states. If the state is already one of the desired states,
+   *   the promise resolves immediately.
+   */
   waitForState: (
     stateOrStates: PermissionState | PermissionState[],
     task?: () => Promise<void>,
   ) => Promise<void>;
 };
 
+/**
+ * Create an observer for a permission.
+ *
+ * @param permissions - The Permissions API to use.
+ * @param descriptor - A descriptor of the permission to observe.
+ *
+ * @returns An observer for the permission.
+ */
 export function createPermissionObserver(
   permissions: Permissions,
   descriptor: PermissionDescriptor,
