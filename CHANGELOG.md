@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.17.0] - 2025-05-04
+
+[v0.17.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.0
+
 ### Added
 
 - Added the `buildInitialPermissionStates` function.
