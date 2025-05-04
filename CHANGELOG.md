@@ -13,8 +13,11 @@ Versioning].
 ### Added
 
 - Added the `buildInitialPermissionStates` function.
-- Added the `DelegatedPermissionsParameters` type.
 - Added the `isMatchingDescriptor` function.
+- Added the `selectedDelegate` property of the return value of
+  `createDelegatedPermissions()`, which is a function that returns the currently
+  selected delegate.
+- Added the `DelegatedPermissionsParameters` type.
 - Added the `PermissionAccessStatusAllowed` type.
 - Added the `PermissionAccessStatusBlocked` type.
 - Added the `PermissionAccessStatusBlockedAutomatically` type.

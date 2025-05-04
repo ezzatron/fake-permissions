@@ -56,6 +56,13 @@ export function createDelegatedPermissions(
   selectDelegate: (delegate: globalThis.Permissions) => void;
 
   /**
+   * Get the selected Permissions API delegate.
+   *
+   * @returns The selected delegate.
+   */
+  selectedDelegate: () => globalThis.Permissions;
+
+  /**
    * Check if a Permissions API delegate is selected.
    *
    * @param delegate - The delegate to check.
@@ -109,6 +116,10 @@ export function createDelegatedPermissions(
         }
         /* v8 ignore stop */
       }
+    },
+
+    selectedDelegate() {
+      return delegate;
     },
 
     isSelectedDelegate(query) {

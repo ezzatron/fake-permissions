@@ -31,6 +31,7 @@ describe("Delegated permissions", () => {
   let delegateB: Permissions;
   let permissions: Permissions;
   let selectDelegate: (delegate: Permissions) => void;
+  let selectedDelegate: () => Permissions;
   let isSelectedDelegate: (delegate: Permissions) => boolean;
   let statusA: PermissionStatus;
   let statusB: PermissionStatus;
@@ -58,7 +59,7 @@ describe("Delegated permissions", () => {
     delegateA = createPermissions({ permissionStore: permissionStoreA });
     delegateB = createPermissions({ permissionStore: permissionStoreB });
 
-    ({ permissions, selectDelegate, isSelectedDelegate } =
+    ({ permissions, selectDelegate, selectedDelegate, isSelectedDelegate } =
       createDelegatedPermissions({ delegates: [delegateA, delegateB] }));
   });
 
@@ -116,6 +117,7 @@ describe("Delegated permissions", () => {
 
   describe("before selecting a delegate", () => {
     it("has selected the first delegate", () => {
+      expect(selectedDelegate()).toBe(delegateA);
       expect(isSelectedDelegate(delegateA)).toBe(true);
       expect(isSelectedDelegate(delegateB)).toBe(false);
     });
@@ -303,6 +305,7 @@ describe("Delegated permissions", () => {
     });
 
     it("has selected the specified delegate", () => {
+      expect(selectedDelegate()).toBe(delegateB);
       expect(isSelectedDelegate(delegateB)).toBe(true);
       expect(isSelectedDelegate(delegateA)).toBe(false);
     });
