@@ -9,7 +9,6 @@ export type { DelegatedPermissionsParameters } from "./delegated-permissions.js"
 export type { PermissionMask } from "./permission-mask.js";
 export { createPermissionObserver } from "./permission-observer.js";
 export type { PermissionObserver } from "./permission-observer.js";
-export type { NonEmptyPermissionStateArray } from "./permission-state.js";
 export {
   buildInitialPermissionStates,
   createPermissionStore,

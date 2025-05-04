@@ -28,7 +28,6 @@ describe("PermissionObserver", () => {
   describe("waitForState()", () => {
     describe("when called with no states", () => {
       it("throws", async () => {
-        // @ts-expect-error - Testing invalid input
         await expect(observer.waitForState([])).rejects.toThrow(
           "No states provided",
         );

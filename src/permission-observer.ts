@@ -1,8 +1,6 @@
-import type { NonEmptyPermissionStateArray } from "./permission-state.js";
-
 export type PermissionObserver = {
   waitForState: (
-    stateOrStates: PermissionState | NonEmptyPermissionStateArray,
+    stateOrStates: PermissionState | PermissionState[],
     task?: () => Promise<void>,
   ) => Promise<void>;
 };

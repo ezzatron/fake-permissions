@@ -38,8 +38,9 @@ Versioning].
 
 ### Removed
 
-- **\[BREAKING]** Removed the `SelectDelegate` type.
 - **\[BREAKING]** Removed the `IsDelegateSelected` type.
+- **\[BREAKING]** Removed the `NonEmptyPermissionStateArray` type.
+- **\[BREAKING]** Removed the `SelectDelegate` type.
 
 ## [v0.16.0] - 2025-05-02
 
