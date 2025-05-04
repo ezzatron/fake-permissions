@@ -42,6 +42,12 @@ Versioning].
 - **\[BREAKING]** Removed the `NonEmptyPermissionStateArray` type.
 - **\[BREAKING]** Removed the `SelectDelegate` type.
 
+### Fixed
+
+- Fixed a bug where the `task` parameter of `PermissionObserver.waitForState()`
+  was not being awaited when the permission state was already in one of the
+  desired states.
+
 ## [v0.16.0] - 2025-05-02
 
 [v0.16.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.16.0

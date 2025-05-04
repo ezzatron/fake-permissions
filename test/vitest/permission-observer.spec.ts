@@ -5,7 +5,7 @@ import {
   type PermissionObserver,
   type PermissionStore,
 } from "fake-permissions";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("PermissionObserver", () => {
   const permissionA: PermissionDescriptor = {
@@ -35,8 +35,21 @@ describe("PermissionObserver", () => {
     });
 
     describe("when called with a single state", () => {
-      it("resolves when the permission state already matches the desired state", async () => {
-        await expect(observer.waitForState("prompt")).resolves.toBeUndefined();
+      describe("when the permission state already matches the desired state", () => {
+        it("resolves", async () => {
+          await expect(
+            observer.waitForState("prompt"),
+          ).resolves.toBeUndefined();
+        });
+
+        it("executes any supplied task", async () => {
+          const task = vi.fn().mockResolvedValue(undefined);
+
+          await expect(
+            observer.waitForState("prompt", task),
+          ).resolves.toBeUndefined();
+          expect(task).toHaveBeenCalled();
+        });
       });
 
       it("resolves when the permission state changes to the desired state", async () => {
@@ -79,13 +92,24 @@ describe("PermissionObserver", () => {
     });
 
     describe("when called with multiple states", () => {
-      it("resolves when the permission state already matches any of the desired states", async () => {
-        await expect(
-          observer.waitForState(["prompt", "granted"]),
-        ).resolves.toBeUndefined();
-        await expect(
-          observer.waitForState(["denied", "prompt"]),
-        ).resolves.toBeUndefined();
+      describe("when the permission state already matches any of the desired states", () => {
+        it("resolves", async () => {
+          await expect(
+            observer.waitForState(["prompt", "granted"]),
+          ).resolves.toBeUndefined();
+          await expect(
+            observer.waitForState(["denied", "prompt"]),
+          ).resolves.toBeUndefined();
+        });
+
+        it("executes any supplied task", async () => {
+          const task = vi.fn().mockResolvedValue(undefined);
+
+          await expect(
+            observer.waitForState(["prompt", "granted"], task),
+          ).resolves.toBeUndefined();
+          expect(task).toHaveBeenCalled();
+        });
       });
 
       it("resolves when the permission state changes to any of the desired states", async () => {

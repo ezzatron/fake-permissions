@@ -39,7 +39,11 @@ export function createPermissionObserver(
 
       const status = await permissions.query(descriptor);
 
-      if (states.includes(status.state)) return;
+      if (states.includes(status.state)) {
+        if (task) await task();
+
+        return;
+      }
 
       await Promise.all([
         new Promise<void>((resolve) => {
