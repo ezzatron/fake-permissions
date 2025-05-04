@@ -8,9 +8,9 @@ _A fake implementation of the W3C Permissions API_
 [![Test coverage][badge-coverage-image]][badge-coverage-link]
 
 [badge-build-image]:
-  https://img.shields.io/github/actions/workflow/status/ezzatron/fake-permissions/ci.yml?branch=main&style=for-the-badge
+  https://img.shields.io/github/actions/workflow/status/ezzatron/fake-permissions/ci-node-library.yml?branch=main&style=for-the-badge
 [badge-build-link]:
-  https://github.com/ezzatron/fake-permissions/actions/workflows/ci.yml
+  https://github.com/ezzatron/fake-permissions/actions/workflows/ci-node-library.yml
 [badge-coverage-image]:
   https://img.shields.io/codecov/c/gh/ezzatron/fake-permissions?style=for-the-badge
 [badge-coverage-link]: https://codecov.io/gh/ezzatron/fake-permissions
