@@ -27,6 +27,7 @@ export function createPermissions(
 
 export class Permissions {
   /**
+   * @internal
    * @deprecated Use {@link createPermissions} instead.
    */
   constructor({ masks = new Map(), permissionStore }: PermissionsParameters) {

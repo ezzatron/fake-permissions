@@ -71,6 +71,7 @@ type PermissionsParameters = {
 
 class Permissions {
   /**
+   * @internal
    * @deprecated Use {@link createDelegatedPermissions} instead.
    */
   constructor({
