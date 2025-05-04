@@ -21,7 +21,8 @@ export type PermissionsParameters = {
    * Internally, this library stores more granular statuses for permissions than
    * what is exposed via the W3C {@link @types/web!Permissions} API. This
    * mapping defines how the internal {@link PermissionAccessStatus} values are
-   * exposed via the fake Permissions API's {@link PermissionState} values.
+   * exposed via the fake {@link @types/web!Permissions} API's
+   * {@link PermissionState} values.
    *
    * For example, some browsers support allowing one-time access to a
    * permission. This usually results in the {@link PermissionState} remaining
