@@ -145,6 +145,8 @@ export type UserParameters = {
  * Create a virtual user that can affect the access status of permissions.
  *
  * @param params - The parameters for creating the user.
+ *
+ * @returns A virtual user.
  */
 export function createUser(params: UserParameters): User {
   const { permissionStore, handleAccessRequest = async () => {} } = params;

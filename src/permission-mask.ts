@@ -3,6 +3,13 @@ import type {
   PermissionStore,
 } from "./permission-store.js";
 
+/**
+ * A mapping of {@link PermissionAccessStatus} values to W3C's
+ * {@link PermissionState} values.
+ *
+ * @see {@link PermissionsParameters.masks} for more information on how this
+ *   mapping is used.
+ */
 export type PermissionMask = Record<PermissionAccessStatus, PermissionState>;
 
 export function normalizeMask(mask: Partial<PermissionMask>): PermissionMask {

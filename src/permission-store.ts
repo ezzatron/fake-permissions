@@ -274,6 +274,8 @@ export type PermissionStoreParameters = {
  * Create a store for managing permission access.
  *
  * @param params - The parameters for creating the store.
+ *
+ * @returns A permission store.
  */
 export function createPermissionStore(
   params: PermissionStoreParameters = {},
