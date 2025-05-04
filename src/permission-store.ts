@@ -219,6 +219,7 @@ export type PermissionStoreSubscriber = (
  * Parameters for creating a permission store.
  *
  * @inline
+ * @see {@link createPermissionStore} to create a permission store.
  */
 export type PermissionStoreParameters = {
   /**

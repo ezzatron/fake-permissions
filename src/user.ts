@@ -120,7 +120,10 @@ export type AccessRequestRecord = {
 };
 
 /**
- * Parameters for creating a user.
+ * Parameters for creating a virtual user.
+ *
+ * @inline
+ * @see {@link createUser} to create a virtual user.
  */
 export type UserParameters = {
   /**

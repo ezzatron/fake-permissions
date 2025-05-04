@@ -11,11 +11,11 @@ type PermissionStatusParameters = {
 let canConstruct = false;
 
 export function createPermissionStatus(
-  parameters: PermissionStatusParameters,
+  params: PermissionStatusParameters,
 ): globalThis.PermissionStatus {
   canConstruct = true;
 
-  return new PermissionStatus(parameters);
+  return new PermissionStatus(params);
 }
 
 export class PermissionStatus extends BaseEventTarget {

@@ -62,7 +62,7 @@ export function createDelegatedPermissions({
 export type SelectDelegate = (delegate: globalThis.Permissions) => void;
 export type IsDelegateSelected = (delegate: globalThis.Permissions) => boolean;
 
-type PermissionParameters = {
+type PermissionsParameters = {
   delegates: globalThis.Permissions[];
   delegate: () => globalThis.Permissions;
   subscribe: (subscriber: Subscriber) => void;
@@ -78,7 +78,7 @@ class Permissions {
     delegate,
     subscribe,
     unsubscribe,
-  }: PermissionParameters) {
+  }: PermissionsParameters) {
     if (!canConstruct) throw new TypeError("Illegal constructor");
     canConstruct = false;
 

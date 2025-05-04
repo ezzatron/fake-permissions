@@ -6,6 +6,10 @@ import {
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
 
+/**
+ * @inline
+ * @see {@link createPermissions} to create a Permissions API.
+ */
 export type PermissionsParameters = {
   masks?: Map<PermissionDescriptor, Partial<PermissionMask>>;
   permissionStore: PermissionStore;
@@ -14,11 +18,11 @@ export type PermissionsParameters = {
 let canConstruct = false;
 
 export function createPermissions(
-  parameters: PermissionsParameters,
+  params: PermissionsParameters,
 ): globalThis.Permissions {
   canConstruct = true;
 
-  return new Permissions(parameters);
+  return new Permissions(params);
 }
 
 export class Permissions {
