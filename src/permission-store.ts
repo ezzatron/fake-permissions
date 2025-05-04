@@ -240,17 +240,21 @@ export type PermissionStoreParameters = {
 
   /**
    * The initial states of permissions in the store, as a map of permission
-   * descriptors to their initial access status.
+   * descriptors to their initial access state.
    *
-   * As well as setting the initial access status, this also defines the set of
+   * As well as setting the initial access states, this also defines the set of
    * permissions that are known to the permission store.
+   *
+   * States can be specified in full by using {@link PermissionAccessState}
+   * objects, or alternatively a {@link PermissionAccessStatus} string can be
+   * used, in which case `dismissCount` will initialize to `0`.
    *
    * @defaultValue The result of calling
    *   {@link buildInitialPermissionStates}.
    */
   initialStates?: Map<
     PermissionDescriptor,
-    PermissionAccessStatus | PermissionAccessState
+    PermissionAccessState | PermissionAccessStatus
   >;
 
   /**
@@ -472,7 +476,7 @@ export function createPermissionStore(
  */
 export function buildInitialPermissionStates(): Map<
   PermissionDescriptor,
-  PermissionAccessStatus | PermissionAccessState
+  PermissionAccessState | PermissionAccessStatus
 > {
   return new Map([
     [{ name: "geolocation" }, "PROMPT"],
