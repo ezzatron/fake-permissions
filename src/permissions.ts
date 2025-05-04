@@ -27,7 +27,7 @@ export function createPermissions(
 
 export class Permissions {
   /**
-   * @deprecated Use the `createPermissions()` function instead.
+   * @deprecated Use {@link createPermissions} instead.
    */
   constructor({ masks = new Map(), permissionStore }: PermissionsParameters) {
     if (!canConstruct) throw new TypeError("Illegal constructor");

@@ -22,7 +22,7 @@ export class PermissionStatus extends BaseEventTarget {
   readonly name: PermissionName;
 
   /**
-   * @deprecated Use the `Permissions.query()` method instead.
+   * @deprecated Use {@link Permissions.query} instead.
    */
   constructor({
     descriptor: { name },
