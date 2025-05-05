@@ -8,7 +8,7 @@ on:
 jobs:
   ci:
     name: Ezzatron
-    uses: ezzatron/repos/.github/workflows/shared-publish-package-npm.yml@main
+    uses: ezzatron/repos/.github/workflows/shared-publish-package-js.yml@main
     secrets: inherit
     permissions:
       id-token: write
