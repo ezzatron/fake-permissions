@@ -11,6 +11,13 @@
   "navigationLinks": {
     "GitHub": "https://github.com/ezzatron/fake-permissions"
   },
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "rewrittenLink": true,
+    "notDocumented": true,
+    "unusedMergeModuleWith": true
+  },
 
   "plugin": ["typedoc-plugin-mdn-links"]
 }
