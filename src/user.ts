@@ -65,7 +65,7 @@ export type User = {
    * @param descriptor - The descriptor of the permission to get access requests
    *   for.
    */
-  accessRequests(descriptor?: PermissionDescriptor): AccessRequestRecord[];
+  accessRequests: (descriptor?: PermissionDescriptor) => AccessRequestRecord[];
 
   /**
    * Get the number of recorded access requests that this user has received.
@@ -76,7 +76,7 @@ export type User = {
    * @param descriptor - The descriptor of the permission to get access request
    *   count for.
    */
-  accessRequestCount(descriptor?: PermissionDescriptor): number;
+  accessRequestCount: (descriptor?: PermissionDescriptor) => number;
 
   /**
    * Clear recorded access requests that this user has received.
@@ -87,7 +87,7 @@ export type User = {
    * @param descriptor - The descriptor of the permission to clear access
    *   requests for.
    */
-  clearAccessRequests(descriptor?: PermissionDescriptor): void;
+  clearAccessRequests: (descriptor?: PermissionDescriptor) => void;
 };
 
 /**
