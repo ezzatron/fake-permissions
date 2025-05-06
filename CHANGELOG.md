@@ -10,6 +10,15 @@ Versioning].
 
 ## Unreleased
 
+## [v0.17.4] - 2025-05-06
+
+[v0.17.4]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.4
+
+### Fixed
+
+- Stopped TypeScript from eliding imports for types that appear in documentation
+  comments.
+
 ## [v0.17.3] - 2025-05-06
 
 [v0.17.3]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.3
