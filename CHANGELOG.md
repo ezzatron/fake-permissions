@@ -10,6 +10,14 @@ Versioning].
 
 ## Unreleased
 
+## [v0.17.2] - 2025-05-06
+
+[v0.17.2]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.2
+
+### Fixed
+
+- Improve compatibility with VSCode in documentation comments.
+
 ## [v0.17.1] - 2025-05-05
 
 [v0.17.1]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.1
