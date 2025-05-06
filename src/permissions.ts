@@ -13,7 +13,7 @@ import { PermissionStore } from "./permission-store.js";
  * @see {@link createPermissions} to create a fake W3C
  *   {@link @types/web!Permissions} API.
  */
-export type PermissionsParameters = {
+export interface PermissionsParameters {
   /**
    * Permission masks to apply when mapping {@link PermissionAccessStatus}
    * values to {@link PermissionState} values for various permissions.
@@ -50,7 +50,7 @@ export type PermissionsParameters = {
    * The permission store to use.
    */
   permissionStore: PermissionStore;
-};
+}
 
 let canConstruct = false;
 

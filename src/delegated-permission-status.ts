@@ -1,12 +1,12 @@
 import { BaseEventTarget } from "./event-target.js";
 
-type PermissionStatusParameters = {
+interface PermissionStatusParameters {
   descriptor: PermissionDescriptor;
   delegates: Map<Permissions, globalThis.PermissionStatus>;
   delegate: () => Permissions;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
-};
+}
 
 let canConstruct = false;
 

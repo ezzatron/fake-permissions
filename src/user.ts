@@ -7,7 +7,7 @@ import { PermissionStore } from "./permission-store.js";
 /**
  * A virtual user that can affect the access status of permissions.
  */
-export type User = {
+export interface User {
   /**
    * Grant access to a permission.
    *
@@ -88,7 +88,7 @@ export type User = {
    *   requests for.
    */
   clearAccessRequests: (descriptor?: PermissionDescriptor) => void;
-};
+}
 
 /**
  * A snapshot record of an access request handled by the user.
@@ -96,7 +96,7 @@ export type User = {
  * @see {@link User.accessRequests} to get a snapshot of access requests
  *   received by a user.
  */
-export type AccessRequestRecord = {
+export interface AccessRequestRecord {
   /**
    * The descriptor of the permission that was requested.
    */
@@ -117,7 +117,7 @@ export type AccessRequestRecord = {
    * also be `undefined` if the access request was dismissed.
    */
   readonly result: AccessDialogResult | undefined;
-};
+}
 
 /**
  * Parameters for creating a virtual user.
@@ -125,7 +125,7 @@ export type AccessRequestRecord = {
  * @inline
  * @see {@link createUser} to create a virtual user.
  */
-export type UserParameters = {
+export interface UserParameters {
   /**
    * The permission store to use.
    */
@@ -139,7 +139,7 @@ export type UserParameters = {
    * @defaultValue async () => {}
    */
   handleAccessRequest?: HandleAccessRequest;
-};
+}
 
 /**
  * Create a virtual user that can affect the access status of permissions.

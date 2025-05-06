@@ -1,7 +1,7 @@
 /**
  * A virtual permission access dialog.
  */
-export type AccessDialog = {
+export interface AccessDialog {
   /**
    * Set whether the dialog choice should be remembered.
    *
@@ -65,12 +65,12 @@ export type AccessDialog = {
    *   {@link PermissionAccessStatusDenied | `"DENIED"`}.
    */
   deny: () => void;
-};
+}
 
 /**
  * The result of an access dialog interaction that wasn't dismissed.
  */
-export type AccessDialogResult = {
+export interface AccessDialogResult {
   /**
    * Whether access should be allowed.
    */
@@ -80,7 +80,7 @@ export type AccessDialogResult = {
    * Whether the choice should be remembered.
    */
   readonly shouldRemember: boolean;
-};
+}
 
 export function createAccessDialog(
   defaultRemember: boolean,

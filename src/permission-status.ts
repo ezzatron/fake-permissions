@@ -5,11 +5,11 @@ import {
   type PermissionStoreSubscriber,
 } from "./permission-store.js";
 
-type PermissionStatusParameters = {
+interface PermissionStatusParameters {
   descriptor: PermissionDescriptor;
   mask: PermissionMask;
   permissionStore: PermissionStore;
-};
+}
 
 let canConstruct = false;
 

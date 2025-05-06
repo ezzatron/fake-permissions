@@ -1,7 +1,7 @@
 /**
  * An observer for permission state changes.
  */
-export type PermissionObserver = {
+export interface PermissionObserver {
   /**
    * Wait for the permission state to change to one of the specified states.
    *
@@ -17,7 +17,7 @@ export type PermissionObserver = {
     stateOrStates: PermissionState | PermissionState[],
     task?: () => Promise<void>,
   ) => Promise<void>;
-};
+}
 
 /**
  * Create an observer for a permission.

@@ -6,7 +6,7 @@ import {
 /**
  * A store for managing permission access.
  */
-export type PermissionStore = {
+export interface PermissionStore {
   /**
    * Check whether a permission is known to this store.
    *
@@ -112,7 +112,7 @@ export type PermissionStore = {
    * @returns A function to unsubscribe the subscriber.
    */
   subscribe: (subscriber: PermissionStoreSubscriber) => () => void;
-};
+}
 
 /**
  * Check whether one permission descriptor matches another.
@@ -137,7 +137,7 @@ export type IsMatchingDescriptor = (
 /**
  * The state of access for a permission.
  */
-export type PermissionAccessState = {
+export interface PermissionAccessState {
   /**
    * The access status of the permission.
    */
@@ -148,7 +148,7 @@ export type PermissionAccessState = {
    * dismissed.
    */
   dismissCount: number;
-};
+}
 
 /**
  * The access status of a permission.
@@ -221,7 +221,7 @@ export type PermissionStoreSubscriber = (
  * @inline
  * @see {@link createPermissionStore} to create a permission store.
  */
-export type PermissionStoreParameters = {
+export interface PermissionStoreParameters {
   /**
    * Whether access request dialogs should remember the user's choice by
    * default.
@@ -268,7 +268,7 @@ export type PermissionStoreParameters = {
    * @defaultValue {@link isMatchingDescriptor}
    */
   isMatchingDescriptor?: IsMatchingDescriptor;
-};
+}
 
 /**
  * Create a store for managing permission access.

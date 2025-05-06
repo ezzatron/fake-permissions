@@ -9,7 +9,7 @@ let canConstruct = false;
  * @see {@link createDelegatedPermissions} to create a delegated Permissions
  *   API.
  */
-export type DelegatedPermissionsParameters = {
+export interface DelegatedPermissionsParameters {
   /**
    * The Permissions APIs to delegate to.
    *
@@ -18,7 +18,7 @@ export type DelegatedPermissionsParameters = {
    * created.
    */
   delegates: globalThis.Permissions[];
-};
+}
 
 /**
  * Create a Permissions API that delegates to other Permissions APIs.
@@ -128,12 +128,12 @@ export function createDelegatedPermissions(
   };
 }
 
-type PermissionsParameters = {
+interface PermissionsParameters {
   delegates: globalThis.Permissions[];
   delegate: () => globalThis.Permissions;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
-};
+}
 
 class Permissions {
   /**
