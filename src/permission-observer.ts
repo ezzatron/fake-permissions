@@ -13,6 +13,7 @@ export interface PermissionObserver {
    * @returns A promise that resolves when the permission state matches one of
    *   the desired states. If the state is already one of the desired states,
    *   the promise resolves immediately.
+   * @throws A {@link TypeError} if no states are provided.
    */
   waitForState: (
     stateOrStates: PermissionState | PermissionState[],
@@ -36,7 +37,7 @@ export function createPermissionObserver(
     async waitForState(stateOrStates, task) {
       const states = normalizeStates(stateOrStates);
 
-      if (states.length < 1) throw new Error("No states provided");
+      if (states.length < 1) throw new TypeError("No states provided");
 
       const status = await permissions.query(descriptor);
 
