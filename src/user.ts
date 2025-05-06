@@ -4,6 +4,14 @@ import {
 } from "./access-dialog.js";
 import { PermissionStore } from "./permission-store.js";
 
+/* eslint-disable @typescript-eslint/no-unused-vars -- imports for docs */
+import type {
+  PermissionAccessStatusBlocked,
+  PermissionAccessStatusGranted,
+  PermissionAccessStatusPrompt,
+} from "./permission-store.js";
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 /**
  * A virtual user that can affect the access status of permissions.
  */

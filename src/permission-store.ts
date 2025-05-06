@@ -36,8 +36,7 @@ export interface PermissionStore {
    * @param descriptor - The descriptor of the permission.
    *
    * @returns The access status of the permission.
-   * @throws {@link @types/web!TypeError} If the permission is not known to this
-   *   store.
+   * @throws A {@link TypeError} if the permission is not known to this store.
    */
   getStatus: (descriptor: PermissionDescriptor) => PermissionAccessStatus;
 
@@ -49,8 +48,7 @@ export interface PermissionStore {
    * @param descriptor - The descriptor of the permission.
    * @param status - The new access status.
    *
-   * @throws {@link @types/web!TypeError} If the permission is not known to this
-   *   store.
+   * @throws A {@link TypeError} if the permission is not known to this store.
    */
   setStatus: (
     descriptor: PermissionDescriptor,
@@ -68,8 +66,7 @@ export interface PermissionStore {
    * @param descriptor - The descriptor of the permission to check.
    *
    * @returns Whether access to the permission is allowed.
-   * @throws {@link @types/web!TypeError} If the permission is not known to this
-   *   store.
+   * @throws A {@link TypeError} if the permission is not known to this store.
    */
   hasAccess: (descriptor: PermissionDescriptor) => boolean;
 
@@ -91,8 +88,7 @@ export interface PermissionStore {
    * @param descriptor - The descriptor of the permission to request access to.
    *
    * @returns Whether access to the permission is allowed.
-   * @throws {@link @types/web!TypeError} If the permission is not known to this
-   *   store.
+   * @throws A {@link TypeError} if the permission is not known to this store.
    */
   requestAccess: (descriptor: PermissionDescriptor) => Promise<boolean>;
 

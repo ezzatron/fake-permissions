@@ -9,6 +9,7 @@ export interface PermissionObserver {
    * @param task - An optional task to execute while waiting for the state
    *   change. You can use this to guarantee that certain actions are performed
    *   after observation has started.
+   *
    * @returns A promise that resolves when the permission state matches one of
    *   the desired states. If the state is already one of the desired states,
    *   the promise resolves immediately.

@@ -1,3 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- imports for docs */
+import type {
+  PermissionAccessStatus,
+  PermissionAccessStatusAllowed,
+  PermissionAccessStatusBlocked,
+  PermissionAccessStatusBlockedAutomatically,
+  PermissionAccessStatusDenied,
+  PermissionAccessStatusGranted,
+  PermissionAccessStatusPrompt,
+  PermissionStoreParameters,
+} from "./permission-store.js";
+import type { User } from "./user.js";
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 /**
  * A virtual permission access dialog.
  */

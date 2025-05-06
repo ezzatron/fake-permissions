@@ -6,12 +6,25 @@ import {
 import { createPermissionStatus } from "./permission-status.js";
 import { PermissionStore } from "./permission-store.js";
 
+/* eslint-disable @typescript-eslint/no-unused-vars -- imports for docs */
+import type {
+  PermissionAccessStatus,
+  PermissionAccessStatusAllowed,
+  PermissionAccessStatusBlocked,
+  PermissionAccessStatusBlockedAutomatically,
+  PermissionAccessStatusDenied,
+  PermissionAccessStatusGranted,
+  PermissionAccessStatusPrompt,
+} from "./permission-store.js";
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 /**
- * Parameters for creating a fake W3C {@link @types/web!Permissions} API.
+ * Parameters for creating a fake W3C
+ * {@link globalThis.Permissions | Permissions} API.
  *
  * @inline
  * @see {@link createPermissions} to create a fake W3C
- *   {@link @types/web!Permissions} API.
+ *   {@link globalThis.Permissions | Permissions} API.
  */
 export interface PermissionsParameters {
   /**
@@ -19,10 +32,11 @@ export interface PermissionsParameters {
    * values to {@link PermissionState} values for various permissions.
    *
    * Internally, this library stores more granular statuses for permissions than
-   * what is exposed via the W3C {@link @types/web!Permissions} API. This
-   * mapping defines how the internal {@link PermissionAccessStatus} values are
-   * exposed via the fake {@link @types/web!Permissions} API's
-   * {@link PermissionState} values.
+   * what is exposed via the W3C {@link globalThis.Permissions | Permissions}
+   * API. This mapping defines how the internal {@link PermissionAccessStatus}
+   * values are exposed via the fake
+   * {@link globalThis.Permissions | Permissions} API's {@link PermissionState}
+   * values.
    *
    * For example, some browsers support allowing one-time access to a
    * permission. This usually results in the {@link PermissionState} remaining
@@ -55,12 +69,12 @@ export interface PermissionsParameters {
 let canConstruct = false;
 
 /**
- * Create a fake W3C {@link @types/web!Permissions} API.
+ * Create a fake W3C {@link globalThis.Permissions | Permissions} API.
  *
  * @param params - The parameters for creating the fake W3C
- *   {@link @types/web!Permissions} API.
+ *   {@link globalThis.Permissions | Permissions} API.
  *
- * @returns A fake W3C Permissions API.
+ * @returns A fake W3C {@link globalThis.Permissions | Permissions} API.
  */
 export function createPermissions(
   params: PermissionsParameters,

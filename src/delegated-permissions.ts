@@ -26,9 +26,10 @@ export interface DelegatedPermissionsParameters {
  * Delegated permissions can be used, for example, to create a Permissions API
  * that "switches" between a fake Permissions API and a real Permissions API.
  *
- * When {@link @types/web!Permissions.query} is called on the delegated
- * Permissions API, the resulting {@link PermissionStatus} will reflect the
- * {@link PermissionState} of the permission in the selected delegate.
+ * When {@link globalThis.Permissions.query | Permissions.query} is called on
+ * the delegated Permissions API, the resulting {@link PermissionStatus} will
+ * reflect the {@link PermissionState} of the permission in the selected
+ * delegate.
  *
  * Permissions API delegates can be selected dynamically at any time, and any
  * {@link PermissionStatus} queries will immediately update to reflect the new

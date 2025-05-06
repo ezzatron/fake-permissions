@@ -3,6 +3,10 @@ import type {
   PermissionStore,
 } from "./permission-store.js";
 
+/* eslint-disable @typescript-eslint/no-unused-vars -- imports for docs */
+import type { PermissionsParameters } from "./permissions.js";
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
 /**
  * A mapping of {@link PermissionAccessStatus} values to W3C's
  * {@link PermissionState} values.
