@@ -22,8 +22,7 @@ export type _DocsTypes =
   | PermissionAccessStatusBlockedAutomatically
   | PermissionAccessStatusDenied
   | PermissionAccessStatusGranted
-  | PermissionAccessStatusPrompt
-  | PermissionStore;
+  | PermissionAccessStatusPrompt;
 
 /**
  * Parameters for creating a fake W3C
