@@ -10,6 +10,14 @@ Versioning].
 
 ## Unreleased
 
+## [v0.17.3] - 2025-05-06
+
+[v0.17.3]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.3
+
+### Fixed
+
+- Removed undesired `@inline` documentation comment annotations.
+
 ## [v0.17.2] - 2025-05-06
 
 [v0.17.2]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.2
