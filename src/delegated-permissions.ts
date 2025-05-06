@@ -5,7 +5,6 @@ let canConstruct = false;
 /**
  * Parameters for creating a delegated Permissions API.
  *
- * @inline
  * @see {@link createDelegatedPermissions} to create a delegated Permissions
  *   API.
  */
@@ -40,6 +39,8 @@ export interface DelegatedPermissionsParameters {
  *
  * @returns The delegated Permissions API, and functions for managing the
  *   selected delegate.
+ *
+ * @inlineType DelegatedPermissionsParameters
  */
 export function createDelegatedPermissions(
   params: DelegatedPermissionsParameters,

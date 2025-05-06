@@ -27,6 +27,8 @@ export interface PermissionStore {
    *
    * @see {@link PermissionStoreParameters.isMatchingDescriptor} for how to
    *   supply custom matching logic.
+   *
+   * @inlineType IsMatchingDescriptor
    */
   isMatchingDescriptor: IsMatchingDescriptor;
 
@@ -112,8 +114,6 @@ export interface PermissionStore {
 
 /**
  * Check whether one permission descriptor matches another.
- *
- * @inline
  *
  * @param a - The first descriptor to compare.
  * @param b - The second descriptor to compare.
@@ -214,7 +214,6 @@ export type PermissionStoreSubscriber = (
 /**
  * Parameters for creating a permission store.
  *
- * @inline
  * @see {@link createPermissionStore} to create a permission store.
  */
 export interface PermissionStoreParameters {
@@ -262,6 +261,8 @@ export interface PermissionStoreParameters {
    * @returns Whether the descriptors match.
    *
    * @defaultValue {@link isMatchingDescriptor}
+   *
+   * @inlineType IsMatchingDescriptor
    */
   isMatchingDescriptor?: IsMatchingDescriptor;
 }
@@ -272,6 +273,8 @@ export interface PermissionStoreParameters {
  * @param params - The parameters for creating the store.
  *
  * @returns A permission store.
+ *
+ * @inlineType PermissionStoreParameters
  */
 export function createPermissionStore(
   params: PermissionStoreParameters = {},

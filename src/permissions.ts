@@ -22,7 +22,6 @@ import type {
  * Parameters for creating a fake W3C
  * {@link globalThis.Permissions | Permissions} API.
  *
- * @inline
  * @see {@link createPermissions} to create a fake W3C
  *   {@link globalThis.Permissions | Permissions} API.
  */
@@ -75,6 +74,8 @@ let canConstruct = false;
  *   {@link globalThis.Permissions | Permissions} API.
  *
  * @returns A fake W3C {@link globalThis.Permissions | Permissions} API.
+ *
+ * @inlineType PermissionsParameters
  */
 export function createPermissions(
   params: PermissionsParameters,

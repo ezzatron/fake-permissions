@@ -130,7 +130,6 @@ export interface AccessRequestRecord {
 /**
  * Parameters for creating a virtual user.
  *
- * @inline
  * @see {@link createUser} to create a virtual user.
  */
 export interface UserParameters {
@@ -155,6 +154,8 @@ export interface UserParameters {
  * @param params - The parameters for creating the user.
  *
  * @returns A virtual user.
+ *
+ * @inlineType UserParameters
  */
 export function createUser(params: UserParameters): User {
   const { permissionStore, handleAccessRequest = async () => {} } = params;
