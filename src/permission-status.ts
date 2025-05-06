@@ -1,7 +1,7 @@
 import { BaseEventTarget } from "./event-target.js";
 import type { PermissionMask } from "./permission-mask.js";
 import {
-  PermissionStore,
+  type PermissionStore,
   type PermissionStoreSubscriber,
 } from "./permission-store.js";
 

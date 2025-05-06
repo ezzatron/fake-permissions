@@ -1,7 +1,7 @@
 import {
-  PermissionStore,
   createPermissionStore,
   createUser,
+  type PermissionStore,
 } from "fake-permissions";
 import { beforeEach, describe, expect, it } from "vitest";
 import { promiseWithResolvers } from "../async.js";

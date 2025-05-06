@@ -4,9 +4,6 @@ import {
   type PermissionMask,
 } from "./permission-mask.js";
 import { createPermissionStatus } from "./permission-status.js";
-import { PermissionStore } from "./permission-store.js";
-
-/* eslint-disable @typescript-eslint/no-unused-vars -- imports for docs */
 import type {
   PermissionAccessStatus,
   PermissionAccessStatusAllowed,
@@ -15,8 +12,18 @@ import type {
   PermissionAccessStatusDenied,
   PermissionAccessStatusGranted,
   PermissionAccessStatusPrompt,
+  PermissionStore,
 } from "./permission-store.js";
-/* eslint-enable @typescript-eslint/no-unused-vars */
+
+export type _DocsTypes =
+  | PermissionAccessStatus
+  | PermissionAccessStatusAllowed
+  | PermissionAccessStatusBlocked
+  | PermissionAccessStatusBlockedAutomatically
+  | PermissionAccessStatusDenied
+  | PermissionAccessStatusGranted
+  | PermissionAccessStatusPrompt
+  | PermissionStore;
 
 /**
  * Parameters for creating a fake W3C

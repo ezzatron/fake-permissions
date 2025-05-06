@@ -1,10 +1,10 @@
 import {
-  PermissionStore,
-  User,
   createPermissionStore,
   createPermissions,
   createUser,
   type PermissionAccessStatus,
+  type PermissionStore,
+  type User,
 } from "fake-permissions";
 import {
   afterEach,

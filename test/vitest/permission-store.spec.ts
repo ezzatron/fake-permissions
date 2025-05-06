@@ -1,8 +1,8 @@
 import {
-  PermissionStore,
   createPermissionStore,
   type HandleAccessRequest,
   type PermissionAccessState,
+  type PermissionStore,
 } from "fake-permissions";
 import {
   afterEach,
