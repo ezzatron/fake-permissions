@@ -358,15 +358,48 @@ describe("PermissionStore()", () => {
         permissionStore.setAccessRequestHandler(handleAccessRequest);
       });
 
-      it("can't dismiss the dialog after it's been dismissed", async () => {
+      it("can't dismiss the dialog after it's been closed", async () => {
         handleAccessRequest.mockImplementation(async (dialog) => {
-          dialog.allow();
+          dialog.deny();
+          dialog.dismiss();
+        });
+
+        await expect(
+          permissionStore.requestAccess(midiSysexTrue),
+        ).rejects.toThrow("Access dialog already closed");
+      });
+
+      it("can't deny the dialog after it's been closed", async () => {
+        handleAccessRequest.mockImplementation(async (dialog) => {
+          dialog.dismiss();
           dialog.deny();
         });
 
         await expect(
           permissionStore.requestAccess(midiSysexTrue),
-        ).rejects.toThrow("Access dialog already dismissed");
+        ).rejects.toThrow("Access dialog already closed");
+      });
+
+      it("can't allow the dialog after it's been closed", async () => {
+        handleAccessRequest.mockImplementation(async (dialog) => {
+          dialog.dismiss();
+          dialog.allow();
+        });
+
+        await expect(
+          permissionStore.requestAccess(midiSysexTrue),
+        ).rejects.toThrow("Access dialog already closed");
+      });
+
+      it("can't remember the dialog choice after it's been made", async () => {
+        handleAccessRequest.mockImplementation(async (dialog) => {
+          dialog.allow();
+          dialog.remember(true);
+        });
+
+        await expect(
+          permissionStore.requestAccess(midiSysexTrue),
+        ).rejects.toThrow("Access dialog already closed");
       });
 
       describe('when access is requested for a permission in the "PROMPT" status', () => {

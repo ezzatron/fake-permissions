@@ -22,8 +22,8 @@ export interface DelegatedPermissionsParameters {
 /**
  * Create a Permissions API that delegates to other Permissions APIs.
  *
- * Delegated permissions can be used, for example, to create a Permissions API
- * that "switches" between a fake Permissions API and a real Permissions API.
+ * Delegated Permissions APIs can be used, for example, to dynamically "switch"
+ * between a fake Permissions API and a real Permissions API.
  *
  * When {@link globalThis.Permissions.query | Permissions.query} is called on
  * the delegated Permissions API, the resulting {@link PermissionStatus} will
@@ -39,6 +39,7 @@ export interface DelegatedPermissionsParameters {
  *
  * @returns The delegated Permissions API, and functions for managing the
  *   selected delegate.
+ * @throws A {@link TypeError} if no delegates are provided.
  *
  * @inlineType DelegatedPermissionsParameters
  */

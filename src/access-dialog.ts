@@ -47,6 +47,8 @@ export interface AccessDialog {
    *
    * @param shouldRemember - Whether the choice should be remembered.
    *
+   * @throws An {@link Error} if the dialog is already closed.
+   *
    * @see {@link PermissionStoreParameters.dialogDefaultRemember} which sets the
    *   default behavior for all dialogs.
    */
@@ -60,6 +62,8 @@ export interface AccessDialog {
    * {@link PermissionStoreParameters.dismissDenyThreshold}, at which point the
    * permission's access status will change to
    * {@link PermissionAccessStatusBlockedAutomatically | `"BLOCKED_AUTOMATICALLY"`}.
+   *
+   * @throws An {@link Error} if the dialog is already closed.
    */
   dismiss: () => void;
 
@@ -73,6 +77,8 @@ export interface AccessDialog {
    *   {@link PermissionAccessStatusGranted | `"GRANTED"`}.
    * - If not remembered, the permission's access status will change to
    *   {@link PermissionAccessStatusAllowed | `"ALLOWED"`}.
+   *
+   * @throws An {@link Error} if the dialog is already closed.
    */
   allow: () => void;
 
@@ -86,6 +92,8 @@ export interface AccessDialog {
    *   {@link PermissionAccessStatusBlocked | `"BLOCKED"`}.
    * - If not remembered, the permission's access status will change to
    *   {@link PermissionAccessStatusDenied | `"DENIED"`}.
+   *
+   * @throws An {@link Error} if the dialog is already closed.
    */
   deny: () => void;
 }
@@ -108,13 +116,14 @@ export interface AccessDialogResult {
 export function createAccessDialog(
   defaultRemember: boolean,
 ): [AccessDialog, () => AccessDialogResult | undefined] {
-  let isDismissed = false;
+  let isClosed = false;
   let shouldRemember = defaultRemember;
   let result: AccessDialogResult | undefined;
 
   return [
     {
       remember(nextShouldRemember) {
+        if (isClosed) throw new Error("Access dialog already closed");
         shouldRemember = nextShouldRemember;
       },
 
@@ -134,9 +143,9 @@ export function createAccessDialog(
   ];
 
   function setResult(toResult: AccessDialogResult | undefined) {
-    if (isDismissed) throw new Error("Access dialog already dismissed");
+    if (isClosed) throw new Error("Access dialog already closed");
 
-    isDismissed = true;
+    isClosed = true;
     result = toResult;
   }
 }

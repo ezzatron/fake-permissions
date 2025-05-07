@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Fixed
+
+- Calling `remember()` on an `AccessDialog` now throws an error if the dialog is
+  already closed.
+
 ## [v0.17.4] - 2025-05-06
 
 [v0.17.4]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.4
