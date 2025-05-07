@@ -5,7 +5,11 @@ export type {
   HandleAccessRequestComplete,
 } from "./access-dialog.js";
 export { createDelegatedPermissions } from "./delegated-permissions.js";
-export type { DelegatedPermissionsParameters } from "./delegated-permissions.js";
+export type {
+  DelegatedPermissionsHandle,
+  DelegatedPermissionsParameters,
+  DelegatedPermissionsResult,
+} from "./delegated-permissions.js";
 export { createPermissionObserver } from "./permission-observer.js";
 export type { PermissionObserver } from "./permission-observer.js";
 export {

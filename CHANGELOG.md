@@ -10,6 +10,18 @@ Versioning].
 
 ## Unreleased
 
+### Added
+
+- Added the `DelegatedPermissionsHandle` type.
+- Added the `DelegatedPermissionsResult` type.
+
+### Changed
+
+- **[BREAKING]** The `createPermissionsDelegate()` function's return value now
+  has a `handle` object which contains the `selectDelegate`, `selectedDelegate`,
+  and `isSelectedDelegate` methods, which were previously on the return value
+  itself.
+
 ## [v0.18.0] - 2025-05-07
 
 [v0.18.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.18.0

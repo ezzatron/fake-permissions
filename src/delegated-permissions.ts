@@ -20,37 +20,24 @@ export interface DelegatedPermissionsParameters {
 }
 
 /**
- * Create a Permissions API that delegates to other Permissions APIs.
- *
- * Delegated Permissions APIs can be used, for example, to dynamically "switch"
- * between a fake Permissions API and a real Permissions API.
- *
- * When {@link globalThis.Permissions.query | Permissions.query} is called on
- * the delegated Permissions API, the resulting {@link PermissionStatus} will
- * reflect the {@link PermissionState} of the permission in the selected
- * delegate.
- *
- * Permissions API delegates can be selected dynamically at any time, and any
- * {@link PermissionStatus} queries will immediately update to reflect the new
- * delegate's {@link PermissionState} for the relevant permission, dispatching
- * events as appropriate to any registered `change` listeners.
- *
- * @param params - The parameters for creating the delegated Permissions API.
- *
- * @returns The delegated Permissions API, and functions for managing the
- *   selected delegate.
- * @throws A {@link TypeError} if no delegates are provided.
- *
- * @inlineType DelegatedPermissionsParameters
+ * The result of calling {@link createDelegatedPermissions}.
  */
-export function createDelegatedPermissions(
-  params: DelegatedPermissionsParameters,
-): {
+export interface DelegatedPermissionsResult {
   /**
    * The delegated Permissions API.
    */
-  permissions: globalThis.Permissions;
+  readonly permissions: globalThis.Permissions;
 
+  /**
+   * A handle for controlling the delegated Permissions API.
+   */
+  readonly handle: DelegatedPermissionsHandle;
+}
+
+/**
+ * A handle for controlling a delegated Permissions API.
+ */
+export interface DelegatedPermissionsHandle {
   /**
    * Select a Permissions API delegate.
    *
@@ -73,7 +60,36 @@ export function createDelegatedPermissions(
    * @returns `true` if the delegate is selected, `false` otherwise.
    */
   isSelectedDelegate: (delegate: globalThis.Permissions) => boolean;
-} {
+}
+
+/**
+ * Create a Permissions API that delegates to other Permissions APIs.
+ *
+ * Delegated Permissions APIs can be used, for example, to dynamically "switch"
+ * between a fake Permissions API and a real Permissions API.
+ *
+ * When {@link globalThis.Permissions.query | Permissions.query} is called on
+ * the delegated Permissions API, the resulting {@link PermissionStatus} will
+ * reflect the {@link PermissionState} of the permission in the selected
+ * delegate.
+ *
+ * Permissions API delegates can be selected dynamically at any time, and any
+ * {@link PermissionStatus} queries will immediately update to reflect the new
+ * delegate's {@link PermissionState} for the relevant permission, dispatching
+ * events as appropriate to any registered `change` listeners.
+ *
+ * @param params - The parameters for creating the delegated Permissions API.
+ *
+ * @returns The delegated Permissions API, and functions for managing the
+ *   selected delegate.
+ * @throws A {@link TypeError} if no delegates are provided.
+ *
+ * @inlineType DelegatedPermissionsParameters
+ * @inlineType DelegatedPermissionsResult
+ */
+export function createDelegatedPermissions(
+  params: DelegatedPermissionsParameters,
+): DelegatedPermissionsResult {
   const { delegates } = params;
   let [delegate] = delegates;
   if (!delegate) throw new TypeError("No delegates provided");
@@ -82,23 +98,23 @@ export function createDelegatedPermissions(
 
   canConstruct = true;
 
-  return {
-    permissions: new Permissions({
-      delegates,
+  const permissions = new Permissions({
+    delegates,
 
-      delegate() {
-        return delegate;
-      },
+    delegate() {
+      return delegate;
+    },
 
-      subscribe(subscriber) {
-        subscribers.add(subscriber);
-      },
+    subscribe(subscriber) {
+      subscribers.add(subscriber);
+    },
 
-      unsubscribe(subscriber) {
-        subscribers.delete(subscriber);
-      },
-    }),
+    unsubscribe(subscriber) {
+      subscribers.delete(subscriber);
+    },
+  });
 
+  const handle: DelegatedPermissionsHandle = {
     selectDelegate(selectedDelegate) {
       if (!delegates.includes(selectedDelegate)) {
         throw new TypeError("Unknown delegate");
@@ -129,6 +145,8 @@ export function createDelegatedPermissions(
       return query === delegate;
     },
   };
+
+  return { permissions, handle };
 }
 
 interface PermissionsParameters {
