@@ -18,6 +18,7 @@
     "notDocumented": true,
     "unusedMergeModuleWith": true
   },
+  "visibilityFilters": {},
 
   "plugin": ["typedoc-plugin-mdn-links"]
 }
