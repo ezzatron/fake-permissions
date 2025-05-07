@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.17.5] - 2025-05-07
+
+[v0.17.5]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.5
+
 ### Fixed
 
 - Calling `remember()` on an `AccessDialog` now throws an error if the dialog is
