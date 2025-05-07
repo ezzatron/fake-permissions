@@ -33,6 +33,16 @@ export interface PermissionStore {
   isMatchingDescriptor: IsMatchingDescriptor;
 
   /**
+   * Get the permission mask of a permission.
+   *
+   * @param descriptor - The descriptor of the permission.
+   *
+   * @returns The permission mask of the permission.
+   * @throws A {@link TypeError} if the permission is not known to this store.
+   */
+  getMask: (descriptor: PermissionDescriptor) => PermissionMask;
+
+  /**
    * Get the access status of a permission.
    *
    * @param descriptor - The descriptor of the permission.
@@ -129,6 +139,15 @@ export type IsMatchingDescriptor = (
   a: PermissionDescriptor,
   b: PermissionDescriptor,
 ) => boolean;
+
+/**
+ * A mapping of {@link PermissionAccessStatus} values to W3C's
+ * {@link PermissionState} values.
+ *
+ * @see {@link PermissionStoreParameters.masks} for more information on how this
+ *   mapping is used.
+ */
+export type PermissionMask = Record<PermissionAccessStatus, PermissionState>;
 
 /**
  * The state of access for a permission.
@@ -265,6 +284,39 @@ export interface PermissionStoreParameters {
    * @inlineType IsMatchingDescriptor
    */
   isMatchingDescriptor?: IsMatchingDescriptor;
+
+  /**
+   * Permission masks to apply when mapping {@link PermissionAccessStatus}
+   * values to {@link PermissionState} values for various permissions.
+   *
+   * Internally, this library stores more granular statuses for permissions than
+   * what is exposed via the W3C {@link globalThis.Permissions | Permissions}
+   * API. This mapping defines how the internal {@link PermissionAccessStatus}
+   * values are exposed via the fake
+   * {@link globalThis.Permissions | Permissions} API's {@link PermissionState}
+   * values.
+   *
+   * For example, some browsers support allowing one-time access to a
+   * permission. This usually results in the {@link PermissionState} remaining
+   * as {@link PermissionState | `"prompt"`} even after access has been allowed
+   * or denied. In order to emulate this behavior, the default behavior of this
+   * library is to use a mask that maps both
+   * {@link PermissionAccessStatusAllowed | `"ALLOWED"`} and
+   * {@link PermissionAccessStatusDenied | `"DENIED"`} to
+   * {@link PermissionState | `"prompt"`}.
+   *
+   * If no explicit mappings are provided, the default mapping is:
+   *
+   * | {@link PermissionAccessStatus}                                                 | {@link PermissionState}               |
+   * | :----------------------------------------------------------------------------- | :------------------------------------ |
+   * | {@link PermissionAccessStatusPrompt | `"PROMPT"`}                              | {@link PermissionState | `"prompt"`}  |
+   * | {@link PermissionAccessStatusGranted | `"GRANTED"`}                            | {@link PermissionState | `"granted"`} |
+   * | {@link PermissionAccessStatusBlocked | `"BLOCKED"`}                            | {@link PermissionState | `"denied"`}  |
+   * | {@link PermissionAccessStatusBlockedAutomatically | `"BLOCKED_AUTOMATICALLY"`} | {@link PermissionState | `"denied"`}  |
+   * | {@link PermissionAccessStatusAllowed | `"ALLOWED"`}                            | {@link PermissionState | `"prompt"`}  |
+   * | {@link PermissionAccessStatusDenied | `"DENIED"`}                              | {@link PermissionState | `"prompt"`}  |
+   */
+  masks?: Map<PermissionDescriptor, Partial<PermissionMask>>;
 }
 
 /**
@@ -284,6 +336,7 @@ export function createPermissionStore(
     dismissDenyThreshold = 3,
     initialStates = buildInitialPermissionStates(),
     isMatchingDescriptor: isMatchingDescriptorFn = isMatchingDescriptor,
+    masks = new Map(),
   } = params;
 
   const states: Map<PermissionDescriptor, PermissionAccessState> = new Map(
@@ -308,6 +361,16 @@ export function createPermissionStore(
     },
 
     isMatchingDescriptor: isMatchingDescriptorFn,
+
+    getMask(descriptor) {
+      const [, existing] = resolveState(descriptor);
+
+      for (const [d, v] of masks) {
+        if (isMatchingDescriptorFn(existing, d)) return normalizeMask(v);
+      }
+
+      return normalizeMask({});
+    },
 
     getStatus(descriptor) {
       const [{ status }] = resolveState(descriptor);
@@ -533,4 +596,16 @@ export function isMatchingDescriptor(
   }
 
   return a.name === b.name;
+}
+
+function normalizeMask(mask: Partial<PermissionMask>): PermissionMask {
+  return {
+    PROMPT: "prompt",
+    GRANTED: "granted",
+    BLOCKED: "denied",
+    BLOCKED_AUTOMATICALLY: "denied",
+    ALLOWED: "prompt",
+    DENIED: "prompt",
+    ...mask,
+  };
 }

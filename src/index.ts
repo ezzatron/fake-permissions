@@ -6,7 +6,6 @@ export type {
 } from "./access-dialog.js";
 export { createDelegatedPermissions } from "./delegated-permissions.js";
 export type { DelegatedPermissionsParameters } from "./delegated-permissions.js";
-export type { PermissionMask } from "./permission-mask.js";
 export { createPermissionObserver } from "./permission-observer.js";
 export type { PermissionObserver } from "./permission-observer.js";
 export {
@@ -24,6 +23,7 @@ export type {
   PermissionAccessStatusDenied,
   PermissionAccessStatusGranted,
   PermissionAccessStatusPrompt,
+  PermissionMask,
   PermissionStore,
   PermissionStoreParameters,
   PermissionStoreSubscriber,

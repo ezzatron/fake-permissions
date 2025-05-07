@@ -41,10 +41,6 @@ describe("Permission masking", () => {
         [permissionB, "PROMPT"],
         [permissionC, "PROMPT"],
       ]),
-    });
-
-    user = createUser({ permissionStore });
-    permissions = createPermissions({
       masks: new Map([
         [
           permissionB,
@@ -60,8 +56,10 @@ describe("Permission masking", () => {
           },
         ],
       ]),
-      permissionStore,
     });
+
+    user = createUser({ permissionStore });
+    permissions = createPermissions({ permissionStore });
 
     statusA = await permissions.query(structuredClone(permissionA));
     statusB = await permissions.query(structuredClone(permissionB));

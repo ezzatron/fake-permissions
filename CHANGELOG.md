@@ -10,6 +10,11 @@ Versioning].
 
 ## Unreleased
 
+### Changed
+
+- **[BREAKING]** The `masks` option has moved from `createPermissions()` to
+  `createPermissionStore()`.
+
 ## [v0.17.5] - 2025-05-07
 
 [v0.17.5]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.17.5

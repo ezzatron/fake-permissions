@@ -20,11 +20,6 @@ describe("Permission masking", () => {
         // Set the initial status of the "geolocation" permission to "PROMPT"
         [{ name: "geolocation" }, "PROMPT"],
       ]),
-    });
-    const user = createUser({ permissionStore });
-
-    const permissions = createPermissions({
-      permissionStore,
       masks: new Map([
         [
           // Mask the "geolocation" permission
@@ -41,6 +36,8 @@ describe("Permission masking", () => {
         ],
       ]),
     });
+    const permissions = createPermissions({ permissionStore });
+    const user = createUser({ permissionStore });
 
     const status = await permissions.query({ name: "geolocation" });
     console.log(status.state); // Outputs "prompt"

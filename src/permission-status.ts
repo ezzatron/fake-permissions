@@ -1,13 +1,12 @@
 import { BaseEventTarget } from "./event-target.js";
-import type { PermissionMask } from "./permission-mask.js";
 import {
+  type PermissionMask,
   type PermissionStore,
   type PermissionStoreSubscriber,
 } from "./permission-store.js";
 
 interface PermissionStatusParameters {
   descriptor: PermissionDescriptor;
-  mask: PermissionMask;
   permissionStore: PermissionStore;
 }
 
@@ -28,11 +27,7 @@ export class PermissionStatus extends BaseEventTarget {
    * @internal
    * @deprecated Use {@link Permissions.query} instead.
    */
-  constructor({
-    descriptor,
-    mask,
-    permissionStore,
-  }: PermissionStatusParameters) {
+  constructor({ descriptor, permissionStore }: PermissionStatusParameters) {
     super({
       onListenerCountChange: (() => {
         let unsubscribe: () => void | undefined;
@@ -56,7 +51,7 @@ export class PermissionStatus extends BaseEventTarget {
 
     this.name = descriptor.name;
     this.#descriptor = descriptor;
-    this.#mask = mask;
+    this.#mask = permissionStore.getMask(descriptor);
     this.#permissionStore = permissionStore;
     this.#onchange = null;
 
