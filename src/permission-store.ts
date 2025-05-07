@@ -221,7 +221,7 @@ export interface PermissionStoreParameters {
    * Whether access request dialogs should remember the user's choice by
    * default.
    *
-   * @defaultValue false
+   * @defaultValue `false`
    */
   dialogDefaultRemember?: boolean;
 
@@ -229,7 +229,7 @@ export interface PermissionStoreParameters {
    * The number of times an access request can be dismissed before the
    * permission is automatically blocked.
    *
-   * @defaultValue 3
+   * @defaultValue `3`
    */
   dismissDenyThreshold?: number;
 

@@ -146,7 +146,7 @@ export interface UserParameters {
    *
    * If omitted, permission access requests will be immediately dismissed.
    *
-   * @defaultValue async () => {}
+   * @defaultValue `async () => {}`
    */
   handleAccessRequest?: HandleAccessRequest;
 }
