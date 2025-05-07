@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.18.0] - 2025-05-07
+
+[v0.18.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.18.0
+
 ### Changed
 
 - **[BREAKING]** The `masks` option has moved from `createPermissions()` to
