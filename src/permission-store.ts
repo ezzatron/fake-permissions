@@ -215,20 +215,36 @@ export type PermissionAccessStatusDenied = "DENIED";
  *
  * @param descriptor - The descriptor of the permission that changed.
  * @param details - The details of the change.
- * @param details.hasAccess - Whether access allowed as of the change.
- * @param details.hadAccess - Whether access was allowed before the change.
- * @param details.toStatus - The new access status of the permission.
- * @param details.fromStatus - The previous access status of the permission.
  */
 export type PermissionStoreSubscriber = (
   descriptor: PermissionDescriptor,
-  details: {
-    hasAccess: boolean;
-    hadAccess: boolean;
-    toStatus: PermissionAccessStatus;
-    fromStatus: PermissionAccessStatus;
-  },
+  details: PermissionStoreSubscriberDetails,
 ) => void;
+
+/**
+ * The details of a permission access status change.
+ */
+export interface PermissionStoreSubscriberDetails {
+  /**
+   * Whether access is allowed as of the change.
+   */
+  hasAccess: boolean;
+
+  /**
+   * Whether access was allowed before the change.
+   */
+  hadAccess: boolean;
+
+  /**
+   * The new access status of the permission.
+   */
+  toStatus: PermissionAccessStatus;
+
+  /**
+   * The previous access status of the permission.
+   */
+  fromStatus: PermissionAccessStatus;
+}
 
 /**
  * Parameters for creating a permission store.

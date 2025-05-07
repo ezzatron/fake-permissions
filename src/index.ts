@@ -31,6 +31,7 @@ export type {
   PermissionStore,
   PermissionStoreParameters,
   PermissionStoreSubscriber,
+  PermissionStoreSubscriberDetails,
 } from "./permission-store.js";
 export { createPermissions } from "./permissions.js";
 export type { PermissionsParameters } from "./permissions.js";

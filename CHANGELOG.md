@@ -14,6 +14,7 @@ Versioning].
 
 - Added the `DelegatedPermissionsHandle` type.
 - Added the `DelegatedPermissionsResult` type.
+- Added the `PermissionStoreSubscriberDetails` type.
 
 ### Changed
 
