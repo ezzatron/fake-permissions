@@ -10,6 +10,10 @@ Versioning].
 
 ## Unreleased
 
+## [v0.19.0] - 2025-05-08
+
+[v0.19.0]: https://github.com/ezzatron/fake-permissions/releases/tag/v0.19.0
+
 ### Added
 
 - Added the `DelegatedPermissionsHandle` type.
