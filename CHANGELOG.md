@@ -22,7 +22,7 @@ Versioning].
 
 ### Changed
 
-- **[BREAKING]** The `createPermissionsDelegate()` function's return value now
+- **[BREAKING]** The `createDelegatedPermissions()` function's return value now
   has a `handle` object which contains the `selectDelegate`, `selectedDelegate`,
   and `isSelectedDelegate` methods, which were previously on the return value
   itself.
