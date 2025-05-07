@@ -80,8 +80,7 @@ export interface DelegatedPermissionsHandle {
  *
  * @param params - The parameters for creating the delegated Permissions API.
  *
- * @returns The delegated Permissions API, and functions for managing the
- *   selected delegate.
+ * @returns The delegated Permissions API, and a handle for controlling it.
  * @throws A {@link TypeError} if no delegates are provided.
  *
  * @inlineType DelegatedPermissionsParameters
