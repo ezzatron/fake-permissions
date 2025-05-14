@@ -33,7 +33,7 @@
     "prepublishOnly": "tsc -p tsconfig.build.json"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.4",
+    "@arethetypeswrong/cli": "^0.18.0",
     "@eslint/js": "^9.24.0",
     "@skypack/package-check": "^0.2.2",
     "@types/web": "^0.0.232",
