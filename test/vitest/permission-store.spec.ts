@@ -408,9 +408,9 @@ describe("PermissionStore()", () => {
 
           expect(handleAccessRequest).toBeCalledWith(
             expect.objectContaining({
-              dismiss: expect.any(Function) as () => void,
-              allow: expect.any(Function) as () => void,
-              deny: expect.any(Function) as () => void,
+              dismiss: expect.any(Function),
+              allow: expect.any(Function),
+              deny: expect.any(Function),
             }),
             midiSysexTrue,
           );
