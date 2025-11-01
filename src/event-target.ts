@@ -120,11 +120,11 @@ export class BaseEventTarget extends EventTarget {
     const listeners = this.#listenersFor(type, options);
     const listenerData = listeners.get(listener);
 
-    /* v8 ignore start: should never occur */
+    /* v8 ignore start: should never occur -- @preserve */
     if (!listenerData) {
       throw new Error("Invariant violation: Missing listener data");
     }
-    /* v8 ignore end */
+    /* v8 ignore end -- @preserve */
 
     listeners.delete(listener);
 

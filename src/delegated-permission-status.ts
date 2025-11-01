@@ -93,11 +93,11 @@ export class PermissionStatus extends BaseEventTarget {
   #statusDelegate(): globalThis.PermissionStatus {
     const delegate = this.#delegates.get(this.#delegate());
 
-    /* v8 ignore start: should never occur */
+    /* v8 ignore start: should never occur -- @preserve */
     if (!delegate) {
       throw new Error("Invariant violation: Missing status delegate");
     }
-    /* v8 ignore end */
+    /* v8 ignore end -- @preserve */
 
     return delegate;
   }
