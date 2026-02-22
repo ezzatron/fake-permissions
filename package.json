@@ -36,7 +36,7 @@
     "@arethetypeswrong/cli": "^0.18.0",
     "@eslint/js": "^9.24.0",
     "@skypack/package-check": "^0.2.2",
-    "@types/web": "^0.0.334",
+    "@types/web": "^0.0.335",
     "@vitest/coverage-v8": "^4.0.0",
     "@vitest/eslint-plugin": "^1.1.39",
     "eslint": "^9.24.0",
