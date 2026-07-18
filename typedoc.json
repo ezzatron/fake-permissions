@@ -3,6 +3,10 @@
 
   "excludeInternal": true,
   "externalSymbolLinkMappings": {
+    "@typescript/old": {
+      "Error": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error",
+      "TypeError": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/TypeError"
+    },
     "@types/web": {
       "PermissionDescriptor": "https://developer.mozilla.org/docs/Web/API/Permissions/query#permissiondescriptor",
       "PermissionState": "https://developer.mozilla.org/docs/Web/API/PermissionStatus/state"
