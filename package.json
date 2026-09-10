@@ -38,7 +38,7 @@
     "@skypack/package-check": "^0.2.2",
     "@types/web": "^0.0.354",
     "@typescript/native": "npm:typescript@^7.0.2",
-    "@vitest/coverage-v8": "^4.0.0",
+    "@vitest/coverage-v8": "^5.0.0",
     "@vitest/eslint-plugin": "^1.1.39",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.1",
@@ -52,6 +52,6 @@
     "typedoc-plugin-mdn-links": "^5.0.1",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.29.0",
-    "vitest": "^4.0.0"
+    "vitest": "^5.0.0"
   }
 }
